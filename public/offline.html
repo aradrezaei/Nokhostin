@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>آفلاین | آموزشگاه نخستین</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Vazirmatn',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        direction: rtl;
+      }
+
+      .container {
+        text-align: center;
+        max-width: 500px;
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      .icon svg {
+        width: 60px;
+        height: 60px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        font-weight: 800;
+      }
+
+      p {
+        font-size: 1.125rem;
+        line-height: 1.7;
+        margin-bottom: 30px;
+        opacity: 0.9;
+      }
+
+      .actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 15px 30px;
+        font-size: 1rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+      }
+
+      .btn-primary {
+        background: white;
+        color: #667eea;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .status {
+        margin-top: 30px;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.875rem;
+      }
+
+      .status-indicator {
+        width: 10px;
+        height: 10px;
+        background: #ff4757;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.1);
+        }
+      }
+
+      .status.online .status-indicator {
+        background: #2ecc71;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3"
+          />
+        </svg>
+      </div>
+
+      <h1>🔌 اتصال اینترنت قطع است</h1>
+
+      <p>
+        نگران نباشید! شما همچنان می‌توانید به محتوای ذخیره شده دسترسی داشته باشید. بعضی از قابلیت‌ها
+        ممکن است محدود باشند.
+      </p>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="window.location.reload()">🔄 تلاش مجدد</button>
+        <button class="btn-secondary" onclick="goHome()">🏠 بازگشت به خانه</button>
+      </div>
+
+      <div class="status" id="status">
+        <span class="status-indicator"></span>
+        <span id="status-text">آفلاین</span>
+      </div>
+    </div>
+
+    <script>
+      function goHome() {
+        window.location.href = '/';
+      }
+
+      // بررسی وضعیت اتصال
+      function updateOnlineStatus() {
+        const status = document.getElementById('status');
+        const statusText = document.getElementById('status-text');
+
+        if (navigator.onLine) {
+          status.classList.add('online');
+          statusText.textContent = 'آنلاین';
+          // رفرش خودکار بعد از 2 ثانیه
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          status.classList.remove('online');
+          statusText.textContent = 'آفلاین';
+        }
+      }
+
+      // Event Listeners
+      window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+
+      // بررسی اولیه
+      updateOnlineStatus();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,265 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: Shabnam;
+  src: url('../public/font/Shabnam.woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Shabnam;
+  src: url(../public/font/Shabnam-Bold.woff2);
+  font-weight: bold;
+  font-style: bold;
+}
+
+* {
+  font-family: Shabnam, sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* انیمیشن fade-in برای transitions */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* View Transitions API — برای مرورگرهای پشتیبانی‌کننده */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+/* Fade-in animation for overall page elements */
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
+  /* Adjust duration and easing as needed */
+}
+
+/* Specific delay classes for staggering animations */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+.animation-delay-700 {
+  animation-delay: 700ms;
+}
+.animation-delay-800 {
+  animation-delay: 800ms;
+}
+.animation-delay-900 {
+  animation-delay: 900ms;
+}
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+/* Animation for Hero section elements - more immediate */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.7s ease-out forwards;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.7s ease-out forwards;
+}
+
+/* Blob animation for hero section */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+/* Ensure the dark mode transition is smooth */
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Custom utility for border-width (if not already defined in your Tailwind config) */
+.border-3 {
+  border-width: 3px;
+}
+.border-4 {
+  border-width: 4px;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes pulse-code {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+.animate-pulse-code {
+  animation: pulse-code 3s infinite ease-in-out;
+}
+
+.swiper-pagination-bullet {
+  background: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+.swiper-pagination-bullet-active {
+  background: #2563eb !important; /* رنگ آبی برند شما */
+  width: 24px !important;
+  border-radius: 8px !important;
+}
+
+.swiper-slide {
+  height: auto;
+  display: flex;
+}
+
+/* برای مرورگرهای مبتنی بر WebKit (مانند Chrome, Safari) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* برای Firefox */
+.no-scrollbar {
+  scrollbar-width: none; /* "auto" یا "thin" */
+}
+
+/* برای IE و Edge (نسخه‌های قدیمی‌تر) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+/* 
+.placeholder-cool::placeholder {
+  color: #9ca3af;
+}
+
+@supports (-webkit-background-clip: text) {
+  .placeholder-cool::placeholder {
+    -webkit-text-fill-color: transparent; 
+    -webkit-background-clip: text; 
+    background-image: linear-gradient(
+      to right,
+      #a78bfa 0%,  
+      #a78bfa 25%,  
+      #9ca3af 25%,  
+      #9ca3af 100% 
+    );
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .placeholder-cool::placeholder {
+    color: #6b7280; 
+  }
+
+  @supports (-webkit-background-clip: text) {
+    .placeholder-cool::placeholder {
+      background-image: linear-gradient(
+        to right,
+        #4000ff 0%,   
+        #4000ff 25%,  
+        #6b7280 25%,  
+        #6b7280 100% 
+      );
+    }
+  }
+} */
