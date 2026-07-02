@@ -235,8 +235,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="enamad" content="68174347" />
       </head>
       <body className="font-shabnam antialiased text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="3f4a413e-35c7-43a7-9e97-98e29b907937"></script>
-        
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="3f4a413e-35c7-43a7-9e97-98e29b907937"
+        ></script>
+
         <Navbar />
         <main role="main" className="flex-1 w-full">
           {children}

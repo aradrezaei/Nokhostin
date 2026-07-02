@@ -213,14 +213,14 @@ export default function ContactPage() {
   };
 
   const inputClass = (field: keyof FormData) =>
-    `w-full px-4 py-3.5 rounded-xl bg-gray-50 dark:bg-gray-900 border text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 outline-none transition-all duration-150 focus:bg-white dark:focus:bg-gray-900 ${
+    `w-full px-4 py-3.5 rounded-xl bg-gray-50 dark:bg-gray-90 border text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 outline-none transition-all duration-150 focus:bg-white dark:focus:bg-gray-900 ${
       errors[field] && touched[field]
         ? 'border-red-300 dark:border-red-800 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900'
         : 'border-gray-200 dark:border-gray-800 focus:border-purple-400 dark:focus:border-purple-700 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900/40'
     }`;
 
   return (
-    <main className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-950 -mt-2" dir="rtl">
+    <main className="text-gray-900 dark:text-gray-100 bg-white dark:bg-slate-900 -mt-2" dir="rtl">
       {/* ══════════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════ */}
@@ -230,18 +230,6 @@ export default function ContactPage() {
             چطور می‌توانیم <br />
             <span className="relative inline-block text-purple-600 dark:text-purple-400">
               کمک کنیم؟
-              <svg
-                className="absolute -bottom-2 left-0 w-full h-3 text-purple-200 dark:text-purple-900/40"
-                viewBox="0 0 100 10"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M0 5 Q 25 0 50 5 T 100 5"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  fill="none"
-                />
-              </svg>
             </span>
           </h1>
           <p className="text-lg md:text-xl text-gray-500 dark:text-neutral-400 max-w-2xl mx-auto leading-8 font-medium italic">
@@ -254,7 +242,7 @@ export default function ContactPage() {
       {/* ══════════════════════════════════════════════════════
           CONTACT CHANNELS
       ══════════════════════════════════════════════════════ */}
-      <section className="relative py-12 lg:py-20 bg-white dark:bg-gray-950 border-y border-gray-100 dark:border-white/[0.05]">
+      <section className="relative py-12 lg:py-20 bg-white dark:bg-slate-900 border-y border-gray-100 dark:border-white/[0.05]">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 overflow-hidden rounded-3xl border border-gray-100 dark:border-white/[0.05] lg:border-none">
             {CHANNELS.map((ch, i) => (
@@ -654,34 +642,47 @@ export default function ContactPage() {
       {/* ══════════════════════════════════════════════════════
           CTA
       ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-screen-xl mx-auto px-6">
-          <div className="relative rounded-3xl bg-purple-600 dark:bg-purple-700 overflow-hidden p-12 md:p-16 text-center">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-            <div className="relative">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4">
+      <section className="py-16 md:py-20 bg-white dark:bg-gray-950">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
+          <div className="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-700 p-10 sm:p-14 md:p-16 text-center shadow-2xl">
+            {/* Glassmorphism + Depth Layer */}
+            <div className="absolute inset-0 bg-white/[0.06] backdrop-blur-3xl" />
+
+            {/* Soft Gradient Orbs */}
+            <div className="absolute -left-20 -top-20 w-[420px] h-[420px] bg-white/10 rounded-full blur-[100px]" />
+            <div className="absolute -right-20 -bottom-20 w-[460px] h-[460px] bg-violet-300/20 rounded-full blur-[120px]" />
+
+            {/* Subtle noise texture */}
+            <div className="absolute inset-0 bg-[radial-gradient(#ffffff_0.8px,transparent_1px)] bg-[length:3px_3px] opacity-10" />
+
+            <div className="relative z-10">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-[-0.04em] leading-[1.1] mb-5 whitespace-nowrap">
                 هنوز مطمئن نیستی؟
               </h2>
-              <p className="text-purple-200 text-sm leading-7 max-w-xl mx-auto mb-8">
+
+              <p className="text-base sm:text-lg md:text-xl text-purple-100/90 max-w-2xl mx-auto leading-relaxed mb-8 md:mb-10">
                 با کارشناسان ما یک جلسه مشاوره رایگان تنظیم کن تا بهترین مسیر آموزشی را بر اساس
                 اهداف و شرایط تو پیدا کنیم.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
                 <Link
                   href="/courses"
-                  className="inline-flex items-center gap-2 bg-white text-purple-700 font-bold text-sm px-6 py-3 rounded-xl hover:bg-purple-50 transition-colors duration-150"
+                  className="group inline-flex items-center justify-center gap-3 bg-white text-purple-700 font-semibold text-base px-8 sm:px-10 py-4 rounded-2xl hover:bg-white hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.985] w-full sm:w-auto"
                 >
                   مشاهده دوره‌ها
-                  <ArrowLeft size={16} />
+                  <ArrowLeft
+                    size={20}
+                    className="group-hover:-translate-x-1 transition-transform"
+                  />
                 </Link>
+
                 <a
                   href="tel:02165565004"
-                  className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-xl hover:bg-white/10 transition-colors duration-150"
+                  className="group inline-flex items-center justify-center gap-3 border border-white/30 hover:border-white/60 text-white font-semibold text-base px-8 sm:px-10 py-4 rounded-2xl hover:bg-white/10 transition-all duration-300 active:scale-[0.985] w-full sm:w-auto"
                 >
-                  <Phone size={15} />
-                  تماس مستقیم
+                  <Phone size={19} />
+                  تماس مستقیم با ما
                 </a>
               </div>
             </div>

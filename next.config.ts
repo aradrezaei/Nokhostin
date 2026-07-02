@@ -5,12 +5,11 @@ const nextConfig = {
     turbopackFileSystemCacheForDev: true,
   },
 
-  output: 'standalone', 
+  output: 'standalone',
 
   typescript: {
     ignoreBuildErrors: true,
   },
-  
 };
 
 export default nextConfig;

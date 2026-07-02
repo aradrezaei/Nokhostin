@@ -268,89 +268,60 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════ */}
-      <section className="relative pt-32 pb-24 overflow-hidden bg-white dark:bg-gray-950">
-        {/* 1. پس‌زمینه مهندسی شده (Grid Pattern) */}
+      <section
+        className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-900"
+        dir="rtl"
+      >
+        {/* Background: Ultra-lightweight CSS Pattern
+        بدون افت فریم، کاملاً بهینه برای موبایل و دسکتاپ 
+      */}
+        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-60 pointer-events-none" />
 
-        {/* <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full">
-    <div className="absolute top-[-10%] left-[-10%] w-72 h-72 bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-[120px]" />
-    <div className="absolute bottom-[10%] right-[-5%] w-80 h-80 bg-indigo-200/20 dark:bg-indigo-900/10 rounded-full blur-[120px]" />
-  </div> */}
-
-        <div className="relative z-10 max-w-screen-xl mx-auto px-6 text-center">
-          {/* نشان (Badge) بالای عنوان برای رسمیت بیشتر */}
-
-          {/* عنوان اصلی با تایپوگرافی قدرتمند */}
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white tracking-tight leading-[1.1] mb-8">
-            ما
-            <span className="relative inline-block px-4">
-              <span className="relative z-10 text-purple-600 dark:text-purple-400">نخستین</span>
-              <svg
-                className="absolute -bottom-2 left-0 w-full h-3 text-purple-200 dark:text-purple-900/40 -z-0"
-                viewBox="0 0 100 10"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M0 5 Q 25 0 50 5 T 100 5"
-                  stroke="currentColor"
-                  strokeWidth="8"
-                  fill="none"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
+        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center flex flex-col items-center">
+          {/* Title: Solid, High-Contrast, Authoritative */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-950 dark:text-white tracking-tight leading-tight mb-6">
+            ما{' '}
+            <span className="relative bg-gradient-to-b from-purple-500 via-purple-700 to-purple-700 dark:from-purple-500 dark:via-purple-500 dark:to-purple-600 bg-clip-text text-transparent mb-4 px-1">
+              نخستین
+              {/* Architectural static underline instead of floating SVGs */}
+            </span>{' '}
             هستیم.
           </h1>
 
-          {/* متن توضیحات با خوانایی بالا */}
-          <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed mb-12 font-medium">
+          {/* Subtitle: Clean, legible, professional weight */}
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed mb-12 font-medium">
             با بیش از{' '}
-            <span className="text-gray-900 dark:text-white border-b-2 border-purple-500/30 pb-0.5">
-              ۲۴ سال سابقه درخشان
-            </span>
-            ، بستری استاندارد و بین‌المللی برای شکوفایی مهارت‌های شما فراهم کرده‌ایم.
+            <span className="text-gray-950 dark:text-white font-bold">۲۴ سال سابقه درخشان</span>،
+            بستری استاندارد و بین‌المللی برای شکوفایی مهارت‌های شما فراهم کرده‌ایم.
           </p>
 
-          {/* دکمه‌های فراخوان (CTA) با استایل Premium */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+          {/* CTAs: Enterprise-grade, no bouncy hover effects */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+            {/* Primary CTA */}
             <Link
               href="/courses"
-              className="group relative inline-flex items-center gap-3 bg-purple-600 hover:bg-purple-700 border border-purple-600  text-white font-bold text-base px-8 py-4 rounded-2xl transition-all duration-300  "
+              className="flex items-center justify-center gap-3 w-full sm:w-auto bg-gray-950 dark:bg-white text-white dark:text-gray-950 font-bold text-base px-8 py-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors duration-200"
             >
               مشاهده دوره‌های تخصصی
-              <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
+              <ArrowLeft size={18} />
             </Link>
 
+            {/* Secondary CTA */}
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-bold text-base px-8 py-4 rounded-2xl transition-all duration-150 hover:shadow-md"
+              className="flex items-center justify-center w-full sm:w-auto bg-transparent border-2 border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white font-bold text-base px-8 py-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-200"
             >
               دریافت مشاوره رایگان
             </Link>
           </div>
-
-          {/* بخش همکاران یا تاییدیه (اختیاری - برای افزایش اعتماد) */}
         </div>
       </section>
-
       {/* ══════════════════════════════════════════════════════
           STATS
       ══════════════════════════════════════════════════════ */}
       {/* ══════════════════════════════════════════════════════
           STATS (Refined & Professional)
     ══════════════════════════════════════════════════════ */}
-      <section className="relative py-16 bg-white dark:bg-gray-950 border-y border-gray-100 dark:border-gray-900/50">
-        <div className="max-w-screen-xl mx-auto px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 lg:gap-y-0">
-            <StatCard value={3900} suffix="+" label="دانش‌آموخته متخصص" icon={GraduationCap} />
-
-            <StatCard value={145} suffix="+" label="دوره آموزشی فعال" icon={BookOpen} />
-
-            <StatCard value={24} suffix=" سال" label="اصالت و سابقه فعالیت" icon={Trophy} />
-
-            <StatCard value={96} suffix="٪" label="شاخص رضایت نهایی" icon={Star} />
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════════════════
           WHY US — asymmetric layout
@@ -420,7 +391,7 @@ export default function AboutPage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="bg-white dark:bg-gray-950 p-8 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors duration-300"
+                  className="bg-white dark:bg-gray-950 p-8 hover:bg-gray-50 dark:hover:bg-gray-900/50 "
                 >
                   <item.icon
                     size={24}
@@ -444,29 +415,32 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════
           VALUES
       ══════════════════════════════════════════════════════ */}
-      <section className="py-16 md:py-24 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-900">
+      <section className="py-12 md:py-16 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-900">
         <div className="max-w-screen-xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight mb-12 md:mb-20">
+          <h2 className="text-2xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-8 md:mb-12">
             آرمان‌هایی که به آن{' '}
             <span className="text-purple-600 dark:text-purple-400">پایبندیم</span>
           </h2>
-          <div className="grid md:grid-cols-3 gap-px bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-2xl md:rounded-[2.5rem] overflow-hidden">
+
+          <div className="grid md:grid-cols-3 gap-px bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden">
             {VALUES.map((v, i) => (
               <div
                 key={i}
-                className="group bg-white dark:bg-gray-950 p-8 md:p-12 text-right hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors duration-500"
+                className="group bg-white dark:bg-gray-950 p-6 md:p-8 text-right hover:bg-gray-50 dark:hover:bg-gray-900/50"
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-purple-50 dark:bg-purple-900/10 flex items-center justify-center mb-6 md:mb-8 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-purple-50 dark:bg-purple-900/10 flex items-center justify-center mb-5 md:mb-6 group-hover:scale-110">
                   <v.icon
-                    size={20} // Smaller icon size for mobile
+                    size={18}
                     className="text-purple-600 dark:text-purple-400"
                     strokeWidth={1.5}
                   />
                 </div>
-                <h3 className="text-lg md:text-xl font-black text-gray-900 dark:text-white mb-3 md:mb-4 leading-none">
+
+                <h3 className="text-base md:text-lg font-black text-gray-900 dark:text-white mb-2.5 md:mb-3 leading-none">
                   {v.title}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed md:leading-7 font-medium">
+
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
                   {v.desc}
                 </p>
               </div>
@@ -541,35 +515,48 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════
           CTA
       ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-screen-xl mx-auto px-6">
-          <div className="relative rounded-3xl bg-purple-600 dark:bg-purple-700 overflow-hidden p-12 md:p-16 text-center">
-            {/* BG pattern */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      <section className="py-12 md:py-16 bg-white dark:bg-gray-950" dir="rtl">
+        {/* کوچک‌تر کردن عرض کل باکس برای دسکتاپ از xl به 5xl جهت زیبایی و انسجام بیشتر */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          {/* پس‌زمینه خفن‌تر با ترکیب گرادیانت عمیق‌تر، سایه ظریف و بوردر داخلی شیشه‌ای */}
+          <div className="relative rounded-[2rem] bg-gradient-to-br from-purple-600 via-indigo-700 to-violet-900 overflow-hidden p-8 md:p-12 text-center shadow-xl shadow-indigo-950/10 border border-white/10">
+            {/* بهینه‌سازی و کوچک‌تر کردن دکوراسیون‌های نئونی پس‌زمینه برای پرفورمنس عالی در موبایل */}
+            <div className="absolute -top-10 -right-10 w-44 h-44 md:w-64 md:h-64 bg-pink-500/20 rounded-full blur-[50px] md:blur-[80px] pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-44 h-44 md:w-64 md:h-64 bg-cyan-500/20 rounded-full blur-[50px] md:blur-[80px] pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-500/15 rounded-full blur-[70px] pointer-events-none" />
 
-            <div className="relative">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4">
+            <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
+              {/* تیتر بهینه شده: اندازه کاملاً ریسپانسیو جهت عدم شکستگی زشت در موبایل */}
+              <h2 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-tight md:leading-snug bg-gradient-to-b from-white via-slate-100 to-purple-200 bg-clip-text text-transparent mb-4">
                 آماده شروع مسیر حرفه‌ای هستی؟
               </h2>
-              <p className="text-purple-200 text-sm leading-7 max-w-xl mx-auto mb-8">
-                همین الان به بیش از ۴۸,۰۰۰ دانش‌آموخته‌ای بپیوند که مسیر حرفه‌ای خود را با نخستین
-                آغاز کردند.
+
+              {/* زیرعنوان جمع‌وجور با خوانایی بالا و هایلایت شیشه‌ای عدد */}
+              <p className="text-white/85 text-lg sm:text-xs md:text-lg leading-relaxed max-w-xl mb-8">
+                همین الان به بیش از ۴۸,۰۰۰ دانش‌آموخته‌ای بپیوند که مسیر حرفه‌ای خود را با{' '}
+                <span className="font-bold text-purple-200">نخستین</span> آغاز کردند.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-xl hover:bg-white/10"
-                >
-                  مشاوره رایگان
-                </Link>
+
+              {/* دکمه‌های مدرن با استایل شیشه‌ای (Glassmorphism) و انیمیشن میکرو حرکتی هاور */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
+                {/* دکمه اصلی - مشاهده دوره‌ها */}
                 <Link
                   href="/courses"
-                  className="inline-flex items-center gap-2 bg-white text-purple-700 font-bold text-sm px-6 py-3 rounded-xl hover:bg-purple-50 "
+                  className="group inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-white text-indigo-950 font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl hover:bg-purple-50 transition-all duration-300 shadow-lg shadow-indigo-950/20 active:scale-[0.98] hover:-translate-y-0.5"
                 >
                   مشاهده دوره‌ها
-                  <ArrowLeft size={16} />
+                  <ArrowLeft
+                    size={16}
+                    className="group-hover:-translate-x-1.5 transition-transform duration-300"
+                  />
+                </Link>
+
+                {/* دکمه فرعی شیشه‌ای - مشاوره رایگان */}
+                <Link
+                  href="/contact"
+                  className="group inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/15 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl hover:bg-white/20"
+                >
+                  مشاوره رایگان
                 </Link>
               </div>
             </div>

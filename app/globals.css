@@ -3,23 +3,34 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @font-face {
-  font-family: Shabnam;
-  src: url('../public/font/Shabnam.woff2');
+  font-family: 'Shabnam';
+  src: url('/font/Shabnam.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: Shabnam;
-  src: url(../public/font/Shabnam-Bold.woff2);
-  font-weight: bold;
-  font-style: bold;
+  font-family: 'Shabnam';
+  src: url('/font/Shabnam-Bold.woff2') format('woff2');
+  font-weight: bold; /* یا 700 */
+  font-style: normal; /* اصلاح شد */
 }
 
 * {
   font-family: Shabnam, sans-serif;
+  cursor:
+    url('../public/default-dark.svg') 4 1,
+    auto;
 }
 
+/* هدف قرار دادن خود دایو و تمام لینک‌های داخل آن */
+
+[class*='cursor-pointer'] {
+  cursor:
+    url('/pointer.svg') 8 2,
+    pointer !important;
+  image-rendering: pixelated;
+}
 .dark {
   color-scheme: dark;
 }

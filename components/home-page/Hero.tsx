@@ -1,346 +1,313 @@
-'use client';
+import { ArrowLeft } from 'lucide-react';
 
-import Link from 'next/link';
-import { Building2, GraduationCap, MessageCircle } from 'lucide-react';
+const CONTENT = {
+  eyebrow: 'همه‌ی مهارت‌های آینده، زیر یک سقف',
+  headlineStart: 'یادگیری که بازی می‌کند،',
+  headlineAccent: 'جدی می‌سازد.',
+  subheadline:
+    'آموزش بدون خستگی در ده‌ها دپارتمان متنوع؛ متد هوشمندی که شما را مستقیم به شرکت‌های پیشرو وصل می‌کند.',
+  ctaSecondary: 'مشاهده رشته‌ها',
+  stats: [
+    { value: '10+', label: 'رشته آموزشی' },
+    { value: '12,000+', label: 'دانشجوی فعال' },
+    { value: '50+', label: 'سازمان همکار' },
+  ],
+};
 
-// ─── Types ─────────────────────────────────────────────────────────────────
-interface StatItem {
-  value: string;
-  label: string;
-  accent: string;
-}
-
-// ─── Data ──────────────────────────────────────────────────────────────────
-const STATS = [
-  { label: 'دانشجویان فعال', value: '۱۲,۴۰۰+', accent: '#3b82f6' }, // آبی
-  { label: 'دوره‌های آموزشی', value: '۸۵۰+', accent: '#8b5cf6' }, // بنفش
-  { label: 'استادان مجرب', value: '۱۲۰+', accent: '#ec4899' }, // صورتی
-  { label: 'رضایت کاربران', value: '۹۸٪', accent: '#10b981' }, // سبز
+const PARTNERS = [
+  'پردیس فناوری',
+  'گروه راهبرد نوین',
+  'سامانه آرتا',
+  'بنیاد دانش‌بنیان کیان',
+  'شرکت داده‌کاوان',
+  'هلدینگ سپهر',
 ];
 
-const FEATURES = [
-  { icon: <Building2 size={20} />, text: 'مجوز رسمی سازمان فنی و حرفه‌ای' },
-  { icon: <GraduationCap size={20} />, text: 'مدرک معتبر بین‌المللی' },
-  { icon: <MessageCircle size={20} />, text: 'پشتیبانی ۲۴/۷' },
-];
+/* ---------------------------- ornaments ---------------------------- */
 
-// ─── Inline SVG Illustration ───────────────────────────────────────────────
-function HeroIllustration() {
+/** small asterisk/spark — always in normal document flow, never hidden */
+function Spark({ className = '' }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 520 480"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className="w-full h-full"
-    >
-      {/* ── Decorative rings ───────────────────────────────────────── */}
-      <circle
-        className="stroke-olive-900 dark:stroke-olive-300 "
-        cx="260"
-        cy="220"
-        r="195"
-        strokeWidth="1"
-        strokeDasharray="6 8"
-        opacity="0.15"
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <line
+        x1="12"
+        y1="2"
+        x2="12"
+        y2="22"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
-
-      {/* ── Laptop base ────────────────────────────────────────────── */}
-      <rect
-        x="80"
-        y="310"
-        width="360"
-        height="18"
-        rx="9"
-        className="fill-slate-300 dark:fill-[#e2e8f0]"
+      <line
+        x1="3.5"
+        y1="7"
+        x2="20.5"
+        y2="17"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
-      <rect
-        x="110"
-        y="300"
-        width="300"
-        height="14"
-        rx="4"
-        className="fill-slate-400 dark:fill-[#cbd5e1]"
+      <line
+        x1="20.5"
+        y1="7"
+        x2="3.5"
+        y2="17"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
-
-      {/* ── Laptop body ────────────────────────────────────────────── */}
-      <rect
-        x="108"
-        y="68"
-        width="304"
-        height="236"
-        rx="14"
-        fill="#1e293b"
-        filter="url(#softShadow)"
-      />
-      <rect x="112" y="72" width="296" height="228" rx="11" fill="#0f172a" />
-
-      {/* ── Screen content ─────────────────────────────────────────── */}
-      <rect
-        x="114"
-        y="74"
-        width="292"
-        height="224"
-        rx="10"
-        fill="url(#screenGrad)"
-        clipPath="url(#screenClip)"
-      />
-
-      {/* Screen grid lines */}
-      <line x1="114" y1="104" x2="406" y2="104" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="114" y1="134" x2="406" y2="134" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="114" y1="164" x2="406" y2="164" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="114" y1="194" x2="406" y2="194" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="174" y1="74" x2="174" y2="298" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="234" y1="74" x2="234" y2="298" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="294" y1="74" x2="294" y2="298" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-      <line x1="354" y1="74" x2="354" y2="298" stroke="#ffffff" strokeWidth="0.4" opacity="0.1" />
-
-      {/* Screen - Code editor mockup */}
-      {/* Sidebar */}
-      <rect x="114" y="74" width="52" height="224" fill="#1a1033" opacity="0.5" />
-      {/* Sidebar items */}
-      {[90, 110, 130, 150, 170, 190, 210, 230, 250, 270].map((y, i) => (
-        <rect
-          key={i}
-          x="122"
-          y={y}
-          width={i % 3 === 0 ? 34 : i % 3 === 1 ? 28 : 22}
-          height="6"
-          rx="3"
-          fill="#6366f1"
-          opacity={i === 1 ? 0.9 : 0.3}
-        />
-      ))}
-
-      {/* Code lines */}
-      <rect x="174" y="84" width="60" height="6" rx="3" fill="#818cf8" opacity="0.8" />
-      <rect x="238" y="84" width="40" height="6" rx="3" fill="#f472b6" opacity="0.7" />
-      <rect x="174" y="98" width="20" height="6" rx="3" fill="#34d399" opacity="0.7" />
-      <rect x="200" y="98" width="80" height="6" rx="3" fill="#fb923c" opacity="0.6" />
-      <rect x="286" y="98" width="50" height="6" rx="3" fill="#818cf8" opacity="0.5" />
-      <rect x="178" y="112" width="45" height="6" rx="3" fill="#60a5fa" opacity="0.7" />
-      <rect x="229" y="112" width="30" height="6" rx="3" fill="#34d399" opacity="0.6" />
-      <rect x="265" y="112" width="70" height="6" rx="3" fill="#f472b6" opacity="0.5" />
-      <rect x="174" y="126" width="90" height="6" rx="3" fill="#fbbf24" opacity="0.6" />
-      <rect x="270" y="126" width="50" height="6" rx="3" fill="#818cf8" opacity="0.5" />
-      <rect x="178" y="140" width="55" height="6" rx="3" fill="#34d399" opacity="0.7" />
-      <rect x="239" y="140" width="100" height="6" rx="3" fill="#60a5fa" opacity="0.5" />
-      <rect x="174" y="154" width="30" height="6" rx="3" fill="#f472b6" opacity="0.6" />
-      <rect x="210" y="154" width="70" height="6" rx="3" fill="#fbbf24" opacity="0.5" />
-      <rect x="286" y="154" width="40" height="6" rx="3" fill="#818cf8" opacity="0.4" />
-      <rect x="178" y="168" width="110" height="6" rx="3" fill="#818cf8" opacity="0.6" />
-      <rect x="174" y="182" width="50" height="6" rx="3" fill="#34d399" opacity="0.5" />
-      <rect x="230" y="182" width="80" height="6" rx="3" fill="#60a5fa" opacity="0.4" />
-      <rect x="178" y="196" width="65" height="6" rx="3" fill="#fb923c" opacity="0.5" />
-      <rect x="249" y="196" width="45" height="6" rx="3" fill="#f472b6" opacity="0.4" />
-      <rect x="174" y="210" width="40" height="6" rx="3" fill="#fbbf24" opacity="0.5" />
-      <rect x="220" y="210" width="90" height="6" rx="3" fill="#818cf8" opacity="0.4" />
-      <rect x="178" y="224" width="75" height="6" rx="3" fill="#34d399" opacity="0.4" />
-      <rect x="259" y="224" width="55" height="6" rx="3" fill="#60a5fa" opacity="0.3" />
-      <rect x="174" y="238" width="35" height="6" rx="3" fill="#f472b6" opacity="0.4" />
-      <rect x="215" y="238" width="100" height="6" rx="3" fill="#fbbf24" opacity="0.3" />
-      <rect x="178" y="252" width="85" height="6" rx="3" fill="#818cf8" opacity="0.3" />
-      <rect x="269" y="252" width="45" height="6" rx="3" fill="#34d399" opacity="0.3" />
-      <rect x="174" y="266" width="50" height="6" rx="3" fill="#60a5fa" opacity="0.3" />
-      <rect x="230" y="266" width="70" height="6" rx="3" fill="#fb923c" opacity="0.25" />
-
-      {/* ── Laptop camera dot ──────────────────────────────────────── */}
-      <circle cx="260" cy="79" r="3" fill="#334155" />
-      <circle cx="260" cy="79" r="1.5" fill="#475569" />
-
-      {/* ── Decorative dots ──────────────────────────────────────────── */}
-      {[
-        [66, 92],
-        [78, 92],
-        [90, 92],
-        [430, 400],
-        [442, 400],
-        [454, 400],
-        [50, 350],
-        [62, 360],
-        [74, 350],
-      ].map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="3.5" className="fill-purple-600 dark:fill-purple-400" />
-      ))}
-
-      {/* Gradient dots accent */}
-      {[
-        [446, 186],
-        [458, 196],
-        [470, 186],
-      ].map(([cx, cy], i) => (
-        <circle
-          key={i}
-          cx={cx}
-          cy={cy}
-          r="4"
-          className="fill-purple-950 dark:fill-purple-700"
-          opacity={0.5 + i * 0.1}
-        />
-      ))}
+      <circle cx="12" cy="12" r="1.6" fill="currentColor" />
     </svg>
   );
 }
 
-// ─── Hero Section ──────────────────────────────────────────────────────────
+/** left ornament — a real x/y axis with a rising line and point markers */
+function GrowthAxis({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 140 140" fill="none" className={className} aria-hidden="true">
+      <line
+        x1="20"
+        y1="10"
+        x2="20"
+        y2="120"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="20"
+        y1="120"
+        x2="130"
+        y2="120"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <polyline
+        points="20,110 50,90 75,68 100,38 125,14"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="20" cy="110" r="2.5" fill="currentColor" />
+      <circle cx="50" cy="90" r="2.5" fill="currentColor" />
+      <circle cx="75" cy="68" r="2.5" fill="currentColor" />
+      <circle cx="100" cy="38" r="2.5" fill="currentColor" />
+      <circle cx="125" cy="14" r="4" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** right ornament — a hexagonal certificate seal with a check and ribbon tails */
+function Seal({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 120 130" fill="none" className={className} aria-hidden="true">
+      <polygon
+        points="60,18 96,39 96,81 60,102 24,81 24,39"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M43,60 L54,71 L79,44"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="48"
+        y1="101"
+        x2="44"
+        y2="120"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="72"
+        y1="101"
+        x2="76"
+        y2="120"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <circle cx="44" cy="120" r="2" fill="currentColor" />
+      <circle cx="76" cy="120" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
 export default function HeroSection() {
   return (
     <section
       dir="rtl"
-      className="relative overflow-hidden -mt-5 lg:pt-36 bg-white dark:bg-slate-900"
-      aria-label="بخش اصلی صفحه"
+      className="hero-academy relative flex min-h-[calc(100svh-64px)] items-center overflow-hidden"
     >
-      {/* ── Subtle background texture ─────────────────────────────── */}
-      <div className="absolute  inset-0 pointer-events-none" aria-hidden="true">
-        {/* Top right blob */}
-        {/* Bottom left blob */}
-        {/* Dot grid — pure CSS, zero JS */}
+      {' '}
+      {/* desktop-only side ornaments — lg: up, so they show on real laptops */}
+      <GrowthAxis className="hero-academy__mark pointer-events-none absolute left-6 top-1/3 hidden h-32 w-32 lg:block xl:left-14 xl:h-36 xl:w-36" />
+      <Seal className="hero-academy__mark pointer-events-none absolute right-6 top-1/4 hidden h-28 w-28 lg:block xl:right-14 xl:h-32 xl:w-32" />
+      <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-6 text-center sm:px-6 sm:py-10 lg:py-16">
+        {/* headline */}
+        <h1 className="max-w-3xl font-bold text-4xl  leading-[1.35] tracking-tight sm:text-4xl sm:leading-[1.3] md:text-5xl lg:text-6xl lg:leading-[1.2]">
+          <span className="text-slate-900 dark:text-slate-200 block">تعاملی یاد بگیرید</span>
+          <span className="text-slate-900 dark:text-slate-200 block">بدون خستگی پیش برید</span>
+        </h1>
+
+        {/* subheadline */}
+        <p className="hero-academy__muted mt-4 max-w-xl text-base leading-7 sm:mt-6 sm:text-lg sm:leading-8">
+          {CONTENT.subheadline}
+        </p>
+
+        {/* CTAs */}
         <div
-          className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #64748b 1px, transparent 1px)',
-            backgroundSize: '28px 28px',
-          }}
-        />
-      </div>
-
-      <div className="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:pt-16 lg:pb-24">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* ── Left: Text content ──────────────────────────────────── */}
-          <div className="order-2 lg:order-1 space-y-7">
-            {/* Trust pill */}
-
-            {/* Headline */}
-            <div className="space-y-2">
-              <h1 className="text-3xl -mt-12 sm:text-4xl lg:text-5xl font-bold leading-[1.2] tracking-tighter text-gray-900 dark:text-white">
-                مسیر شغلی خود را
-                <br />
-                <span className="relative inline-block mt-2">
-                  {/* متن با گرادینت عمودی رسمی (از آبی تیره به آبی روشن) */}
-                  <span className="relative z-10 bg-gradient-to-b from-purple-500 via-purple-700 to-purple-700 dark:from-purple-500 dark:via-purple-500 dark:to-purple-600 bg-clip-text text-transparent">
-                    با ما بسازید
-                  </span>
-
-                  {/* خط زیرین (Underline) رسمی و ظریف */}
-                  <svg
-                    className="absolute -bottom-1 right-0 w-full overflow-visible"
-                    viewBox="0 0 200 6"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M0 4 Q100 0 200 4"
-                      stroke="currentColor"
-                      className="text-purple-600/30"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
-              </h1>
-
-              <p className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 font-mono leading-relaxed max-w-lg">
-                با بیش از{' '}
-                <strong className="text-gray-800 dark:text-gray-200 font-bold">۲۰ سال تجربه</strong>
-                ، از صفر تا استخدام همراه شما هستیم.
-              </p>
-            </div>
-
-            {/* Feature list */}
-            <ul className="space-y-2.5" role="list">
-              {FEATURES.map((f) => (
-                <li
-                  key={f.text}
-                  className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400"
-                >
-                  <span
-                    className="flex-shrink-0 text-black opacity-65 dark:text-white"
-                    aria-hidden="true"
-                  >
-                    {f.icon}
-                  </span>
-                  {f.text}
-                </li>
-              ))}
-            </ul>
-
-            {/* CTAs */}
-            {/* <div className="flex flex-col sm:flex-row gap-3 pt-1">
-              <Link
-                href="/courses"
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl 
-bg-purple-600 dark:
-active:scale-95 transform transition-all duration-200 
-text-white font-bold text-sm
-border border-white/10"
-              >
-                مشاهده دوره‌ها
-              </Link>
-              <a
-                href="tel:02165565004"
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600 text-gray-900 dark:text-white font-bold text-sm  border border-gray-200 dark:border-gray-700"
-              >
-                <svg
-                  className="w-[18px] h-[18px]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                مشاوره رایگان
-              </a>
-            </div> */}
-          </div>
-
-          {/* ── Right: Illustration ─────────────────────────────────── */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-            <div className="w-full max-w-[420px] lg:max-w-[500px]">
-              <HeroIllustration />
-            </div>
-          </div>
-        </div>
-
-        {/* ── Stats bar ─────────────────────────────────────────────── */}
-        <div
-          className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200 dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-300 dark:border-gray-800 "
-          role="list"
+          id="pointer"
+          className="mt-8 cursor-pointer flex w-full max-w-xs flex-col items-stretch gap-3 sm:mt-10 sm:max-w-none sm:w-auto sm:flex-row sm:justify-center sm:gap-4"
         >
-          {STATS.map((stat, i) => (
-            <div
-              key={stat.label}
-              role="listitem"
-              className="group relative bg-white dark:bg-gray-900 px-6 py-3 text-center "
-            >
-              {/* خط جداکننده افقی برای موبایل در صورت نیاز */}
-              <div className="relative z-10">
-                <div
-                  className="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tighter tabular-nums bg-clip-text text-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(to bottom, ${stat.accent}, ${stat.accent}80)`,
-                  }}
-                >
-                  {stat.value}
-                </div>
-                <div className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                  {stat.label}
-                </div>
-              </div>
-
-              {/* افکت درخشش ضعیف در هاور */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-50 dark:to-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </div>
-          ))}
+          <button className="hero-academy__cta-primary  cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-bold sm:py-4 sm:text-base">
+            شروع کنید
+            <span className="hero-academy__cta-primary-label">
+              <ArrowLeft className="h-4 w-4" />
+            </span>
+          </button>
+          <a
+            href="#fields"
+            className="hero-academy__cta-secondary cursor-pointer inline-flex items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-bold sm:py-4 sm:text-base"
+          >
+            مشاوره رایگان
+          </a>
         </div>
+
+        {/* stats */}
       </div>
+      <style>{`
+        .hero-academy {
+          --bg: #fcfbff;
+          --ink: #211441;
+          --muted: #665f7d;
+          --brand-1: #7c3aed;
+          --brand-2: #c026d3;
+          --brand-3: #4c1d95;
+          --border: rgba(124, 58, 237, 0.18);
+          --surface: rgba(124, 58, 237, 0.05);
+          --partner: #9088a6;
+          background-color: var(--bg);
+        }
+        .dark .hero-academy {
+          --bg: #0b0714;
+          --ink: #f5f3ff;
+          --muted: #a99fc4;
+          --brand-1: #a78bfa;
+          --brand-2: #e879f9;
+          --brand-3: #ddd6fe;
+          --border: rgba(167, 139, 250, 0.28);
+          --surface: rgba(124, 58, 237, 0.14);
+          --partner: #6c6389;
+        }
+
+        .hero-academy__mark { color: var(--border); }
+
+        .hero-academy__partner { color: var(--partner); }
+
+        .hero-academy__gradient-text {
+          background-image: linear-gradient(95deg, var(--brand-1) 15%, var(--brand-2) 55%, var(--brand-1) 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        .hero-academy__eyebrow {
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--brand-3);
+        }
+
+        .hero-academy__chip {
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--brand-3);
+        }
+
+        /* ---------------- the button ---------------- */
+        .hero-academy__cta-primary {
+          position: relative;
+          overflow: hidden;
+          color: #ffffff;
+          background-image: linear-gradient(180deg, var(--brand-1) 0%, color-mix(in srgb, var(--brand-1) 88%, black) 100%);
+          border: 1px solid color-mix(in srgb, var(--brand-1) 70%, black);
+          border-bottom: 4px solid color-mix(in srgb, var(--brand-1) 55%, black);
+          box-shadow: 0 2px 0 0 rgba(76, 29, 149, 0.15);
+          transform: translateY(0);
+          transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 140ms ease, border-bottom-width 90ms ease;
+          will-change: transform;
+        }
+        .hero-academy__cta-primary-label {
+          position: relative;
+          z-index: 1;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .hero-academy__cta-primary::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.35) 45%, transparent 62%);
+          transform: translateX(-130%);
+          transition: transform 600ms ease;
+          pointer-events: none;
+        }
+        .hero-academy__cta-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 22px -8px rgba(124, 58, 237, 0.6);
+        }
+        .hero-academy__cta-primary:hover::after {
+          transform: translateX(130%);
+        }
+        .hero-academy__cta-primary:active {
+          transform: translateY(2px);
+          border-bottom-width: 1px;
+          box-shadow: 0 1px 0 0 rgba(76, 29, 149, 0.15);
+        }
+        .hero-academy__cta-primary:focus-visible {
+          outline: 2px solid var(--brand-1);
+          outline-offset: 3px;
+        }
+
+        .hero-academy__cta-secondary {
+          color: var(--ink);
+          background: transparent;
+          border: 1px solid var(--border);
+          border-bottom: 4px solid var(--border);
+          transform: translateY(0);
+          transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), background 140ms ease, border-bottom-width 90ms ease;
+        }
+        .hero-academy__cta-secondary:hover {
+          transform: translateY(-2px);
+          background: var(--surface);
+        }
+        .hero-academy__cta-secondary:active {
+          transform: translateY(2px);
+          border-bottom-width: 1px;
+        }
+        .hero-academy__cta-secondary:focus-visible {
+          outline: 2px solid var(--brand-1);
+          outline-offset: 3px;
+        }
+
+        .hero-academy__divider { border-top: 1px solid var(--border); }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hero-academy__cta-primary,
+          .hero-academy__cta-secondary,
+          .hero-academy__cta-primary::after {
+            transition: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }
