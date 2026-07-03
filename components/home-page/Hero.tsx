@@ -202,7 +202,7 @@ export default function HeroSection() {
           background-color: var(--bg);
         }
         .dark .hero-academy {
-          --bg: #0b0714;
+          --bg: #131f24;
           --ink: #f5f3ff;
           --muted: #a99fc4;
           --brand-1: #a78bfa;

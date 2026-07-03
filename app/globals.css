@@ -1,6 +1,9 @@
 @import 'tailwindcss';
-
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-dark: #131f24;
+}
 
 @font-face {
   font-family: 'Shabnam';
@@ -159,11 +162,7 @@ html.dark {
   color-scheme: dark;
 }
 
-body {
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
+
 
 /* Custom utility for border-width (if not already defined in your Tailwind config) */
 .border-3 {

@@ -225,7 +225,7 @@ export default function CategoriesSection() {
   const { ref: scrollerRef, atStart, atEnd, scrollByStep } = useHorizontalScroller<HTMLDivElement>();
 
   return (
-    <section className="w-full bg-white py-14 dark:bg-gray-950" dir="rtl">
+    <section className="w-full bg-white py-14 dark:bg-dark" dir="rtl">
       <div className="mx-auto max-w-screen-xl px-4">
         <div className="mb-8 flex items-end justify-between gap-4">
           <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white md:text-3xl">

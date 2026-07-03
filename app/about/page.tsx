@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import BtnLink from '@/components/ui/BtnLink';
+import OBtn from  '@/components/ui/OutlineBtn'
 import {
   Award,
   Users,
@@ -264,12 +266,12 @@ const PARTNERS = [
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AboutPage() {
   return (
-    <main className="text-gray-900 dark:text-gray-100 -mt-2 bg-white dark:bg-gray-950" dir="rtl">
+    <main className="text-gray-900 dark:text-gray-100 -mt-2 bg-white dark:bg-dark " dir="rtl">
       {/* ══════════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════ */}
       <section
-        className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-900"
+        className="relative pt-32 pb-24 lg:pt-40 lg:pb-32  border-b border-gray-100 dark:border-gray-900"
         dir="rtl"
       >
         {/* Background: Ultra-lightweight CSS Pattern
@@ -298,21 +300,13 @@ export default function AboutPage() {
           {/* CTAs: Enterprise-grade, no bouncy hover effects */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
             {/* Primary CTA */}
-            <Link
-              href="/courses"
-              className="flex items-center justify-center gap-3 w-full sm:w-auto bg-gray-950 dark:bg-white text-white dark:text-gray-950 font-bold text-base px-8 py-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors duration-200"
-            >
-              مشاهده دوره‌های تخصصی
-              <ArrowLeft size={18} />
-            </Link>
+  <BtnLink href="/courses" className="sm:w-auto px-8">
+    مشاهده دوره‌های تخصصی
+  </BtnLink>
 
-            {/* Secondary CTA */}
-            <Link
-              href="/contact"
-              className="flex items-center justify-center w-full sm:w-auto bg-transparent border-2 border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white font-bold text-base px-8 py-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-200"
-            >
-              دریافت مشاوره رایگان
-            </Link>
+  <BtnLink variant='secondary' className="sm:w-auto px-8">
+    دریافت مشاوره رایگان
+  </BtnLink>
           </div>
         </div>
       </section>
@@ -326,88 +320,114 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════
           WHY US — asymmetric layout
       ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-screen-xl mx-auto px-6">
-          <div className="flex flex-col lg:flex-row gap-20 items-center">
-            {/* سمت راست: محتوا */}
-            <div className="lg:w-[45%]">
-              <div className="inline-block px-3 py-1 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 text-xs font-bold mb-6">
-                چرا آموزشگاه نخستین؟
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-[1.2] mb-8">
-                مسیر یادگیری <br />
-                <span className="text-purple-600 dark:text-purple-400">تا استخدام حرفه‌ای</span>
-              </h2>
-              <p className="text-gray-500 dark:text-gray-400 leading-8 mb-10 text-lg">
-                ما در نخستین، فاصله‌ی بین آموزش و بازار کار را حذف کرده‌ایم. متدهای ما بر اساس
-                استانداردهای بین‌المللی طراحی شده است.
-              </p>
+     <section className="py-24">
+  <div className="mx-auto flex max-w-screen-xl flex-col items-center gap-20 px-6 lg:flex-row">
+    {/* متن */}
+    <div className="lg:w-[45%]">
+      <div className="mb-6 inline-flex rounded-xl bg-violet-100 px-4 py-2 text-xs font-bold text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
+        چرا آموزشگاه نخستین؟
+      </div>
 
-              <div className="grid gap-4">
-                {[
-                  { text: 'مدرک رسمی فنی و حرفه‌ای قابل استعلام' },
-                  { text: 'پشتیبانی اختصاصی تا روز آزمون' },
-                  { text: 'معرفی مستقیم به پروژه‌های اجرایی' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 group">
-                    <div className="w-5 h-5 rounded-full border-2 border-purple-500/30 flex items-center justify-center group-hover:border-purple-500 transition-colors">
-                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                    </div>
-                    <span className="text-sm md:text-base font-bold text-gray-700 dark:text-gray-300">
-                      {item.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
+      <h2 className="mb-8 text-4xl font-black leading-[1.2] tracking-tight text-[#10242a] md:text-5xl dark:text-[#edf3f5]">
+        مسیر یادگیری
+        <br />
+        <span className="text-violet-600 dark:text-violet-400">
+          تا استخدام حرفه‌ای
+        </span>
+      </h2>
+
+      <p className="mb-10 text-lg leading-8 text-[#61727a] dark:text-[#93a5ac]">
+        ما در نخستین فاصله‌ی بین آموزش و بازار کار را حذف کرده‌ایم. تمامی
+        دوره‌ها بر اساس استانداردهای بین‌المللی طراحی شده‌اند تا شما در
+        کوتاه‌ترین زمان وارد بازار کار شوید.
+      </p>
+
+      <div className="space-y-5">
+        {[
+          'مدرک رسمی فنی و حرفه‌ای قابل استعلام',
+          'پشتیبانی اختصاصی تا روز آزمون',
+          'معرفی مستقیم به پروژه‌های اجرایی',
+        ].map((item) => (
+          <div
+            key={item}
+            className="group flex items-center gap-4"
+          >
+            <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-violet-500/25 transition-colors group-hover:border-violet-500">
+              <div className="h-2 w-2 rounded-full bg-violet-500" />
             </div>
 
-            {/* سمت چپ: گرید کارت‌ها (مینیمال و مهندسی شده) */}
-            <div className="flex-1 grid grid-cols-2 gap-px bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none">
-              {[
-                {
-                  icon: Medal,
-                  label: 'رتبه برتر',
-                  sub: 'جزو آموزشگاه های نمونه کشور',
-                  color: 'text-amber-500',
-                },
-                {
-                  icon: Users,
-                  label: '+۳,۹۰۰',
-                  sub: 'دانش‌آموخته متخصص',
-                  color: 'text-purple-500',
-                },
-                {
-                  icon: Globe,
-                  label: '۱۸۷ کشور',
-                  sub: 'اعتبار بین‌المللی مدارک',
-                  color: 'text-blue-500',
-                },
-                {
-                  icon: Zap,
-                  label: 'استخدام سریع',
-                  sub: 'کوتاه‌ترین مسیر شغلی',
-                  color: 'text-emerald-500',
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="bg-white dark:bg-gray-950 p-8 hover:bg-gray-50 dark:hover:bg-gray-900/50 "
-                >
-                  <item.icon
-                    size={24}
-                    className={`${item.color} mb-4 opacity-80`}
-                    strokeWidth={1.5}
-                  />
-                  <p className="text-xl font-black text-gray-900 dark:text-white mb-1">
-                    {item.label}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 leading-5">{item.sub}</p>
-                </div>
-              ))}
-            </div>
+            <span className="font-bold text-[#23363d] dark:text-[#d8e3e6]">
+              {item}
+            </span>
           </div>
+        ))}
+      </div>
+    </div>
+
+    {/* کارت‌ها */}
+    <div className="grid flex-1 grid-cols-2 gap-5">
+      {[
+        {
+          icon: Medal,
+          title: 'رتبه برتر',
+          sub: 'جزو آموزشگاه‌های نمونه کشور',
+          color: 'text-amber-500',
+        },
+        {
+          icon: Users,
+          title: '+۳,۹۰۰',
+          sub: 'دانش‌آموخته متخصص',
+          color: 'text-violet-500',
+        },
+        {
+          icon: Globe,
+          title: '۱۸۷ کشور',
+          sub: 'اعتبار بین‌المللی مدارک',
+          color: 'text-sky-500',
+        },
+        {
+          icon: Zap,
+          title: 'استخدام سریع',
+          sub: 'کوتاه‌ترین مسیر ورود به بازار کار',
+          color: 'text-emerald-500',
+        },
+      ].map((item) => (
+        <div
+          key={item.title}
+          className="
+            rounded-3xl
+            border-b-4
+            border-b-[#d9e4e8]
+            bg-[#f8fafb]
+            p-8
+            transition-colors
+            duration-200
+
+            hover:bg-[#f2f6f8]
+
+            dark:border-b-[#2b3b42]
+            dark:bg-[#17242a]
+            dark:hover:bg-[#1d2d33]
+          "
+        >
+          <item.icon
+            size={28}
+            strokeWidth={1.8}
+            className={`${item.color} mb-6`}
+          />
+
+          <h3 className="mb-2 text-2xl font-black text-[#10242a] dark:text-[#edf3f5]">
+            {item.title}
+          </h3>
+
+          <p className="leading-6 text-[#6b7b82] dark:text-[#8fa2aa]">
+            {item.sub}
+          </p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
       {/* ══════════════════════════════════════════════════════
           TIMELINE
       ══════════════════════════════════════════════════════ */}
@@ -415,154 +435,137 @@ export default function AboutPage() {
       {/* ══════════════════════════════════════════════════════
           VALUES
       ══════════════════════════════════════════════════════ */}
-      <section className="py-12 md:py-16 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-900">
-        <div className="max-w-screen-xl mx-auto px-6 text-center">
-          <h2 className="text-2xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-8 md:mb-12">
-            آرمان‌هایی که به آن{' '}
-            <span className="text-purple-600 dark:text-purple-400">پایبندیم</span>
-          </h2>
+    <section className="border-t border-[#e6ecef] py-12 md:py-16 dark:border-[#26363d]">
+  <div className="mx-auto max-w-screen-xl px-6">
+    <h2 className="mb-8 text-center text-2xl font-black tracking-tight text-[#10242a] md:mb-12 md:text-4xl dark:text-[#edf3f5]">
+      آرمان‌هایی که به آن{' '}
+      <span className="text-violet-600 dark:text-violet-400">
+        پایبندیم
+      </span>
+    </h2>
 
-          <div className="grid md:grid-cols-3 gap-px bg-gray-100 dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden">
-            {VALUES.map((v, i) => (
-              <div
-                key={i}
-                className="group bg-white dark:bg-gray-950 p-6 md:p-8 text-right hover:bg-gray-50 dark:hover:bg-gray-900/50"
-              >
-                <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-purple-50 dark:bg-purple-900/10 flex items-center justify-center mb-5 md:mb-6 group-hover:scale-110">
-                  <v.icon
-                    size={18}
-                    className="text-purple-600 dark:text-purple-400"
-                    strokeWidth={1.5}
-                  />
-                </div>
+    <div className="grid gap-5 md:grid-cols-3">
+      {VALUES.map((v, i) => (
+        <div
+          key={i}
+          className="
+            rounded-3xl
+            bg-[#f8fafb]
+            p-6
+            border-b-4
+            border-b-[#d9e4e8]
 
-                <h3 className="text-base md:text-lg font-black text-gray-900 dark:text-white mb-2.5 md:mb-3 leading-none">
-                  {v.title}
-                </h3>
+            transition-colors
+            duration-200
 
-                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
-                  {v.desc}
-                </p>
-              </div>
-            ))}
+            hover:bg-[#f2f6f8]
+
+            dark:bg-[#17242a]
+            dark:border-b-[#2b3b42]
+            dark:hover:bg-[#1d2d33]
+          "
+        >
+          <div
+            className="
+              mb-6
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-2xl
+              bg-violet-100
+              dark:bg-violet-500/15
+            "
+          >
+            <v.icon
+              size={20}
+              strokeWidth={1.7}
+              className="text-violet-600 dark:text-violet-400"
+            />
           </div>
-        </div>
-      </section>
 
+          <h3 className="mb-3 text-lg font-black text-[#10242a] dark:text-[#edf3f5]">
+            {v.title}
+          </h3>
+
+          <p className="leading-7 text-[#66757c] dark:text-[#93a5ac]">
+            {v.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
       {/* ══════════════════════════════════════════════════════
           TEAM
       ══════════════════════════════════════════════════════ */}
 
-      {/* ══════════════════════════════════════════════════════
-          CERTIFICATIONS
-      ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white dark:bg-gray-950">
-        <div className="max-w-screen-xl mx-auto px-6">
-          <div className="bg-slate-100 dark:bg-slate-900 rounded-[2.5rem] p-8 md:p-16 overflow-hidden relative">
-            {/* واترماک ظریف پس‌زمینه برای حس اصالت */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  opacity-[0.02] pointer-events-none">
-              <Award size={400} />
-            </div>
+    {/* ══════════════════════════════════════════════════════
+    CERTIFICATIONS SECTION
+══════════════════════════════════════════════════════ */}
+<section className="py-24 border-t border-[#e6ecef] dark:border-[#26363d]">
+  <div className="max-w-screen-xl mx-auto px-6">
+    <div className="bg-[#f8fafb] dark:bg-[#17242a] border-b-4 border-[#d9e4e8] dark:border-[#2b3b42] rounded-3xl p-8 md:p-16 overflow-hidden relative">
+      
+      {/* واترماک مچ شده با دیزاین فلت پس‌زمینه */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.015] dark:opacity-[0.02] text-[#10242a] dark:text-[#edf3f5] pointer-events-none">
+        <Award size={420} strokeWidth={1} />
+      </div>
 
-            <div className="relative z-10 flex flex-col lg:flex-row gap-16 items-center">
-              <div className="lg:w-1/2">
-                <h2 className="text-3xl md:text-5xl font-black text-black dark:text-white mb-8 leading-tight">
-                  اعتباری که <br />{' '}
-                  <span className="text-purple-600 dark:text-purple-400 font-medium ">
-                    مرز نمی‌شناسد
-                  </span>
-                </h2>
-                <div className="space-y-6">
-                  {[
-                    'تاییدیه مستقیم سازمان فنی و حرفه‌ای کشور',
-                    'قابلیت ترجمه رسمی برای مهاجرت (ILO)',
-                    'کد استاندارد بین‌المللی مهارت',
-                  ].map((text, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-4 text-gray-800 dark:text-gray-300"
-                    >
-                      <CheckCircle
-                        size={20}
-                        className="text-purple-700 dark:text-purple-500 flex-shrink-0"
-                      />
-                      <span className="font-medium">{text}</span>
-                    </div>
-                  ))}
-                </div>
+      <div className="relative z-10 flex flex-col lg:flex-row gap-16 items-center">
+        <div className="lg:w-1/2">
+          <div className="mb-4 inline-flex rounded-xl bg-violet-100 px-3 py-1.5 text-xs font-bold text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
+            سازمان آموزش فنی و حرفه‌ای کشور
+          </div>
+          
+          <h2 className="text-3xl md:text-5xl font-black text-[#10242a] dark:text-[#edf3f5] mb-8 leading-[1.25] tracking-tight">
+            اعتباری که <br />{' '}
+            <span className="text-violet-600 dark:text-violet-400">
+              مرز نمی‌شناسد
+            </span>
+          </h2>
+          
+          <div className="space-y-5">
+            {[
+              'تاییدیه مستقیم سازمان فنی و حرفه‌ای کشور تحت نظر وزارت کار',
+              'قابلیت ترجمه رسمی و بین‌المللی جهت مهاجرت کاری (ILO)',
+              'صدور کد استاندارد بین‌المللی هولوگرام‌دار مهارت',
+            ].map((text, i) => (
+              <div key={i} className="flex items-start gap-4 text-[#61727a] dark:text-[#93a5ac]">
+                <CheckCircle size={20} className="text-violet-600 dark:text-violet-400 flex-shrink-0 mt-0.5" />
+                <span className="font-bold text-[#23363d] dark:text-[#d8e3e6] text-sm md:text-base">{text}</span>
               </div>
-
-              <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {benefits.map((benefit, i) => (
-                  <div
-                    key={i}
-                    className="p-6 rounded-3xl bg-white/80 dark:bg-black/20 border border-white/10 hover:bg-white/10 transition-colors"
-                  >
-                    <benefit.icon size={24} className="text-purple-400 mb-4" />
-                    <h4 className="text-gray-800 dark:text-white font-bold text-sm mb-2">
-                      {benefit.title}
-                    </h4>
-                    <p className="text-gray-600 dark:text-gray-400 text-xs leading-5">
-                      {benefit.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-      </section>
+
+        {/* کارت‌های فرعی گواهینامه */}
+        <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {benefits.map((benefit, i) => (
+            <div
+              key={i}
+              className="p-6 rounded-2xl bg-white dark:bg-[#1d2d33]/50 border border-[#e6ecef] dark:border-[#2b3b42] transition-colors"
+            >
+              <benefit.icon size={24} className="text-violet-500 dark:text-violet-400 mb-4" />
+              <h4 className="text-[#10242a] dark:text-[#edf3f5] font-black text-sm mb-2">
+                {benefit.title}
+              </h4>
+              <p className="text-[#61727a] dark:text-[#93a5ac] text-xs leading-6">
+                {benefit.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
       {/* ══════════════════════════════════════════════════════
           CTA
       ══════════════════════════════════════════════════════ */}
-      <section className="py-12 md:py-16 bg-white dark:bg-gray-950" dir="rtl">
-        {/* کوچک‌تر کردن عرض کل باکس برای دسکتاپ از xl به 5xl جهت زیبایی و انسجام بیشتر */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          {/* پس‌زمینه خفن‌تر با ترکیب گرادیانت عمیق‌تر، سایه ظریف و بوردر داخلی شیشه‌ای */}
-          <div className="relative rounded-[2rem] bg-gradient-to-br from-purple-600 via-indigo-700 to-violet-900 overflow-hidden p-8 md:p-12 text-center shadow-xl shadow-indigo-950/10 border border-white/10">
-            {/* بهینه‌سازی و کوچک‌تر کردن دکوراسیون‌های نئونی پس‌زمینه برای پرفورمنس عالی در موبایل */}
-            <div className="absolute -top-10 -right-10 w-44 h-44 md:w-64 md:h-64 bg-pink-500/20 rounded-full blur-[50px] md:blur-[80px] pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-44 h-44 md:w-64 md:h-64 bg-cyan-500/20 rounded-full blur-[50px] md:blur-[80px] pointer-events-none" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-500/15 rounded-full blur-[70px] pointer-events-none" />
 
-            <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
-              {/* تیتر بهینه شده: اندازه کاملاً ریسپانسیو جهت عدم شکستگی زشت در موبایل */}
-              <h2 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-tight md:leading-snug bg-gradient-to-b from-white via-slate-100 to-purple-200 bg-clip-text text-transparent mb-4">
-                آماده شروع مسیر حرفه‌ای هستی؟
-              </h2>
-
-              {/* زیرعنوان جمع‌وجور با خوانایی بالا و هایلایت شیشه‌ای عدد */}
-              <p className="text-white/85 text-lg sm:text-xs md:text-lg leading-relaxed max-w-xl mb-8">
-                همین الان به بیش از ۴۸,۰۰۰ دانش‌آموخته‌ای بپیوند که مسیر حرفه‌ای خود را با{' '}
-                <span className="font-bold text-purple-200">نخستین</span> آغاز کردند.
-              </p>
-
-              {/* دکمه‌های مدرن با استایل شیشه‌ای (Glassmorphism) و انیمیشن میکرو حرکتی هاور */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
-                {/* دکمه اصلی - مشاهده دوره‌ها */}
-                <Link
-                  href="/courses"
-                  className="group inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-white text-indigo-950 font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl hover:bg-purple-50 transition-all duration-300 shadow-lg shadow-indigo-950/20 active:scale-[0.98] hover:-translate-y-0.5"
-                >
-                  مشاهده دوره‌ها
-                  <ArrowLeft
-                    size={16}
-                    className="group-hover:-translate-x-1.5 transition-transform duration-300"
-                  />
-                </Link>
-
-                {/* دکمه فرعی شیشه‌ای - مشاوره رایگان */}
-                <Link
-                  href="/contact"
-                  className="group inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/15 text-white font-semibold text-sm sm:text-base px-6 py-3.5 rounded-xl hover:bg-white/20"
-                >
-                  مشاوره رایگان
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

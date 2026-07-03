@@ -1,0 +1,323 @@
+/**
+ * 💡 نقشه توکن‌های دیزاین سیستم (نسخه مستطیلی و فوق لوکس)
+ */
+:root {
+  --cta-bg-container: #17242a;
+  --cta-border: #2b3b42;
+  --cta-border-bottom: rgba(43, 59, 66, 0.85);
+  --cta-text-title: #edf3f5;
+  --cta-text-muted: #93a5ac;
+  --cta-brand: #8B3DFF;
+  --cta-accent: #00F0FF; /* تغییر به سایان نئونی محو برای جذابیت انیمیشن */
+  --cta-glow-opacity: 0.05;
+  --cta-grid-opacity: 0.02;
+  --cta-btn-secondary-bg: rgba(43, 59, 66, 0.2);
+  --cta-btn-secondary-hover: #1d2d33;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --cta-bg-container: #ffffff;
+    --cta-border: rgba(15, 23, 42, 0.08);
+    --cta-border-bottom: rgba(15, 23, 42, 0.12);
+    --cta-text-title: #0f172a;
+    --cta-text-muted: #64748b;
+    --cta-brand: #6366f1;
+    --cta-accent: #4f46e5;
+    --cta-glow-opacity: 0.07;
+    --cta-grid-opacity: 0.04;
+    --cta-btn-secondary-bg: rgba(15, 23, 42, 0.03);
+    --cta-btn-secondary-hover: rgba(15, 23, 42, 0.06);
+  }
+}
+
+/**
+ * 📐 کانتینر اصلی (مستطیلی + فاصله شدید از المنت پایینی)
+ */
+.ctaContainer {
+  position: relative;
+  width: 100%;
+  max-width: 850px;
+  
+  /* تنظیم فاصله‌ها: بالا ۶ رم، پایین ۱۰ رم برای جداسازی کامل از المنت‌های پایینی آموزشگاه */
+  margin: 6rem auto 10rem auto; 
+  
+  border-radius: 12px; /* کاهش از ۲۴ به ۱۲ برای دستیابی به ظاهر مستطیلی و مدرن */
+  background-color: var(--cta-bg-container);
+  border: 1px solid var(--cta-border);
+  border-bottom: 3px solid var(--cta-border-bottom);
+  
+  isolation: isolate;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 3.5rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .ctaContainer {
+    margin: 8rem auto 12rem auto; /* در دسکتاپ فاصله پایینی به ۱۲ رم افزایش می‌یابد */
+    padding: 5rem 4rem;
+  }
+}
+
+.align_center { text-align: center; }
+.align_left { text-align: left; }
+.align_left .actionsWrapper { justify-content: flex-start; }
+
+/**
+ * 🔒 لایه‌های پس‌زمینه هوشمند
+ */
+.layerPipeline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  contain: strict;
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.layer1_bgGradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%, 
+    rgba(139, 61, 255, 0.04) 0%, 
+    transparent 80%
+  );
+}
+
+/**
+ * 🌀 انیمیشن سینمایی تکامل نوری (Cinematic Aurora Morphing)
+ * ترکیب جابه‌جایی ظریف با تغییر زاویه رنگ (Hue-Rotate) بدون درگیر کردن CPU
+ */
+.layer2_auroraLight {
+  position: absolute;
+  top: -25%;
+  left: -5%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, var(--cta-brand) 0%, transparent 70%);
+  opacity: var(--cta-glow-opacity);
+  will-change: transform, filter;
+  transform: translate3d(0, 0, 0);
+  animation: cinematicFluid 18s linear infinite alternate;
+}
+
+.layer3_meshLighting {
+  position: absolute;
+  bottom: -25%;
+  right: -5%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, var(--cta-accent) 0%, transparent 70%);
+  opacity: var(--cta-glow-opacity);
+  will-change: transform, filter;
+  transform: translate3d(0, 0, 0);
+  animation: cinematicFluidTwo 24s linear infinite alternate;
+}
+
+.layer4_gridTexture {
+  position: absolute;
+  inset: 0;
+  opacity: var(--cta-grid-opacity);
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, var(--cta-text-title) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--cta-text-title) 1px, transparent 1px);
+}
+
+.layer5_noiseTexture {
+  position: absolute;
+  inset: 0;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.layer6_innerGlassBorder {
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  border: 1px solid transparent;
+  background: linear-gradient(to bottom, rgba(237, 243, 245, 0.09), transparent 60%) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box exclude, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box exclude, linear-gradient(#fff 0 0);
+}
+
+.layer8_radialGlowBehindTitle {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  width: 250px;
+  height: 140px;
+  will-change: transform, opacity;
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(circle, var(--cta-brand) 0%, transparent 80%);
+  opacity: calc(var(--cta-glow-opacity) * 0.6);
+  animation: cosmicPulse 8s ease-in-out infinite alternate;
+}
+
+/**
+ * ✨ شاین متحرک پیشرفته لیزری (Laser Velvet Sweep)
+ */
+.layer9_animatedShineSweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 300%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(237, 243, 245, 0.0) 42%,
+    rgba(237, 243, 245, 0.05) 50%,
+    rgba(237, 243, 245, 0.0) 58%,
+    transparent 100%
+  );
+  will-change: transform;
+  transform: translate3d(-100%, 0, 0) skewX(-20deg);
+  animation: cinematicShine 14s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+/**
+ * ✍️ محتوا (تایپوگرافی تمیز بدون بج)
+ */
+.contentLayer {
+  position: relative;
+  z-index: 10;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+
+.title {
+  color: var(--cta-text-title);
+  font-size: 1.75rem;
+  line-height: 1.3;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+  max-width: 38rem;
+}
+
+.align_center .title { margin-left: auto; margin-right: auto; }
+
+@media (min-width: 768px) {
+  .title { font-size: 2.25rem; letter-spacing: -0.03em; }
+}
+
+.description {
+  color: var(--cta-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-weight: 400;
+  margin-bottom: 2.25rem;
+  max-width: 35rem;
+}
+
+.align_center .description { margin-left: auto; margin-right: auto; }
+
+.actionsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  justify-content: center;
+  align-items: stretch;
+}
+
+@media (min-width: 480px) {
+  .actionsWrapper { flex-direction: row; align-items: center; }
+}
+
+/**
+ * 🎛 دکمه‌های منطبق با ساختار مستطیلی
+ */
+.primaryBtn,
+.secondaryBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px; /* دکمه‌ها هم برای هارمونی بیشتر مستطیلی‌تر شدند */
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.primaryBtn {
+  background-color: var(--cta-brand);
+  color: #ffffff;
+  border: 1px solid rgba(237, 243, 245, 0.1);
+  border-bottom: 2.5px solid rgba(0, 0, 0, 0.3);
+}
+
+.primaryBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(139, 61, 255, 0.25); }
+.primaryBtn:active { transform: translateY(1px); }
+
+.secondaryBtn {
+  background-color: var(--cta-btn-secondary-bg);
+  color: var(--cta-text-title);
+  border: 1px solid var(--cta-border);
+  border-bottom: 2.5px solid var(--cta-border-bottom);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.secondaryBtn:hover {
+  background-color: var(--cta-btn-secondary-hover);
+  border-color: var(--cta-text-muted);
+  transform: translateY(-1px);
+}
+.secondaryBtn:active { transform: translateY(1px); }
+
+.btnInner { display: flex; align-items: center; gap: 0.5rem; }
+
+/**
+ * 🎬 موتورهای انیمیشن ۶۰ فریم فوق حرفه‌ای (حاوی تغییر فاز رنگ)
+ */
+@keyframes cinematicFluid {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    transform: translate3d(30px, -15px, 0) scale(1.1);
+    filter: hue-rotate(45deg); /* چرخش رنگ به سمت کدهای نئونی لوکس */
+  }
+  100% {
+    transform: translate3d(-15px, 20px, 0) scale(0.95);
+    filter: hue-rotate(90deg);
+  }
+}
+
+@keyframes cinematicFluidTwo {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-35px, 20px, 0) scale(1.15) rotate(15deg);
+    filter: hue-rotate(-60deg);
+  }
+}
+
+@keyframes cosmicPulse {
+  0% { transform: translate3d(-50%, -50%, 0) scale(0.92); opacity: 0.4; }
+  100% { transform: translate3d(-50%, -50%, 0) scale(1.08); opacity: 0.8; }
+}
+
+@keyframes cinematicShine {
+  0% { transform: translate3d(-100%, 0, 0) skewX(-20deg); }
+  35%, 100% { transform: translate3d(100%, 0, 0) skewX(-20deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer2_auroraLight, .layer3_meshLighting, .layer8_radialGlowBehindTitle, .layer9_animatedShineSweep {
+    animation: none !important; transform: none !important; filter: none !important;
+  }
+  .layer8_radialGlowBehindTitle { transform: translate3d(-50%, -50%, 0) !important; }
+  .layer9_animatedShineSweep { display: none; }
+}
