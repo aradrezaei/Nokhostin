@@ -274,3 +274,6 @@ body {
     }
   }
 } */
+@property --n-a { syntax: '<integer>'; initial-value: 0; inherits: false; }
+@property --n-b { syntax: '<integer>'; initial-value: 0; inherits: false; }
+@property --n-c { syntax: '<integer>'; initial-value: 0; inherits: false; }

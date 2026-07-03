@@ -144,12 +144,16 @@ export default function HeroSection() {
   return (
     <section
       dir="rtl"
-      className="hero-academy relative flex min-h-[calc(100svh-64px)] items-center overflow-hidden"
+      className="hero-academy  flex min-h-[calc(100svh-64px)] items-center overflow-hidden"
     >
       {' '}
-      {/* desktop-only side ornaments — lg: up, so they show on real laptops */}
-      <GrowthAxis className="hero-academy__mark pointer-events-none absolute left-6 top-1/3 hidden h-32 w-32 lg:block xl:left-14 xl:h-36 xl:w-36" />
-      <Seal className="hero-academy__mark pointer-events-none absolute right-6 top-1/4 hidden h-28 w-28 lg:block xl:right-14 xl:h-32 xl:w-32" />
+      {/* موج پایین هیرو سکشن */}
+      {/* <div className="pointer-events-none absolute top-96 left-0 w-full opacity-[0.12] dark:opacity-20">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+  <path fill="#5000ca" fill-opacity="0.5" d="M0,64L0,96L36.9,96L36.9,128L73.8,128L73.8,224L110.8,224L110.8,288L147.7,288L147.7,64L184.6,64L184.6,0L221.5,0L221.5,192L258.5,192L258.5,0L295.4,0L295.4,96L332.3,96L332.3,192L369.2,192L369.2,160L406.2,160L406.2,160L443.1,160L443.1,160L480,160L480,288L516.9,288L516.9,64L553.8,64L553.8,128L590.8,128L590.8,160L627.7,160L627.7,64L664.6,64L664.6,224L701.5,224L701.5,96L738.5,96L738.5,192L775.4,192L775.4,96L812.3,96L812.3,32L849.2,32L849.2,320L886.2,320L886.2,96L923.1,96L923.1,32L960,32L960,128L996.9,128L996.9,32L1033.8,32L1033.8,224L1070.8,224L1070.8,96L1107.7,96L1107.7,256L1144.6,256L1144.6,256L1181.5,256L1181.5,320L1218.5,320L1218.5,224L1255.4,224L1255.4,96L1292.3,96L1292.3,64L1329.2,64L1329.2,160L1366.2,160L1366.2,32L1403.1,32L1403.1,256L1440,256L1440,320L1403.1,320L1403.1,320L1366.2,320L1366.2,320L1329.2,320L1329.2,320L1292.3,320L1292.3,320L1255.4,320L1255.4,320L1218.5,320L1218.5,320L1181.5,320L1181.5,320L1144.6,320L1144.6,320L1107.7,320L1107.7,320L1070.8,320L1070.8,320L1033.8,320L1033.8,320L996.9,320L996.9,320L960,320L960,320L923.1,320L923.1,320L886.2,320L886.2,320L849.2,320L849.2,320L812.3,320L812.3,320L775.4,320L775.4,320L738.5,320L738.5,320L701.5,320L701.5,320L664.6,320L664.6,320L627.7,320L627.7,320L590.8,320L590.8,320L553.8,320L553.8,320L516.9,320L516.9,320L480,320L480,320L443.1,320L443.1,320L406.2,320L406.2,320L369.2,320L369.2,320L332.3,320L332.3,320L295.4,320L295.4,320L258.5,320L258.5,320L221.5,320L221.5,320L184.6,320L184.6,320L147.7,320L147.7,320L110.8,320L110.8,320L73.8,320L73.8,320L36.9,320L36.9,320L0,320L0,320Z"></path>
+</svg>      </div> */}
+
+
       <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-6 text-center sm:px-6 sm:py-10 lg:py-16">
         {/* headline */}
         <h1 className="max-w-3xl font-bold text-4xl  leading-[1.35] tracking-tight sm:text-4xl sm:leading-[1.3] md:text-5xl lg:text-6xl lg:leading-[1.2]">
@@ -164,7 +168,7 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <div
-          id="pointer"
+         
           className="mt-8 cursor-pointer flex w-full max-w-xs flex-col items-stretch gap-3 sm:mt-10 sm:max-w-none sm:w-auto sm:flex-row sm:justify-center sm:gap-4"
         >
           <button className="hero-academy__cta-primary  cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-bold sm:py-4 sm:text-base">
@@ -180,6 +184,7 @@ export default function HeroSection() {
             مشاوره رایگان
           </a>
         </div>
+
 
         {/* stats */}
       </div>
