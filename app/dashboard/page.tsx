@@ -9,7 +9,7 @@ import Avatar from '@/components/panel/Avatar';
 import { ClassCard } from '@/components/panel/ClassCard';
 import Medal from '@/components/panel/Medal';
 import { Alert, Card } from '@/components/panel/ui';
-import { EmptyState, Spinner, StatTile } from '@/components/panel/widgets';
+import { DeferredSpinner, EmptyState, StatTile } from '@/components/panel/widgets';
 
 export default function DashboardHome() {
   const { user } = useAuth();
@@ -103,8 +103,8 @@ export default function DashboardHome() {
             پروفایل
           </Link>
         </div>
-        {loading ? (
-          <Spinner label="در حال بارگذاری مدال‌ها…" />
+        {loading && achievements.length === 0 ? (
+          <DeferredSpinner active label="در حال بارگذاری مدال‌ها…" />
         ) : achievements.length > 0 ? (
           <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {achievements.map((a) => (
@@ -148,8 +148,8 @@ export default function DashboardHome() {
           )}
         </div>
 
-        {loading ? (
-          <Spinner />
+        {loading && snapshots.length === 0 ? (
+          <DeferredSpinner active />
         ) : snapshots.length === 0 ? (
           <EmptyState
             icon={<Sparkles className="h-6 w-6" />}
@@ -231,8 +231,8 @@ export default function DashboardHome() {
             همه
           </Link>
         </div>
-        {loading ? (
-          <Spinner />
+        {loading && classes.length === 0 ? (
+          <DeferredSpinner active />
         ) : classes.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-6 w-6" />}

@@ -6,11 +6,17 @@ import { useParams } from 'next/navigation';
 import { ClipboardCheck, Star } from 'lucide-react';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { CLASS_STATUS_LABEL, formatDate, formatSchedule, toFa } from '@/lib/format';
-import type { ClassDetail } from '@/lib/types';
+import {
+  CLASS_STATUS_LABEL,
+  SESSION_STATUS_LABEL,
+  formatDate,
+  formatSchedule,
+  toFa,
+} from '@/lib/format';
+import type { ClassDetail, ClassSession } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Badge, Button, Card } from '@/components/panel/ui';
-import { Spinner } from '@/components/panel/widgets';
+import { DeferredSpinner } from '@/components/panel/widgets';
 
 export default function MentorClassDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,10 +24,11 @@ export default function MentorClassDetailPage() {
   const [klass, setKlass] = useState<ClassDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [tab, setTab] = useState<'sessions' | 'students'>('sessions');
 
   const load = useCallback(async () => {
-    setLoading(true);
+    if (!klass) setLoading(true);
     setError('');
     try {
       setKlass(await request<ClassDetail>(`/classes/${id}`));
@@ -30,13 +37,37 @@ export default function MentorClassDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [request, id]);
+  }, [request, id, klass]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initial load only
+  }, [id, request]);
 
-  if (loading) return <Spinner />;
+  const setSessionStatus = async (session: ClassSession, status: 'canceled' | 'scheduled') => {
+    setBusyId(session.id);
+    setError('');
+    try {
+      await request(`/classes/${id}/sessions/${session.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      setKlass((prev) =>
+        prev
+          ? {
+              ...prev,
+              sessions: prev.sessions.map((s) => (s.id === session.id ? { ...s, status } : s)),
+            }
+          : prev,
+      );
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'تغییر وضعیت جلسه ناموفق بود.');
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  if (loading && !klass) return <DeferredSpinner active />;
   if (error && !klass) return <Alert>{error}</Alert>;
   if (!klass) return null;
 
@@ -65,7 +96,7 @@ export default function MentorClassDetailPage() {
           </Badge>
         </div>
         <p className="mt-2 text-xs font-bold text-slate-400">
-          شروع ترم: {klass.startDateJalali ?? formatDate(klass.startDate)}
+          شروع ترم: {klass.startDateJalali || formatDate(klass.startDate)}
           {' · '}
           جلسه {toFa(klass.sessionsHeld)} از {toFa(klass.totalSessions)} برگزار شده
         </p>
@@ -97,34 +128,58 @@ export default function MentorClassDetailPage() {
 
       {tab === 'sessions' && (
         <div className="space-y-2">
-          {klass.sessions.map((s) => (
-            <Card key={s.id} className="!p-4 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-black text-slate-900 dark:text-white">
-                  جلسه {toFa(s.sessionNumber)}
-                </p>
-                <p className="text-xs font-bold text-slate-400">
-                  {s.scheduledDateJalali ?? formatDate(s.scheduledDate)}
-                  {s.isToday ? ' · امروز' : ''}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge tone={s.status === 'held' ? 'green' : s.isToday ? 'violet' : 'gray'}>
-                  {s.status === 'held' ? 'برگزارشده' : s.isToday ? 'امروز' : 'زمان‌بندی‌شده'}
-                </Badge>
-                <Link href={`/mentor/classes/${id}/sessions/${s.id}/attendance`}>
-                  <Button variant="ghost" className="!px-3 !py-2">
-                    <ClipboardCheck className="h-4 w-4" /> حضور و غیاب
-                  </Button>
-                </Link>
-                <Link href={`/mentor/classes/${id}/sessions/${s.id}/evaluations`}>
-                  <Button className="!px-3 !py-2">
-                    <Star className="h-4 w-4" /> ارزیابی
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          ))}
+          {klass.sessions.map((s) => {
+            const canceled = s.status === 'canceled';
+            const held = s.status === 'held';
+            return (
+              <Card key={s.id} className="!p-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">
+                    جلسه {toFa(s.sessionNumber)}
+                  </p>
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                    {s.scheduledDateJalali || formatDate(s.scheduledDate)}
+                    {s.isToday ? ' · امروز' : ''}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge
+                    tone={
+                      held ? 'green' : canceled ? 'amber' : s.isToday ? 'violet' : 'gray'
+                    }
+                  >
+                    {SESSION_STATUS_LABEL[s.status] ?? s.status}
+                  </Badge>
+                  {!canceled && (
+                    <>
+                      <Link href={`/mentor/classes/${id}/sessions/${s.id}/attendance`}>
+                        <Button variant="ghost" className="!px-3 !py-2" disabled={held && !s.isToday}>
+                          <ClipboardCheck className="h-4 w-4" /> حضور و غیاب
+                        </Button>
+                      </Link>
+                      <Link href={`/mentor/classes/${id}/sessions/${s.id}/evaluations`}>
+                        <Button className="!px-3 !py-2">
+                          <Star className="h-4 w-4" /> ارزیابی
+                        </Button>
+                      </Link>
+                    </>
+                  )}
+                  {!held && (
+                    <Button
+                      variant="subtle"
+                      className="!px-3 !py-2"
+                      disabled={busyId === s.id}
+                      onClick={() =>
+                        setSessionStatus(s, canceled ? 'scheduled' : 'canceled')
+                      }
+                    >
+                      {canceled ? 'بازگردانی' : 'لغو جلسه'}
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
         </div>
       )}
 

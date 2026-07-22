@@ -32,7 +32,7 @@ export interface StudentOverview {
 
 type Cache = { at: number; data: StudentOverview };
 let cache: Cache | null = null;
-const TTL_MS = 20_000;
+const TTL_MS = 45_000;
 
 const TOP_MEDAL: Pick<Medal, 'code' | 'title' | 'description'> = {
   code: 'top_rank',
@@ -40,7 +40,6 @@ const TOP_MEDAL: Pick<Medal, 'code' | 'title' | 'description'> = {
   description: 'بالاترین نمره در این کلاس',
 };
 
-/** Ensure achievements always surface when snapshots mark isTop / carry medals. */
 function normalizeOverview(raw: StudentOverview): StudentOverview {
   const seen = new Set<string>();
   const achievements: OverviewAchievement[] = [];
@@ -80,7 +79,7 @@ function normalizeOverview(raw: StudentOverview): StudentOverview {
 export function useMyOverview() {
   const { request } = useAuth();
   const [data, setData] = useState<StudentOverview | null>(() => cache?.data ?? null);
-  const [loading, setLoading] = useState(!cache);
+  const [loading, setLoading] = useState(() => !cache);
   const [error, setError] = useState('');
 
   const load = useCallback(
@@ -90,7 +89,9 @@ export function useMyOverview() {
         setLoading(false);
         return cache.data;
       }
-      setLoading(true);
+
+      // Keep previous UI visible — only spin when we have nothing to show.
+      if (!cache?.data) setLoading(true);
       setError('');
       try {
         const raw = await request<StudentOverview>('/me/overview');
@@ -99,7 +100,6 @@ export function useMyOverview() {
         setData(next);
         return next;
       } catch (e) {
-        // Fallback: classes only — better than a blank panel if overview is down.
         try {
           const classes = await request<MyClassEntry[]>('/me/classes');
           const next = normalizeOverview({ classes, snapshots: [], achievements: [] });

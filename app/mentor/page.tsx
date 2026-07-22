@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { GraduationCap } from 'lucide-react';
 import { ApiError } from '@/lib/api';
@@ -9,7 +9,7 @@ import { toFa } from '@/lib/format';
 import type { ClassSummary, Paginated } from '@/lib/types';
 import { ClassCard } from '@/components/panel/ClassCard';
 import { Alert, Card } from '@/components/panel/ui';
-import { EmptyState, Spinner, StatTile } from '@/components/panel/widgets';
+import { EmptyState, DeferredSpinner, StatTile } from '@/components/panel/widgets';
 
 export default function MentorHomePage() {
   const { user, request } = useAuth();
@@ -17,20 +17,22 @@ export default function MentorHomePage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setData(await request<Paginated<ClassSummary>>('/classes?pageSize=50&status=active'));
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'خطا در دریافت کلاس‌ها.');
-    } finally {
-      setLoading(false);
-    }
-  }, [request]);
-
   useEffect(() => {
-    load();
-  }, [load]);
+    let cancelled = false;
+    void request<Paginated<ClassSummary>>('/classes?pageSize=50&status=active')
+      .then((res) => {
+        if (!cancelled) setData(res);
+      })
+      .catch((e) => {
+        if (!cancelled) setError(e instanceof ApiError ? e.message : 'خطا در دریافت کلاس‌ها.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [request]);
 
   const items = data?.items ?? [];
   const students = items.reduce((sum, c) => sum + c.studentCount, 0);
@@ -69,8 +71,8 @@ export default function MentorHomePage() {
             همه کلاس‌ها
           </Link>
         </div>
-        {loading ? (
-          <Spinner />
+        {loading && items.length === 0 ? (
+          <DeferredSpinner active />
         ) : items.length === 0 ? (
           <EmptyState
             icon={<GraduationCap className="h-6 w-6" />}

@@ -9,7 +9,7 @@ import { toFa } from '@/lib/format';
 import type { AttendancePayload, AttendanceStatus } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Button, Card, TextInput } from '@/components/panel/ui';
-import { Spinner } from '@/components/panel/widgets';
+import { DeferredSpinner } from '@/components/panel/widgets';
 
 type Draft = {
   status: AttendanceStatus;
@@ -123,7 +123,7 @@ export default function MentorAttendancePage() {
     }
   };
 
-  if (loading) return <Spinner />;
+  if (loading && !payload) return <DeferredSpinner active />;
 
   return (
     <div className="space-y-5">

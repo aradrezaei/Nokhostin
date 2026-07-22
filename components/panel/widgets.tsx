@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { toFa } from '@/lib/format';
 
@@ -86,4 +87,32 @@ export function Spinner({ label = 'در حال بارگذاری…' }: { label?:
       <span className="text-sm font-black text-slate-500 dark:text-slate-300">{label}</span>
     </div>
   );
+}
+
+/**
+ * Only shows a spinner if loading lasts longer than `delayMs`.
+ * Fast responses stay spinner-free for a snappier panel feel.
+ */
+export function DeferredSpinner({
+  active,
+  delayMs = 350,
+  label,
+}: {
+  active: boolean;
+  delayMs?: number;
+  label?: string;
+}) {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (!active) {
+      setShow(false);
+      return;
+    }
+    const id = window.setTimeout(() => setShow(true), delayMs);
+    return () => window.clearTimeout(id);
+  }, [active, delayMs]);
+
+  if (!active || !show) return null;
+  return <Spinner label={label} />;
 }

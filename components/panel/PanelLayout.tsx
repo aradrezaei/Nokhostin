@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -20,6 +20,21 @@ interface PanelLayoutProps {
   navItems: PanelNavItem[];
   allowedRoles: UserRole[];
   children: ReactNode;
+}
+
+function DeferredAuthSplash() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const id = window.setTimeout(() => setShow(true), 350);
+    return () => window.clearTimeout(id);
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-6 py-4 dark:border-slate-800 dark:bg-[#131f24]">
+      <span className="h-6 w-6 animate-spin rounded-full border-3 border-[#7c3aed] border-t-transparent" />
+      <span className="text-sm font-black text-slate-700 dark:text-slate-200">در حال بارگذاری…</span>
+    </div>
+  );
 }
 
 /**
@@ -50,13 +65,11 @@ export default function PanelLayout({
 
   if (loading || !user || !allowedRoles.includes(user.role)) {
     return (
-      <div dir="rtl" className="flex min-h-[40vh] items-center justify-center">
-        <div className="flex items-center gap-3 rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-6 py-4 dark:border-slate-800 dark:bg-[#131f24]">
-          <span className="h-6 w-6 animate-spin rounded-full border-3 border-[#7c3aed] border-t-transparent" />
-          <span className="text-sm font-black text-slate-700 dark:text-slate-200">
-            در حال بارگذاری...
-          </span>
-        </div>
+      <div dir="rtl" className="flex min-h-[30vh] items-center justify-center">
+        {/* Intentionally empty for the first ~350ms so fast auth feels instant */}
+        {loading ? (
+          <DeferredAuthSplash />
+        ) : null}
       </div>
     );
   }
