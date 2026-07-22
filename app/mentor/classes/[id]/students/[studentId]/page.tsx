@@ -28,7 +28,7 @@ export default function MentorStudentProgressPage() {
       setName(klass.students.find((s) => s.student.id === studentId)?.student.fullName ?? '');
       setData(progress);
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'خطا در دریافت روند رشد.');
+      setError(e instanceof ApiError ? e.message : 'خطا در دریافت گزارش پیشرفت.');
     } finally {
       setLoading(false);
     }
@@ -49,7 +49,7 @@ export default function MentorStudentProgressPage() {
           بازگشت به کلاس
         </Link>
       </p>
-      <ProgressView data={data} studentName={name} />
+      <ProgressView data={data} studentName={name} showTuition={false} />
     </div>
   );
 }

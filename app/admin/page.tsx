@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BookMarked, Building2, GraduationCap, Newspaper, UserCog, Users } from 'lucide-react';
+import { BookMarked, Building2, ClipboardList, GraduationCap, Newspaper, UserCog, Users } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import type { Paginated } from '@/lib/types';
 import { toFa } from '@/lib/format';
@@ -53,9 +53,15 @@ export default function AdminDashboard() {
 
   const shortcuts = [
     {
+      href: '/admin/attendance-logs',
+      title: 'لاگ حضور',
+      desc: 'تاریخچه ثبت حضور و پیامک‌ها',
+      icon: <ClipboardList className="h-6 w-6" />,
+    },
+    {
       href: '/admin/classes',
       title: 'کلاس‌ها',
-      desc: 'ساخت کلاس، هنرجو، شهریه و خروجی اکسل',
+      desc: 'کلاس، هنرجو، شهریه و خروجی اکسل',
       icon: <GraduationCap className="h-6 w-6" />,
     },
     {
@@ -82,7 +88,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-black text-slate-900 dark:text-white">داشبورد مدیریت</h1>
-        <p className="mt-1 text-sm font-bold text-slate-400">نمای کلی آموزشگاه زبان</p>
+        <p className="mt-1 text-sm font-bold text-slate-400">نمای کلی آموزشگاه</p>
       </header>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">

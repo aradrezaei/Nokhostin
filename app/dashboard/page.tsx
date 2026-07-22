@@ -43,14 +43,14 @@ export default function DashboardHome() {
             {user?.fullName}
           </h1>
           <p className="mt-1 text-sm font-bold text-slate-400">
-            پیشرفت، مدال و حضورت — یک نگاه، بدون شلوغی.
+            خلاصه کلاس‌ها، نمره و حضور
           </p>
         </div>
         <Link
           href="/dashboard/profile"
           className="inline-flex items-center gap-1 rounded-2xl border-2 border-slate-200 border-b-4 px-4 py-2 text-xs font-black text-slate-600 hover:border-[#7c3aed] hover:text-[#7c3aed] dark:border-slate-700 dark:text-slate-300"
         >
-          پروفایل و مدال‌ها
+          پروفایل
           <ChevronLeft className="h-3.5 w-3.5" />
         </Link>
       </Card>
@@ -91,14 +91,14 @@ export default function DashboardHome() {
             {toFa(unpaid)} کلاس شهریه پرداخت‌نشده داری
           </p>
           <p className="mt-1 text-xs font-bold text-rose-600/80 dark:text-rose-400">
-            برای تسویه با آموزشگاه هماهنگ کن.
+            برای پرداخت شهریه با آموزشگاه تماس بگیرید.
           </p>
         </Card>
       )}
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌های تو</h2>
+          <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌ها</h2>
           <Link href="/dashboard/profile" className="text-xs font-black text-[#7c3aed]">
             پروفایل
           </Link>
@@ -129,9 +129,9 @@ export default function DashboardHome() {
               <Trophy className="h-6 w-6 text-amber-400" />
             </span>
             <div>
-              <p className="text-sm font-black text-slate-900 dark:text-white">هنوز مدالی نداری</p>
+              <p className="text-sm font-black text-slate-900 dark:text-white">مدالی ثبت نشده</p>
               <p className="mt-1 text-xs font-bold leading-5 text-slate-400">
-                وقتی نمره‌ات بالاترینِ کلاس بشه، مدال مقام اول اینجا می‌آید.
+                با بالاترین نمره کلاس، مدال مقام اول اینجا نمایش داده می‌شود.
               </p>
             </div>
           </Card>
@@ -153,8 +153,8 @@ export default function DashboardHome() {
         ) : snapshots.length === 0 ? (
           <EmptyState
             icon={<Sparkles className="h-6 w-6" />}
-            title="هنوز داده‌ای برای عملکرد نیست"
-            hint="بعد از اولین حضور و ارزیابی، اینجا پر می‌شود."
+            title="گزارشی از کلاس‌ها نیست"
+            hint="پس از ثبت حضور و ارزیابی، آمار اینجا می‌آید."
           />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -236,8 +236,8 @@ export default function DashboardHome() {
         ) : classes.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-6 w-6" />}
-            title="هنوز در کلاسی ثبت نشدی"
-            hint="وقتی مدیر تو را به کلاس اضافه کند، اینجا می‌آید."
+            title="کلاسی ثبت نشده"
+            hint="پس از ثبت‌نام در کلاس، اینجا نمایش داده می‌شود."
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">

@@ -37,7 +37,7 @@ const TTL_MS = 20_000;
 const TOP_MEDAL: Pick<Medal, 'code' | 'title' | 'description'> = {
   code: 'top_rank',
   title: 'مقام اول کلاس',
-  description: 'بالاترین عملکرد این ترم را داری. مثل ستاره‌های دولینگو بدرخش!',
+  description: 'بالاترین نمره در این کلاس',
 };
 
 /** Ensure achievements always surface when snapshots mark isTop / carry medals. */

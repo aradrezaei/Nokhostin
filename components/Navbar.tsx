@@ -138,10 +138,14 @@ function MobileMenu({
   open,
   onClose,
   pathname,
+  isDark,
+  onToggleTheme,
 }: {
   open: boolean;
   onClose: () => void;
   pathname: string;
+  isDark: boolean;
+  onToggleTheme: () => void;
 }) {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -174,25 +178,39 @@ function MobileMenu({
     <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="منوی اصلی">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/45"
+        className="absolute inset-0 bg-slate-950/50"
         onClick={onClose}
         aria-label="بستن منو"
       />
 
-      <aside className="nav-drawer absolute inset-y-0 right-0 flex w-[min(100vw-3rem,20rem)] flex-col bg-[var(--nav-bg)] shadow-2xl">
-        <div className="flex h-14 items-center justify-between border-b border-[var(--nav-border)] px-4">
+      <aside className="nav-drawer absolute inset-y-0 right-0 flex w-[min(100vw,22rem)] flex-col border-l border-[var(--nav-border)] bg-[var(--nav-bg)]">
+        <div className="flex h-14 items-center justify-between gap-2 border-b border-[var(--nav-border)] px-4">
           <Link href="/" onClick={onClose} aria-label="صفحه اصلی نخستین">
             <BrandMark compact />
           </Link>
-          <button
-            ref={closeBtnRef}
-            type="button"
-            onClick={onClose}
-            className="nav-icon-btn"
-            aria-label="بستن منو"
-          >
-            <X className="h-[18px] w-[18px]" strokeWidth={2} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              aria-label={isDark ? 'حالت روشن' : 'حالت تاریک'}
+              className="nav-icon-btn"
+            >
+              {isDark ? (
+                <Sun className="h-[17px] w-[17px]" strokeWidth={2} />
+              ) : (
+                <Moon className="h-[17px] w-[17px]" strokeWidth={2} />
+              )}
+            </button>
+            <button
+              ref={closeBtnRef}
+              type="button"
+              onClick={onClose}
+              className="nav-icon-btn"
+              aria-label="بستن منو"
+            >
+              <X className="h-[18px] w-[18px]" strokeWidth={2} />
+            </button>
+          </div>
         </div>
 
         <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-3" aria-label="منوی موبایل">
@@ -203,7 +221,7 @@ function MobileMenu({
                 href={item.href}
                 onClick={onClose}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                className={`block rounded-xl px-3 py-2.5 text-[14px] font-semibold ${
+                className={`block rounded-xl px-3 py-3 text-[15px] font-bold ${
                   isActive(item.href)
                     ? 'bg-[color-mix(in_srgb,var(--brand)_12%,transparent)] text-[var(--brand)]'
                     : 'text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]'
@@ -220,7 +238,7 @@ function MobileMenu({
             type="button"
             onClick={() => setCoursesOpen((v) => !v)}
             aria-expanded={coursesOpen}
-            className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[14px] font-semibold text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]"
+            className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-[15px] font-bold text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]"
           >
             دپارتمان‌ها
             <ChevronDown
@@ -245,7 +263,7 @@ function MobileMenu({
                           key={course.href}
                           href={course.href}
                           onClick={onClose}
-                          className="block py-1 text-[12px] text-[var(--nav-muted-ink)] hover:text-[var(--brand)]"
+                          className="block py-1.5 text-[12px] font-semibold text-[var(--nav-muted-ink)] hover:text-[var(--brand)]"
                         >
                           {course.name}
                         </Link>
@@ -257,7 +275,7 @@ function MobileMenu({
               <Link
                 href="/courses"
                 onClick={onClose}
-                className="flex items-center justify-center gap-1 rounded-lg bg-[var(--nav-bg)] px-3 py-2 text-[12px] font-bold text-[var(--brand)] hover:text-[var(--brand-deep)]"
+                className="flex items-center justify-center gap-1 rounded-lg bg-[var(--nav-bg)] px-3 py-2.5 text-[12px] font-bold text-[var(--brand)]"
               >
                 همه دوره‌ها
                 <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.25} />
@@ -478,7 +496,13 @@ export default function Navbar() {
         </div>
       </header>
 
-      <MobileMenu open={mobileMenuOpen} onClose={closeMobileMenu} pathname={pathname} />
+      <MobileMenu
+        open={mobileMenuOpen}
+        onClose={closeMobileMenu}
+        pathname={pathname}
+        isDark={isDark}
+        onToggleTheme={toggleTheme}
+      />
       <div className="h-14 sm:h-16" aria-hidden="true" />
     </>
   );

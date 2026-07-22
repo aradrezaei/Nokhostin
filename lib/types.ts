@@ -170,13 +170,15 @@ export interface ClassSession {
   id: string;
   sessionNumber: number;
   scheduledDate: string;
+  scheduledDateJalali?: string;
   status: SessionStatus;
+  isToday?: boolean;
 }
 
 export interface ClassRosterEntry {
   enrollmentId: string;
   status: EnrollmentStatus;
-  tuitionPaid: boolean;
+  tuitionPaid?: boolean;
   student: { id: string; fullName: string; mobile: string; status: UserStatus };
 }
 
@@ -189,6 +191,7 @@ export interface ClassDetail {
   termNumber: number;
   totalSessions: number;
   startDate: string;
+  startDateJalali?: string;
   schedule: ClassSchedule;
   status: ClassStatus;
   createdAt: string;
@@ -205,6 +208,23 @@ export interface AttendanceRow {
   status: AttendanceStatus | null;
   lateMinutes: number;
   note: string | null;
+  updatedAt?: string | null;
+  updatedAtJalali?: string | null;
+}
+
+export interface AttendanceSessionMeta {
+  id: string;
+  sessionNumber: number;
+  scheduledDate: string;
+  scheduledDateJalali: string;
+  status: SessionStatus;
+  isToday: boolean;
+  canMark: boolean;
+}
+
+export interface AttendancePayload {
+  session: AttendanceSessionMeta;
+  records: AttendanceRow[];
 }
 
 export interface EvaluationRow {

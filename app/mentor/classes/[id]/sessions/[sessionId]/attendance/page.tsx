@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { toFa } from '@/lib/format';
-import type { AttendanceRow, AttendanceStatus } from '@/lib/types';
+import type { AttendancePayload, AttendanceStatus } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Button, Card, TextInput } from '@/components/panel/ui';
 import { Spinner } from '@/components/panel/widgets';
@@ -38,7 +38,7 @@ export default function MentorAttendancePage() {
   const { id, sessionId } = useParams<{ id: string; sessionId: string }>();
   const { request } = useAuth();
   const router = useRouter();
-  const [rows, setRows] = useState<AttendanceRow[]>([]);
+  const [payload, setPayload] = useState<AttendancePayload | null>(null);
   const [draft, setDraft] = useState<Record<string, Draft>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -49,12 +49,12 @@ export default function MentorAttendancePage() {
     setLoading(true);
     setError('');
     try {
-      const data = await request<AttendanceRow[]>(
+      const data = await request<AttendancePayload>(
         `/classes/${id}/sessions/${sessionId}/attendance`,
       );
-      setRows(data);
+      setPayload(data);
       const next: Record<string, Draft> = {};
-      for (const row of data) {
+      for (const row of data.records) {
         next[row.studentId] = {
           status: row.status ?? 'present',
           lateMinutes: row.lateMinutes || 5,
@@ -62,7 +62,7 @@ export default function MentorAttendancePage() {
       }
       setDraft(next);
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'خطا در دریافت حضورغیاب.');
+      setError(e instanceof ApiError ? e.message : 'خطا در دریافت حضور و غیاب.');
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,12 @@ export default function MentorAttendancePage() {
     load();
   }, [load]);
 
+  const rows = payload?.records ?? [];
+  const session = payload?.session;
+  const canMark = session?.canMark !== false;
+
   const markAll = (status: AttendanceStatus) => {
+    if (!canMark) return;
     setDraft((prev) => {
       const next = { ...prev };
       for (const row of rows) {
@@ -86,6 +91,10 @@ export default function MentorAttendancePage() {
   };
 
   const save = async () => {
+    if (!canMark) {
+      setError('فقط جلسهٔ امروز را می‌توانید ثبت کنید.');
+      return;
+    }
     setSaving(true);
     setError('');
     setOk('');
@@ -98,12 +107,15 @@ export default function MentorAttendancePage() {
           lateMinutes: d.status === 'late' ? Math.max(1, d.lateMinutes) : 0,
         };
       });
-      await request(`/classes/${id}/sessions/${sessionId}/attendance`, {
-        method: 'PUT',
-        body: JSON.stringify({ records }),
-      });
-      setOk('حضور و غیاب ذخیره شد. در صورت غیبت/تأخیر پیامک ارسال می‌شود.');
-      await load();
+      const saved = await request<AttendancePayload>(
+        `/classes/${id}/sessions/${sessionId}/attendance`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ records }),
+        },
+      );
+      setPayload(saved);
+      setOk('حضور و غیاب ذخیره شد. برای غیبت و تأخیر جدید، پیامک ارسال می‌شود.');
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'ذخیره ناموفق بود.');
     } finally {
@@ -123,20 +135,29 @@ export default function MentorAttendancePage() {
             </Link>
           </p>
           <h1 className="mt-1 text-2xl font-black text-slate-900 dark:text-white">
-            ثبت حضور و غیاب
+            حضور و غیاب
+            {session ? ` · جلسه ${toFa(session.sessionNumber)}` : ''}
           </h1>
-          <p className="mt-1 text-sm font-bold text-slate-400">
-            برای تأخیر، دقیقه‌ها را وارد کنید — پیامک خودکار ارسال می‌شود.
+          <p className="mt-1 text-sm font-bold text-slate-500 dark:text-slate-400">
+            {session?.scheduledDateJalali ?? '—'}
+            {session?.isToday ? ' · امروز' : ''}
           </p>
+          {!canMark && (
+            <p className="mt-2 text-xs font-bold text-amber-700 dark:text-amber-300">
+              فقط جلسهٔ امروز قابل ثبت است. برای جلسات دیگر با مدیر هماهنگ کنید.
+            </p>
+          )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="ghost" onClick={() => markAll('present')}>
-            همه حاضر
-          </Button>
-          <Button variant="subtle" onClick={() => markAll('absent')}>
-            همه غایب
-          </Button>
-        </div>
+        {canMark && (
+          <div className="flex flex-wrap gap-2">
+            <Button variant="ghost" onClick={() => markAll('present')}>
+              همه حاضر
+            </Button>
+            <Button variant="subtle" onClick={() => markAll('absent')}>
+              همه غایب
+            </Button>
+          </div>
+        )}
       </header>
 
       {error && <Alert>{error}</Alert>}
@@ -154,9 +175,16 @@ export default function MentorAttendancePage() {
               <Card key={row.studentId} className="!p-4">
                 <div className="flex items-center gap-3">
                   <Avatar name={row.fullName} seed={row.studentId} size={40} />
-                  <p className="flex-1 text-sm font-black text-slate-900 dark:text-white">
-                    {row.fullName}
-                  </p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-black text-slate-900 dark:text-white">
+                      {row.fullName}
+                    </p>
+                    {row.updatedAtJalali && (
+                      <p className="text-[11px] font-bold text-slate-400">
+                        آخرین ثبت: {row.updatedAtJalali}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2">
                   {STATUS_OPTS.map((opt) => {
@@ -165,13 +193,14 @@ export default function MentorAttendancePage() {
                       <button
                         key={opt.value}
                         type="button"
+                        disabled={!canMark}
                         onClick={() =>
                           setDraft((prev) => ({
                             ...prev,
                             [row.studentId]: { ...d, status: opt.value },
                           }))
                         }
-                        className={`rounded-xl border-2 px-2 py-2.5 text-xs font-black ${
+                        className={`rounded-xl border-2 px-2 py-2.5 text-xs font-black disabled:opacity-50 ${
                           active
                             ? `${opt.tone} border-b-4`
                             : 'border-slate-200 text-slate-500 dark:border-slate-700'
@@ -190,6 +219,7 @@ export default function MentorAttendancePage() {
                       min={1}
                       max={600}
                       dir="ltr"
+                      disabled={!canMark}
                       className="!w-24 !py-2"
                       value={d.lateMinutes}
                       onChange={(e) =>
@@ -213,12 +243,16 @@ export default function MentorAttendancePage() {
         </div>
       )}
 
-      <div className="sticky bottom-3 flex gap-2 rounded-2xl border-2 border-slate-200 border-b-4 bg-white/95 p-3 backdrop-blur dark:border-slate-800 dark:bg-[#131f24]/95">
+      <div className="sticky bottom-3 flex gap-2 rounded-2xl border-2 border-slate-200 border-b-4 bg-white p-3 dark:border-slate-800 dark:bg-[#131f24]">
         <Button variant="ghost" className="flex-1" onClick={() => router.back()}>
-          انصراف
+          بازگشت
         </Button>
-        <Button className="flex-1" onClick={save} disabled={saving || rows.length === 0}>
-          {saving ? 'در حال ذخیره…' : 'ذخیره حضورغیاب'}
+        <Button
+          className="flex-1"
+          onClick={save}
+          disabled={saving || rows.length === 0 || !canMark}
+        >
+          {saving ? 'در حال ذخیره…' : 'ذخیره'}
         </Button>
       </div>
     </div>

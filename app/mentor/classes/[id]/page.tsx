@@ -10,7 +10,7 @@ import { CLASS_STATUS_LABEL, formatDate, formatSchedule, toFa } from '@/lib/form
 import type { ClassDetail } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Badge, Button, Card } from '@/components/panel/ui';
-import { Spinner, TuitionPill } from '@/components/panel/widgets';
+import { Spinner } from '@/components/panel/widgets';
 
 export default function MentorClassDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -65,6 +65,8 @@ export default function MentorClassDetailPage() {
           </Badge>
         </div>
         <p className="mt-2 text-xs font-bold text-slate-400">
+          شروع ترم: {klass.startDateJalali ?? formatDate(klass.startDate)}
+          {' · '}
           جلسه {toFa(klass.sessionsHeld)} از {toFa(klass.totalSessions)} برگزار شده
         </p>
       </header>
@@ -101,15 +103,18 @@ export default function MentorClassDetailPage() {
                 <p className="text-sm font-black text-slate-900 dark:text-white">
                   جلسه {toFa(s.sessionNumber)}
                 </p>
-                <p className="text-xs font-bold text-slate-400">{formatDate(s.scheduledDate)}</p>
+                <p className="text-xs font-bold text-slate-400">
+                  {s.scheduledDateJalali ?? formatDate(s.scheduledDate)}
+                  {s.isToday ? ' · امروز' : ''}
+                </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge tone={s.status === 'held' ? 'green' : 'violet'}>
-                  {s.status === 'held' ? 'برگزارشده' : 'آماده‌ی ثبت'}
+                <Badge tone={s.status === 'held' ? 'green' : s.isToday ? 'violet' : 'gray'}>
+                  {s.status === 'held' ? 'برگزارشده' : s.isToday ? 'امروز' : 'زمان‌بندی‌شده'}
                 </Badge>
                 <Link href={`/mentor/classes/${id}/sessions/${s.id}/attendance`}>
                   <Button variant="ghost" className="!px-3 !py-2">
-                    <ClipboardCheck className="h-4 w-4" /> حضورغیاب
+                    <ClipboardCheck className="h-4 w-4" /> حضور و غیاب
                   </Button>
                 </Link>
                 <Link href={`/mentor/classes/${id}/sessions/${s.id}/evaluations`}>
@@ -141,9 +146,9 @@ export default function MentorClassDetailPage() {
                     <p className="text-sm font-black text-slate-900 dark:text-white">
                       {row.student.fullName}
                     </p>
-                    <div className="mt-1">
-                      <TuitionPill paid={row.tuitionPaid} />
-                    </div>
+                    <p dir="ltr" className="mt-0.5 text-xs font-bold text-slate-400">
+                      {row.student.mobile}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -153,7 +158,7 @@ export default function MentorClassDetailPage() {
                     </Button>
                   </Link>
                   <Link href={`/mentor/classes/${id}/students/${row.student.id}`}>
-                    <Button className="!px-3 !py-2">روند رشد</Button>
+                    <Button className="!px-3 !py-2">گزارش پیشرفت</Button>
                   </Link>
                 </div>
               </Card>

@@ -15,12 +15,12 @@ function motivationCopy(data: ClassProgress): string {
   const attended = data.attendance.present + data.attendance.late;
   const marked = attended + data.attendance.absent;
   const rate = marked > 0 ? attended / marked : 0;
-  if (data.rank.isTop) return 'مقام اولی! مدالت در پروفایل می‌درخشد.';
-  if (data.improvement.improved) return 'نسبت به ترم قبل رشد کردی — عالی پیش می‌ری.';
-  if (rate >= 0.9) return 'حضورت فوق‌العاده‌ست. تمرکز روی مهارت‌ها بذار.';
-  if (rate >= 0.7) return 'حضور خوبه؛ با تمرین بیشتر امتیازت می‌ره بالا.';
-  if (marked === 0) return 'به محض ثبت اولین جلسه، روندت اینجا روشن می‌شه.';
-  return 'هر جلسه یک پله. امروز هم یه قدم جلوتر برو.';
+  if (data.rank.isTop) return 'مقام اول این کلاس.';
+  if (data.improvement.improved) return 'نسبت به ترم قبل پیشرفت داشته‌اید.';
+  if (rate >= 0.9) return 'میزان حضور بالاست.';
+  if (rate >= 0.7) return 'حضور قابل قبول است.';
+  if (marked === 0) return 'پس از ثبت اولین جلسه، آمار اینجا نمایش داده می‌شود.';
+  return 'با ادامه جلسات، وضعیت دقیق‌تر می‌شود.';
 }
 
 /**
@@ -30,9 +30,11 @@ function motivationCopy(data: ClassProgress): string {
 export default function ProgressView({
   data,
   studentName,
+  showTuition = true,
 }: {
   data: ClassProgress;
   studentName?: string;
+  showTuition?: boolean;
 }) {
   const { attendance, evaluations, sessions, medals, rank, improvement, termGrade } = data;
   const attended = attendance.present + attendance.late;
@@ -47,7 +49,7 @@ export default function ProgressView({
             {
               code: 'top_rank' as const,
               title: 'مقام اول کلاس',
-              description: 'بالاترین عملکرد این ترم را داری. مثل ستاره‌های دولینگو بدرخش!',
+              description: 'بالاترین نمره در این کلاس',
             },
           ]
         : [];
@@ -72,7 +74,7 @@ export default function ProgressView({
             </span>
           </p>
         </div>
-        <TuitionPill paid={data.tuitionPaid} />
+        {showTuition ? <TuitionPill paid={data.tuitionPaid} /> : null}
       </header>
 
       <Card className="!p-4 border-[#7c3aed]/30 bg-[#7c3aed]/5 dark:border-[#7c3aed]/40 dark:bg-[#7c3aed]/10">
@@ -102,9 +104,6 @@ export default function ProgressView({
             >
               <Medal code={m.code} size={80} />
               <div>
-                <p className="text-[11px] font-extrabold text-amber-700 dark:text-amber-300">
-                  مدال افتخار
-                </p>
                 <p className="text-sm font-black text-slate-900 dark:text-white">{m.title}</p>
                 <p className="mt-1 text-xs font-bold leading-5 text-slate-500 dark:text-slate-400">
                   {m.description}
@@ -213,7 +212,7 @@ export default function ProgressView({
                     <span className="truncate text-amber-600 dark:text-amber-400">مقام اول</span>
                   </>
                 ) : (
-                  <span className="truncate text-slate-400">در مسیر پیشرفت</span>
+                  <span className="truncate text-slate-400">—</span>
                 )}
               </p>
             </div>

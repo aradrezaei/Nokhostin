@@ -12,10 +12,10 @@ export type Achievement = MedalType & {
   courseName?: string | null;
 };
 
-/** Duolingo-style achievement grid for profile / dashboard. */
+/** Compact medal cards for profile / dashboard. */
 export default function MedalShowcase({
   items,
-  emptyHint = 'مقام اول کلاس را بگیر تا مدالت اینجا بدرخشد.',
+  emptyHint = 'وقتی بالاترین نمرهٔ کلاس را داشته باشید، مدال مقام اول اینجا نمایش داده می‌شود.',
 }: {
   items: Achievement[];
   emptyHint?: string;
@@ -23,10 +23,10 @@ export default function MedalShowcase({
   if (items.length === 0) {
     return (
       <Card className="flex flex-col items-center !py-10 text-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-dashed border-slate-300 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/40">
           <Trophy className="h-7 w-7 text-slate-300 dark:text-slate-600" />
         </span>
-        <p className="mt-4 text-sm font-black text-slate-700 dark:text-slate-200">هنوز مدالی نداری</p>
+        <p className="mt-4 text-sm font-black text-slate-700 dark:text-slate-200">مدالی ثبت نشده</p>
         <p className="mt-1 max-w-xs text-xs font-bold leading-5 text-slate-400">{emptyHint}</p>
       </Card>
     );
@@ -40,24 +40,19 @@ export default function MedalShowcase({
           href={`/dashboard/courses/${item.classId}`}
           className="block"
         >
-          <Card
-            className={`!p-4 flex items-center gap-4 transition-transform hover:-translate-y-0.5 ${medalGlow(item.code)}`}
-          >
-            <span className="shrink-0 drop-shadow-sm">
-              <Medal code={item.code} size={88} />
+          <Card className={`!p-4 flex items-center gap-4 ${medalGlow(item.code)}`}>
+            <span className="shrink-0">
+              <Medal code={item.code} size={72} />
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] font-extrabold uppercase tracking-wide text-amber-700/80 dark:text-amber-300/80">
-                مدال افتخار
-              </p>
-              <p className="mt-0.5 text-base font-black text-slate-900 dark:text-white">
-                {item.title}
-              </p>
+              <p className="text-base font-black text-slate-900 dark:text-white">{item.title}</p>
               <p className="mt-1 text-xs font-bold leading-5 text-slate-500 dark:text-slate-400">
                 {item.classTitle}
                 {item.courseName ? ` · ${item.courseName}` : ''}
               </p>
-              <p className="mt-1.5 text-[11px] font-bold text-slate-400">{item.description}</p>
+              {item.description ? (
+                <p className="mt-1.5 text-[11px] font-bold text-slate-400">{item.description}</p>
+              ) : null}
             </div>
           </Card>
         </Link>

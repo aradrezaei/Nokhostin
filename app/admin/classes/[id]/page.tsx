@@ -236,16 +236,16 @@ export default function AdminClassDetailPage() {
                     <td className="px-4 py-3">
                       <button
                         type="button"
-                        onClick={() => toggleTuition(row.enrollmentId, row.tuitionPaid)}
+                        onClick={() => toggleTuition(row.enrollmentId, row.tuitionPaid ?? false)}
                       >
-                        <TuitionPill paid={row.tuitionPaid} />
+                        <TuitionPill paid={row.tuitionPaid ?? false} />
                       </button>
                     </td>
                     <td className="px-4 py-3 text-left">
                       <div className="inline-flex gap-2">
                         <Link href={`/admin/classes/${id}/students/${row.student.id}`}>
                           <Button variant="subtle" className="!px-3 !py-1.5">
-                            روند رشد
+                            روند پیشرفت
                           </Button>
                         </Link>
                         <Button

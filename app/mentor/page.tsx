@@ -39,10 +39,10 @@ export default function MentorHomePage() {
     <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-black text-slate-900 dark:text-white">
-          سلام {user?.fullName} 👋
+          سلام {user?.fullName}
         </h1>
         <p className="mt-1 text-sm font-bold text-slate-400">
-          فقط کلاس‌های خودتان را می‌بینید — افزودن/حذف هنرجو فقط با مدیر است.
+          کلاس‌های شما — ثبت حضور فقط برای جلسه امروز
         </p>
       </header>
 
@@ -86,12 +86,12 @@ export default function MentorHomePage() {
         )}
       </section>
 
-      <Card className="!p-5 border-[#7c3aed]/30 bg-violet-50/50 dark:bg-violet-950/20">
-        <p className="text-sm font-black text-slate-900 dark:text-white">راهنمای سریع جلسه</p>
+      <Card className="!p-5">
+        <p className="text-sm font-black text-slate-900 dark:text-white">ترتیب کار در جلسه</p>
         <ol className="mt-2 list-decimal space-y-1 pr-5 text-xs font-bold leading-6 text-slate-500 dark:text-slate-400">
-          <li>جلسه را باز کنید و حضور / غیبت / تأخیر را ثبت کنید.</li>
-          <li>در پایان جلسه چهار مهارت را از ۵ نمره دهید.</li>
-          <li>در پایان ترم، نمرات میان‌ترم و پایان‌ترم را وارد کنید.</li>
+          <li>حضور و غیاب جلسه امروز را ثبت کنید.</li>
+          <li>در پایان جلسه، ارزیابی مهارت‌ها را وارد کنید.</li>
+          <li>در پایان ترم، نمرات میان‌ترم و پایان‌ترم را ثبت کنید.</li>
         </ol>
       </Card>
     </div>

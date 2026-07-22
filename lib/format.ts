@@ -30,7 +30,8 @@ export const WEEKDAYS_ORDER: WeekDay[] = [
 let jalaliFormatter: Intl.DateTimeFormat | null = null;
 function getJalali(): Intl.DateTimeFormat {
   if (!jalaliFormatter) {
-    jalaliFormatter = new Intl.DateTimeFormat('fa-IR', {
+    jalaliFormatter = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+      timeZone: 'Asia/Tehran',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -39,12 +40,30 @@ function getJalali(): Intl.DateTimeFormat {
   return jalaliFormatter;
 }
 
-/** Formats an ISO date (or Date) as a Jalali date string in Persian. */
+/** Formats an ISO date (or Date) as a Jalali date string in Persian (Tehran). */
 export function formatDate(value: string | Date | null | undefined): string {
+  if (!value) return '—';
+  const date =
+    typeof value === 'string'
+      ? new Date(value.length === 10 ? `${value}T12:00:00` : value)
+      : value;
+  if (Number.isNaN(date.getTime())) return '—';
+  return getJalali().format(date);
+}
+
+/** Compact Jalali date/time for logs. */
+export function formatDateTime(value: string | Date | null | undefined): string {
   if (!value) return '—';
   const date = typeof value === 'string' ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return '—';
-  return getJalali().format(date);
+  return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+    timeZone: 'Asia/Tehran',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
 }
 
 /** Human schedule, e.g. «شنبه و دوشنبه · ۱۷:۳۰». */
