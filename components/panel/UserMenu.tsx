@@ -61,14 +61,12 @@ export default function UserMenu() {
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={`حساب ${user.fullName}`}
-        className="inline-flex max-w-[220px] items-center gap-2 rounded-xl border border-[var(--nav-border)] bg-[var(--nav-bg)] py-1 pe-2.5 ps-1 text-[13px] font-semibold text-[var(--nav-ink)] transition-colors hover:bg-[var(--nav-muted)]"
+        className="inline-flex max-w-[220px] items-center gap-2 rounded-xl border border-[var(--nav-border)] bg-[var(--nav-bg)] py-1 pe-2.5 ps-1 text-[13px] font-semibold text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]"
       >
         <Avatar name={user.fullName} seed={user.id} size={28} priority className="!rounded-lg" />
         <span className="hidden truncate sm:inline">{user.fullName}</span>
         <ChevronDown
-          className={`h-3.5 w-3.5 shrink-0 text-[var(--nav-muted-ink)] transition-transform duration-200 ${
-            open ? 'rotate-180' : ''
-          }`}
+          className={`h-3.5 w-3.5 shrink-0 text-[var(--nav-muted-ink)] ${open ? 'rotate-180' : ''}`}
           strokeWidth={2.25}
         />
       </button>
@@ -91,7 +89,7 @@ export default function UserMenu() {
             href={home}
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2.5 px-3.5 py-2.5 text-[13px] font-medium text-[var(--nav-muted-ink)] transition-colors hover:bg-[var(--nav-muted)] hover:text-[var(--nav-ink)]"
+            className="flex items-center gap-2.5 px-3.5 py-2.5 text-[13px] font-medium text-[var(--nav-muted-ink)] hover:bg-[var(--nav-muted)] hover:text-[var(--nav-ink)]"
           >
             <LayoutDashboard className="h-4 w-4" strokeWidth={2} />
             ورود به پنل
@@ -104,7 +102,7 @@ export default function UserMenu() {
               await logout();
               router.replace('/');
             }}
-            className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-[13px] font-medium text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40"
+            className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-[13px] font-medium text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40"
           >
             <LogOut className="h-4 w-4" strokeWidth={2} />
             خروج از حساب

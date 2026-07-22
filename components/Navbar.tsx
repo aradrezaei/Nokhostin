@@ -87,49 +87,39 @@ function CourseMenu({ onNavigate }: { onNavigate: () => void }) {
       id="course-menu"
       role="menu"
       aria-label="دپارتمان‌های آموزشی"
-      className="nav-dropdown absolute left-1/2 top-[calc(100%+14px)] w-[min(720px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-[0_24px_64px_-16px_rgba(15,23,42,0.18)] dark:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.55)]"
+      className="nav-dropdown absolute left-1/2 top-[calc(100%+12px)] w-[min(720px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-[0_24px_64px_-16px_rgba(15,23,42,0.18)] dark:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.55)]"
     >
-      <div className="flex items-center justify-between gap-4 border-b border-[var(--nav-border)] px-5 py-3.5">
-        <div>
-          <p className="text-[13px] font-semibold text-[var(--nav-ink)]">دپارتمان‌های آموزشی</p>
-          <p className="mt-0.5 text-[11px] text-[var(--nav-muted-ink)]">
-            مسیر یادگیری‌ات را انتخاب کن
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--nav-border)] px-5 py-3">
+        <p className="text-[13px] font-semibold text-[var(--nav-ink)]">دپارتمان‌های آموزشی</p>
         <Link
           href="/courses"
           onClick={onNavigate}
-          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[var(--brand)] transition-colors hover:bg-[var(--nav-muted)]"
+          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[var(--brand)] hover:bg-[var(--nav-muted)]"
         >
           همه دوره‌ها
           <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.25} />
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-x-2 gap-y-1 p-3">
+      <div className="grid grid-cols-2 gap-1 p-3 sm:grid-cols-3">
         {DEPARTMENTS.map((department) => {
           const Icon = department.icon;
           return (
-            <section
-              key={department.id}
-              className="rounded-xl p-3 transition-colors hover:bg-[var(--nav-muted)]"
-            >
-              <div className="mb-2.5 flex items-center gap-2.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]">
-                  <Icon className="h-4 w-4" strokeWidth={2} />
+            <section key={department.id} className="rounded-xl p-3 hover:bg-[var(--nav-muted)]">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]">
+                  <Icon className="h-3.5 w-3.5" strokeWidth={2} />
                 </span>
-                <h2 className="text-[12px] font-semibold tracking-tight text-[var(--nav-ink)]">
-                  {department.title}
-                </h2>
+                <h2 className="text-[12px] font-semibold text-[var(--nav-ink)]">{department.title}</h2>
               </div>
-              <ul className="space-y-0.5 pr-[2.375rem]">
+              <ul className="space-y-0.5">
                 {department.courses.map((course) => (
                   <li key={course.href}>
                     <Link
                       href={course.href}
                       role="menuitem"
                       onClick={onNavigate}
-                      className="block rounded-md px-1.5 py-1 text-[12px] leading-5 text-[var(--nav-muted-ink)] transition-colors hover:text-[var(--nav-ink)]"
+                      className="block rounded-md px-1 py-1 text-[12px] text-[var(--nav-muted-ink)] hover:text-[var(--nav-ink)]"
                     >
                       {course.name}
                     </Link>
@@ -163,17 +153,13 @@ function MobileMenu({
       setCoursesOpen(false);
       return;
     }
-
     closeBtnRef.current?.focus();
-
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
     };
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKeyDown);
-
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKeyDown);
@@ -185,21 +171,16 @@ function MobileMenu({
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 
   return (
-    <div
-      className="fixed inset-0 z-[60] xl:hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label="منوی اصلی"
-    >
+    <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="منوی اصلی">
       <button
         type="button"
-        className="absolute inset-0 cursor-default bg-slate-950/40 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-slate-950/45"
         onClick={onClose}
         aria-label="بستن منو"
       />
 
-      <aside className="nav-drawer absolute inset-y-0 right-0 flex w-[min(100vw-2.5rem,22rem)] flex-col border-l border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-2xl">
-        <div className="flex h-16 items-center justify-between px-4">
+      <aside className="nav-drawer absolute inset-y-0 right-0 flex w-[min(100vw-3rem,20rem)] flex-col bg-[var(--nav-bg)] shadow-2xl">
+        <div className="flex h-14 items-center justify-between border-b border-[var(--nav-border)] px-4">
           <Link href="/" onClick={onClose} aria-label="صفحه اصلی نخستین">
             <BrandMark compact />
           </Link>
@@ -214,18 +195,18 @@ function MobileMenu({
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="منوی موبایل">
-          <div className="space-y-0.5">
+        <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-3" aria-label="منوی موبایل">
+          <div className="space-y-1">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                className={`block rounded-xl px-3.5 py-2.5 text-[14px] font-medium transition-colors ${
+                className={`block rounded-xl px-3 py-2.5 text-[14px] font-semibold ${
                   isActive(item.href)
-                    ? 'bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]'
-                    : 'text-[var(--nav-muted-ink)] hover:bg-[var(--nav-muted)] hover:text-[var(--nav-ink)]'
+                    ? 'bg-[color-mix(in_srgb,var(--brand)_12%,transparent)] text-[var(--brand)]'
+                    : 'text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]'
                 }`}
               >
                 {item.label}
@@ -237,40 +218,34 @@ function MobileMenu({
 
           <button
             type="button"
-            onClick={() => setCoursesOpen((value) => !value)}
+            onClick={() => setCoursesOpen((v) => !v)}
             aria-expanded={coursesOpen}
-            className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-[var(--nav-ink)] transition-colors hover:bg-[var(--nav-muted)]"
+            className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[14px] font-semibold text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]"
           >
             دپارتمان‌ها
             <ChevronDown
-              className={`h-4 w-4 text-[var(--nav-muted-ink)] transition-transform duration-200 ${
-                coursesOpen ? 'rotate-180' : ''
-              }`}
+              className={`h-4 w-4 text-[var(--nav-muted-ink)] ${coursesOpen ? 'rotate-180' : ''}`}
               strokeWidth={2}
             />
           </button>
 
           {coursesOpen && (
-            <div className="mt-1 space-y-1 px-1 pb-2">
+            <div className="mt-1 space-y-2 rounded-xl bg-[var(--nav-muted)] p-2">
               {DEPARTMENTS.map((department) => {
                 const Icon = department.icon;
                 return (
-                  <section key={department.id} className="rounded-xl px-2.5 py-2">
-                    <div className="mb-1.5 flex items-center gap-2">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]">
-                        <Icon className="h-3.5 w-3.5" strokeWidth={2} />
-                      </span>
-                      <p className="text-[12px] font-semibold text-[var(--nav-ink)]">
-                        {department.title}
-                      </p>
+                  <section key={department.id} className="rounded-lg px-2 py-1.5">
+                    <div className="mb-1 flex items-center gap-2">
+                      <Icon className="h-3.5 w-3.5 text-[var(--brand)]" strokeWidth={2} />
+                      <p className="text-[12px] font-bold text-[var(--nav-ink)]">{department.title}</p>
                     </div>
-                    <div className="space-y-0.5 pr-9">
+                    <div className="space-y-0.5 pr-5">
                       {department.courses.map((course) => (
                         <Link
                           key={course.href}
                           href={course.href}
                           onClick={onClose}
-                          className="block py-1 text-[12px] leading-5 text-[var(--nav-muted-ink)] transition-colors hover:text-[var(--nav-ink)]"
+                          className="block py-1 text-[12px] text-[var(--nav-muted-ink)] hover:text-[var(--brand)]"
                         >
                           {course.name}
                         </Link>
@@ -282,31 +257,29 @@ function MobileMenu({
               <Link
                 href="/courses"
                 onClick={onClose}
-                className="mx-2 mt-1 flex items-center justify-center gap-1 rounded-xl border border-[var(--nav-border)] px-3 py-2.5 text-[13px] font-semibold text-[var(--brand)] transition-colors hover:bg-[var(--nav-muted)]"
+                className="flex items-center justify-center gap-1 rounded-lg bg-[var(--nav-bg)] px-3 py-2 text-[12px] font-bold text-[var(--brand)] hover:text-[var(--brand-deep)]"
               >
-                مشاهده همه دوره‌ها
+                همه دوره‌ها
                 <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.25} />
               </Link>
             </div>
           )}
         </nav>
 
-        <div className="space-y-2 border-t border-[var(--nav-border)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="space-y-2 border-t border-[var(--nav-border)] p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           {user ? (
             <>
               <Link
                 href={panelHome(user.role)}
                 onClick={onClose}
-                className="flex w-full items-center gap-3 rounded-xl border border-[var(--nav-border)] bg-[var(--nav-muted)] px-3 py-3 transition-colors hover:border-[color-mix(in_srgb,var(--brand)_35%,var(--nav-border))]"
+                className="flex items-center gap-3 rounded-xl border border-[var(--nav-border)] px-3 py-2.5 hover:bg-[var(--nav-muted)]"
               >
-                <Avatar name={user.fullName} seed={user.id} size={40} className="!rounded-xl" />
+                <Avatar name={user.fullName} seed={user.id} size={36} className="!rounded-lg" />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-[var(--nav-ink)]">
+                  <span className="block truncate text-sm font-bold text-[var(--nav-ink)]">
                     {user.fullName}
                   </span>
-                  <span className="mt-0.5 block text-[11px] font-medium text-[var(--brand)]">
-                    ورود به پنل
-                  </span>
+                  <span className="text-[11px] font-medium text-[var(--brand)]">ورود به پنل</span>
                 </span>
               </Link>
               <button
@@ -316,13 +289,13 @@ function MobileMenu({
                   await logout();
                   router.replace('/');
                 }}
-                className="flex w-full cursor-pointer items-center justify-center rounded-xl border border-rose-200/80 px-4 py-2.5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-400 dark:hover:bg-rose-950/40"
+                className="flex w-full items-center justify-center rounded-xl px-3 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/30"
               >
                 خروج از حساب
               </button>
             </>
           ) : (
-            <Link href="/auth" onClick={onClose} className="nav-cta w-full cursor-pointer">
+            <Link href="/auth" onClick={onClose} className="nav-cta w-full">
               <UserRound className="h-4 w-4" strokeWidth={2} />
               ورود یا ثبت‌نام
             </Link>
@@ -361,7 +334,6 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!courseMenuOpen) return;
-
     const onPointerDown = (event: PointerEvent) => {
       if (courseMenuRef.current && !courseMenuRef.current.contains(event.target as Node)) {
         closeCourseMenu();
@@ -370,7 +342,6 @@ export default function Navbar() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') closeCourseMenu();
     };
-
     window.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('keydown', onKeyDown);
     return () => {
@@ -414,24 +385,25 @@ export default function Navbar() {
     <>
       <header
         dir="rtl"
-        className={`nav-header fixed inset-x-0 top-0 z-50 h-16 ${scrolled ? 'nav-header--scrolled' : ''}`}
+        className={`nav-header fixed inset-x-0 top-0 z-50 h-14 sm:h-16 ${scrolled ? 'nav-header--scrolled' : ''}`}
       >
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex min-w-0 items-center gap-8">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-6">
             <Link
               href="/"
-              className="flex flex-shrink-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--nav-bg)] rounded-lg"
+              className="flex shrink-0 items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)]"
               aria-label="صفحه اصلی آموزشگاه نخستین"
             >
-              <span className="sm:hidden">
+              <span className="lg:hidden">
                 <BrandMark compact />
               </span>
-              <span className="hidden sm:block">
+              <span className="hidden lg:block">
                 <BrandMark />
               </span>
             </Link>
 
-            <nav className="hidden items-center gap-0.5 xl:flex" aria-label="منوی اصلی">
+            {/* Desktop links — from lg up; hamburger never shows here */}
+            <nav className="hidden items-center gap-0.5 lg:flex" aria-label="منوی اصلی">
               {NAV_ITEMS.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -454,7 +426,7 @@ export default function Navbar() {
               >
                 <button
                   type="button"
-                  onClick={() => setCourseMenuOpen((value) => !value)}
+                  onClick={() => setCourseMenuOpen((v) => !v)}
                   aria-expanded={courseMenuOpen}
                   aria-controls="course-menu"
                   aria-haspopup="menu"
@@ -464,9 +436,7 @@ export default function Navbar() {
                 >
                   دپارتمان‌ها
                   <ChevronDown
-                    className={`h-3.5 w-3.5 opacity-70 transition-transform duration-200 ${
-                      courseMenuOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`h-3.5 w-3.5 opacity-70 ${courseMenuOpen ? 'rotate-180' : ''}`}
                     strokeWidth={2.25}
                   />
                 </button>
@@ -475,7 +445,7 @@ export default function Navbar() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1.5">
             <button
               type="button"
               onClick={toggleTheme}
@@ -489,16 +459,18 @@ export default function Navbar() {
               )}
             </button>
 
-            <div className="hidden sm:block">
+            {/* Account chip only on desktop — mobile uses drawer */}
+            <div className="hidden lg:block">
               <UserMenu />
             </div>
 
+            {/* Hamburger only below lg — never beside desktop nav */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-expanded={mobileMenuOpen}
               aria-label="بازکردن منو"
-              className="nav-icon-btn xl:hidden"
+              className="nav-icon-btn nav-hamburger"
             >
               <Menu className="h-[18px] w-[18px]" strokeWidth={2} />
             </button>
@@ -507,7 +479,7 @@ export default function Navbar() {
       </header>
 
       <MobileMenu open={mobileMenuOpen} onClose={closeMobileMenu} pathname={pathname} />
-      <div className="h-16" aria-hidden="true" />
+      <div className="h-14 sm:h-16" aria-hidden="true" />
     </>
   );
 }

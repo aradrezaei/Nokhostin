@@ -96,14 +96,16 @@ export default function DashboardHome() {
         </Card>
       )}
 
-      {achievements.length > 0 && (
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌های تو</h2>
-            <Link href="/dashboard/profile" className="text-xs font-black text-[#7c3aed]">
-              همه در پروفایل
-            </Link>
-          </div>
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌های تو</h2>
+          <Link href="/dashboard/profile" className="text-xs font-black text-[#7c3aed]">
+            پروفایل
+          </Link>
+        </div>
+        {loading ? (
+          <Spinner label="در حال بارگذاری مدال‌ها…" />
+        ) : achievements.length > 0 ? (
           <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {achievements.map((a) => (
               <Link
@@ -112,15 +114,29 @@ export default function DashboardHome() {
                 className="flex w-[148px] shrink-0 flex-col items-center rounded-3xl border-2 border-amber-200 border-b-4 bg-amber-50 px-3 py-4 text-center dark:border-amber-900/60 dark:bg-amber-950/30"
               >
                 <Medal code={a.code} size={72} />
-                <p className="mt-2 text-xs font-black text-slate-900 dark:text-white">مقام اول</p>
+                <p className="mt-2 text-xs font-black text-slate-900 dark:text-white">
+                  {a.code === 'top_rank' ? 'مقام اول' : a.title}
+                </p>
                 <p className="mt-0.5 line-clamp-2 text-[10px] font-bold text-slate-400">
                   {a.classTitle}
                 </p>
               </Link>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <Card className="!p-5 flex items-center gap-4">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
+              <Trophy className="h-6 w-6 text-amber-400" />
+            </span>
+            <div>
+              <p className="text-sm font-black text-slate-900 dark:text-white">هنوز مدالی نداری</p>
+              <p className="mt-1 text-xs font-bold leading-5 text-slate-400">
+                وقتی نمره‌ات بالاترینِ کلاس بشه، مدال مقام اول اینجا می‌آید.
+              </p>
+            </div>
+          </Card>
+        )}
+      </section>
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">

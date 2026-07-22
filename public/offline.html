@@ -2,228 +2,164 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>آفلاین | آموزشگاه نخستین</title>
     <style>
+      :root {
+        --bg: #fcfbff;
+        --ink: #1a1430;
+        --muted: #6b6480;
+        --brand: #7c3aed;
+        --brand-deep: #5b21b6;
+        --card: #ffffff;
+        --border: #e8e4f0;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b1418;
+          --ink: #f5f3ff;
+          --muted: #9aa8b2;
+          --card: #131f24;
+          --border: #2a3a44;
+        }
+      }
       * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
-
       body {
-        font-family:
-          'Vazirmatn',
-          -apple-system,
-          BlinkMacSystemFont,
-          'Segoe UI',
-          sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
-        direction: rtl;
+        padding: 1.5rem;
+        font-family: Shabnam, Tahoma, sans-serif;
+        background:
+          radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--brand) 18%, transparent), transparent),
+          var(--bg);
+        color: var(--ink);
       }
-
-      .container {
+      .shell {
+        width: min(100%, 26rem);
+        border: 2px solid var(--border);
+        border-bottom-width: 6px;
+        border-radius: 1.5rem;
+        background: var(--card);
+        padding: 1.75rem 1.5rem;
         text-align: center;
-        max-width: 500px;
-        animation: fadeIn 0.6s ease-out;
       }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      .mark {
+        width: 4.5rem;
+        height: 4.5rem;
+        margin: 0 auto 1.25rem;
+        border-radius: 1.25rem;
+        border: 2px solid var(--border);
+        border-bottom-width: 4px;
+        background: color-mix(in srgb, var(--brand) 12%, transparent);
+        display: grid;
+        place-items: center;
+        color: var(--brand);
       }
-
-      .icon {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 30px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: bounce 2s infinite;
+      .mark svg {
+        width: 2rem;
+        height: 2rem;
       }
-
-      @keyframes bounce {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-20px);
-        }
-      }
-
-      .icon svg {
-        width: 60px;
-        height: 60px;
-      }
-
       h1 {
-        font-size: 2rem;
-        margin-bottom: 15px;
+        font-size: 1.35rem;
         font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
       }
-
       p {
-        font-size: 1.125rem;
+        font-size: 0.9rem;
         line-height: 1.7;
-        margin-bottom: 30px;
-        opacity: 0.9;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
       }
-
       .actions {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        flex-wrap: wrap;
+        display: grid;
+        gap: 0.65rem;
       }
-
-      button {
-        padding: 15px 30px;
-        font-size: 1rem;
-        font-weight: 700;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: inherit;
-      }
-
-      .btn-primary {
-        background: white;
-        color: #667eea;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      }
-
-      .btn-secondary {
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        color: white;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-      }
-
-      .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.5);
-      }
-
-      .status {
-        margin-top: 30px;
-        padding: 15px 20px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        display: flex;
+      button,
+      a.btn {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        font-size: 0.875rem;
+        height: 2.75rem;
+        border-radius: 0.9rem;
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-decoration: none;
+        border: 2px solid transparent;
+        border-bottom-width: 4px;
       }
-
-      .status-indicator {
-        width: 10px;
-        height: 10px;
-        background: #ff4757;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
+      .primary {
+        color: #fff;
+        background: var(--brand);
+        border-color: var(--brand-deep);
       }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.5;
-          transform: scale(1.1);
-        }
+      .ghost {
+        color: var(--ink);
+        background: transparent;
+        border-color: var(--border);
       }
-
-      .status.online .status-indicator {
-        background: #2ecc71;
+      .status {
+        margin-top: 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .dot {
+        display: inline-block;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 999px;
+        margin-left: 0.35rem;
+        background: #ef4444;
+        vertical-align: middle;
+      }
+      .dot.on {
+        background: #22c55e;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3"
-          />
+    <main class="shell" role="main">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M2 8.5 12 3l10 5.5v7L12 21 2 15.5v-7Z" />
+          <path d="M12 12v9" />
+          <path d="M2 8.5 12 14l10-5.5" />
         </svg>
       </div>
-
-      <h1>🔌 اتصال اینترنت قطع است</h1>
-
+      <h1>الان آفلاین هستی</h1>
       <p>
-        نگران نباشید! شما همچنان می‌توانید به محتوای ذخیره شده دسترسی داشته باشید. بعضی از قابلیت‌ها
-        ممکن است محدود باشند.
+        اتصال اینترنت قطع است. صفحاتی که قبلاً باز کرده‌ای هنوز در دسترس‌اند. به‌محض برگشت آنلاین،
+        همه‌چیز دوباره همگام می‌شود.
       </p>
-
       <div class="actions">
-        <button class="btn-primary" onclick="window.location.reload()">🔄 تلاش مجدد</button>
-        <button class="btn-secondary" onclick="goHome()">🏠 بازگشت به خانه</button>
+        <button type="button" class="primary" onclick="location.reload()">تلاش دوباره</button>
+        <a class="btn ghost" href="/">بازگشت به خانه</a>
       </div>
-
-      <div class="status" id="status">
-        <span class="status-indicator"></span>
-        <span id="status-text">آفلاین</span>
-      </div>
-    </div>
-
+      <p class="status">
+        <span id="dot" class="dot" aria-hidden="true"></span>
+        <span id="label">بدون اتصال</span>
+      </p>
+    </main>
     <script>
-      function goHome() {
-        window.location.href = '/';
+      function sync() {
+        var online = navigator.onLine;
+        document.getElementById('dot').classList.toggle('on', online);
+        document.getElementById('label').textContent = online ? 'آنلاین شدی — در حال بارگذاری…' : 'بدون اتصال';
+        if (online) setTimeout(function () { location.replace('/'); }, 500);
       }
-
-      // بررسی وضعیت اتصال
-      function updateOnlineStatus() {
-        const status = document.getElementById('status');
-        const statusText = document.getElementById('status-text');
-
-        if (navigator.onLine) {
-          status.classList.add('online');
-          statusText.textContent = 'آنلاین';
-          // رفرش خودکار بعد از 2 ثانیه
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        } else {
-          status.classList.remove('online');
-          statusText.textContent = 'آفلاین';
-        }
-      }
-
-      // Event Listeners
-      window.addEventListener('online', updateOnlineStatus);
-      window.addEventListener('offline', updateOnlineStatus);
-
-      // بررسی اولیه
-      updateOnlineStatus();
+      window.addEventListener('online', sync);
+      window.addEventListener('offline', sync);
+      sync();
     </script>
   </body>
 </html>

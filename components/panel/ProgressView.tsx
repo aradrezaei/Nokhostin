@@ -39,6 +39,19 @@ export default function ProgressView({
   const marked = attended + attendance.absent;
   const attendanceRate = marked > 0 ? Math.round((attended / marked) * 100) : 0;
 
+  const displayMedals =
+    medals.length > 0
+      ? medals
+      : rank.isTop && data.score !== null
+        ? [
+            {
+              code: 'top_rank' as const,
+              title: 'مقام اول کلاس',
+              description: 'بالاترین عملکرد این ترم را داری. مثل ستاره‌های دولینگو بدرخش!',
+            },
+          ]
+        : [];
+
   return (
     <div className="w-full max-w-full space-y-5 overflow-x-hidden [content-visibility:auto]">
       <header className="flex flex-wrap items-start justify-between gap-3">
@@ -80,9 +93,9 @@ export default function ProgressView({
         </div>
       </Card>
 
-      {medals.length > 0 && (
+      {displayMedals.length > 0 && (
         <section className="grid gap-3 sm:grid-cols-2">
-          {medals.map((m) => (
+          {displayMedals.map((m) => (
             <Card
               key={m.code}
               className="!p-4 flex items-center gap-4 border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30"

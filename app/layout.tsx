@@ -2,6 +2,9 @@ import React from 'react';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
 import { NavGate, FooterGate } from '@/components/Chrome';
+import ClearStaleCaches from '@/components/ClearStaleCaches';
+import VpnNotice from '@/components/VpnNotice';
+import PwaShell from '@/components/PwaShell';
 import localFont from 'next/font/local';
 import type { Metadata, Viewport } from 'next';
 
@@ -90,6 +93,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://nokhostin.org',
   },
+
+  applicationName: 'نخستین',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'نخستین',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
 };
 
 export const viewport: Viewport = {
@@ -97,6 +113,11 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#7c3aed' },
+    { media: '(prefers-color-scheme: dark)', color: '#131f24' },
+  ],
+  colorScheme: 'light dark',
 };
 
 // =====================================================
@@ -223,10 +244,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
           }}
         />
 
-        {/* Icons */}
+        {/* Icons + PWA */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="نخستین" />
+        <meta name="application-name" content="نخستین" />
+        <meta name="format-detection" content="telephone=no" />
 
         {/* اعتبارسنجی enamad */}
         <meta name="enamad" content="68174347" />
@@ -239,11 +266,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
         ></script>
 
         <AuthProvider>
+          <ClearStaleCaches />
+          <PwaShell />
           <NavGate />
           <main role="main" className="flex-1 w-full">
             {children}
           </main>
           <FooterGate />
+          <VpnNotice />
         </AuthProvider>
       </body>
     </html>
