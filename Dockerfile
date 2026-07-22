@@ -19,6 +19,12 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# NEXT_PUBLIC_* must exist at BUILD time (inlined into the JS bundle).
+ARG NEXT_PUBLIC_API_URL=https://api.nokhostin.org/api/v1
+ARG NEXT_PUBLIC_SITE_URL=https://nokhostin.org
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+
 RUN \
   if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   elif [ -f package-lock.json ]; then npm run build; \

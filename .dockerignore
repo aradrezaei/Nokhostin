@@ -7,3 +7,13 @@ build
 README.md
 .dockerignore
 Dockerfile
+
+# Never bake local env into the production image
+.env
+.env.*
+!.env.example
+**/*.log
+.DS_Store
+.idea
+.husky
+*.report.html
