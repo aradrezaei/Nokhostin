@@ -357,19 +357,30 @@ export default function ContactPage() {
                       <label className="block text-xs font-bold text-[#23363d] dark:text-[#d8e3e6] mb-1.5">
                         موضوع پیام <span className="text-red-500">*</span>
                       </label>
-                      <select
-                        value={formData.subject}
-                        onChange={(e) => handleChange('subject', e.target.value)}
-                        onBlur={() => handleBlur('subject')}
-                        className={inputClass('subject') + ' cursor-pointer appearance-none'}
-                      >
-                        <option value="">انتخاب کنید...</option>
-                        {SUBJECTS.map((s, i) => (
-                          <option key={i} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          value={formData.subject}
+                          onChange={(e) => handleChange('subject', e.target.value)}
+                          onBlur={() => handleBlur('subject')}
+                          className={
+                            inputClass('subject')
+                              .replace('px-4', 'ps-4') +
+                            ' nk-select cursor-pointer appearance-none pe-11'
+                          }
+                        >
+                          <option value="">انتخاب کنید...</option>
+                          {SUBJECTS.map((s, i) => (
+                            <option key={i} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown
+                          size={16}
+                          aria-hidden
+                          className="pointer-events-none absolute end-3.5 top-1/2 -translate-y-1/2 text-[#93a5ac] dark:text-[#61727a]"
+                        />
+                      </div>
                       {errors.subject && touched.subject && (
                         <p className="mt-1.5 text-xs font-bold text-red-500">{errors.subject}</p>
                       )}

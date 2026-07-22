@@ -1,4 +1,3 @@
-import { useId } from 'react';
 import { toFa } from '@/lib/format';
 
 export interface LinePoint {
@@ -7,7 +6,7 @@ export interface LinePoint {
 }
 
 /**
- * Lightweight trend line. Always scales to container width — no horizontal overflow.
+ * Lightweight trend line — solid stroke, no gradients (friendlier on weak GPUs).
  */
 export default function LineChart({
   points,
@@ -20,7 +19,6 @@ export default function LineChart({
   /** @deprecated ignored — chart is always fluid */
   width?: number;
 }) {
-  const gid = useId();
   const width = 360;
   const pad = { top: 14, right: 16, bottom: 26, left: 16 };
   const w = width - pad.left - pad.right;
@@ -47,7 +45,6 @@ export default function LineChart({
   const py = (y: number) => pad.top + (1 - Math.min(y / max, 1)) * h;
 
   const line = valid.map((p, i) => `${i === 0 ? 'M' : 'L'} ${px(p.x)} ${py(p.y)}`).join(' ');
-  const area = `${line} L ${px(valid[valid.length - 1]!.x)} ${pad.top + h} L ${px(valid[0]!.x)} ${pad.top + h} Z`;
 
   return (
     <div className="w-full overflow-hidden">
@@ -60,13 +57,6 @@ export default function LineChart({
         aria-label="روند نمرات"
         preserveAspectRatio="xMidYMid meet"
       >
-        <defs>
-          <linearGradient id={`l-${gid}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-
         {[0, 0.5, 1].map((g) => (
           <line
             key={g}
@@ -80,12 +70,11 @@ export default function LineChart({
           />
         ))}
 
-        <path d={area} fill={`url(#l-${gid})`} />
         <path
           d={line}
           fill="none"
           stroke="#7c3aed"
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -94,10 +83,10 @@ export default function LineChart({
             key={i}
             cx={px(p.x)}
             cy={py(p.y)}
-            r="4"
+            r="3.5"
             fill="#fff"
             stroke="#7c3aed"
-            strokeWidth="2.5"
+            strokeWidth="2"
           />
         ))}
         {points.map((p) => (

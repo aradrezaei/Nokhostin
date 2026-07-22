@@ -31,7 +31,7 @@ export default function Footer() {
       />
 
       {/* wave lip (Duolingo-style section join) */}
-      <div className="relative bg-[#fcfbff] dark:bg-[#0b1418]" aria-hidden>
+      <div className="relative bg-[#fcfbff] dark:bg-[#131f24]" aria-hidden>
         <svg
           viewBox="0 0 1440 48"
           preserveAspectRatio="none"

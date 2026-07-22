@@ -588,7 +588,7 @@
 //                   </label>
 //                   <div className="relative">
 //                     <select
-//                       className="w-full bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 focus:border-purple-500 text-gray-900 dark:text-white font-medium text-sm px-5 py-3.5 rounded-xl transition-all focus:outline-none appearance-none"
+//                       className="w-full bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 focus:border-purple-500 text-gray-900 dark:text-white font-medium text-sm ps-5 py-3.5 rounded-xl transition-all focus:outline-none appearance-none nk-select pe-11"
 //                       required
 //                     >
 //                       <option value="" disabled selected>
@@ -599,7 +599,7 @@
 //                     </select>
 //                     <ChevronDown
 //                       size={16}
-//                       className="text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
+//                       className="text-gray-400 absolute end-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
 //                     />
 //                   </div>
 //                 </div>

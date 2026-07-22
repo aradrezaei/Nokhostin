@@ -10,6 +10,7 @@ export interface AuthUser {
   role: UserRole;
   studentType: StudentType;
   status: UserStatus;
+  createdAt?: string;
 }
 
 export interface AuthTokens {

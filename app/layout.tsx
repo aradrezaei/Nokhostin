@@ -7,8 +7,8 @@ import type { Metadata, Viewport } from 'next';
 
 const shabnam = localFont({
   src: [
-    { path: '../public/font/Shabnam.woff2', weight: '400', style: 'normal' },
-    { path: '../public/font/Shabnam-Bold.woff2', weight: '700', style: 'normal' },
+    { path: '../public/fonts/Shabnam.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/Shabnam-Bold.woff2', weight: '700', style: 'normal' },
   ],
   variable: '--font-shabnam',
   display: 'swap',
@@ -113,7 +113,7 @@ const schemaOrg = {
       url: 'https://nokhostin.org',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://nokhostin.org/logo.png',
+        url: 'https://nokhostin.org/brand/logo.png',
         width: 200,
         height: 200,
       },
@@ -225,7 +225,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
         {/* Icons */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
 
         {/* اعتبارسنجی enamad */}

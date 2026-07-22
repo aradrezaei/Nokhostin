@@ -143,22 +143,24 @@ function ImageBlockEditor({
   const [error, setError] = useState('');
 
   const onFile = async (file: File) => {
-    if (block.alt.trim().length < 3) {
-      setError('ابتدا متن جایگزین (alt) را وارد کنید.');
-      return;
-    }
+    const alt = block.alt.trim().length >= 3 ? block.alt.trim() : 'تصویر پست';
     setUploading(true);
     setError('');
     try {
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('alt', block.alt.trim());
+      fd.append('alt', alt);
       const media = await request<MediaAsset>('/admin/media', { method: 'POST', body: fd });
-      patch({ mediaId: media.id, url: media.url });
+      patch({
+        mediaId: media.id,
+        url: media.url,
+        alt: block.alt.trim().length >= 3 ? block.alt : alt,
+      });
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'آپلود ناموفق بود.');
     } finally {
       setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
     }
   };
 

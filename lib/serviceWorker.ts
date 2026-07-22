@@ -107,7 +107,7 @@ function showUpdateNotification(registration?: ServiceWorkerRegistration) {
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification('به‌روزرسانی موجود', {
       body: message,
-      icon: '/icons/icon-192x192.png',
+      icon: '/icons/icon-192.png',
       badge: '/icons/badge-72x72.png',
       tag: 'sw-update',
       requireInteraction: true,

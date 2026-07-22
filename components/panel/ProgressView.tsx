@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarClock, Clock3, TrendingUp, Trophy, UserCheck, UserX } from 'lucide-react';
+import { CalendarClock, Clock3, Sparkles, TrendingUp, Trophy, UserCheck, UserX } from 'lucide-react';
 import type { ClassProgress } from '@/lib/types';
 import { formatScore, formatSchedule, toFa } from '@/lib/format';
 import Medal from '@/components/panel/Medal';
@@ -8,12 +8,24 @@ import { Card } from '@/components/panel/ui';
 import AttendanceBar from '@/components/panel/viz/AttendanceBar';
 import LineChart from '@/components/panel/viz/LineChart';
 import ProgressRing from '@/components/panel/viz/ProgressRing';
-import RadarChart from '@/components/panel/viz/RadarChart';
+import SkillBars from '@/components/panel/viz/SkillBars';
 import { SectionTitle, StatTile, TuitionPill } from '@/components/panel/widgets';
+
+function motivationCopy(data: ClassProgress): string {
+  const attended = data.attendance.present + data.attendance.late;
+  const marked = attended + data.attendance.absent;
+  const rate = marked > 0 ? attended / marked : 0;
+  if (data.rank.isTop) return 'رتبه‌ی اولی! همین مسیر رو نگه دار.';
+  if (data.improvement.improved) return 'نسبت به ترم قبل رشد کردی — عالی پیش می‌ری.';
+  if (rate >= 0.9) return 'حضورت فوق‌العاده‌ست. تمرکز روی مهارت‌ها بذار.';
+  if (rate >= 0.7) return 'حضور خوبه؛ با تمرین بیشتر امتیازت می‌ره بالا.';
+  if (marked === 0) return 'به محض ثبت اولین جلسه، روندت اینجا روشن می‌شه.';
+  return 'هر جلسه یک پله. امروز هم یه قدم جلوتر برو.';
+}
 
 /**
  * Shared, mobile-first progress surface for student / mentor / admin.
- * Charts are pure SVG — no chart libraries, cheap on weak CPUs.
+ * Charts stay CSS/SVG-light — no chart libs, no heavy gradients for weak GPUs.
  */
 export default function ProgressView({
   data,
@@ -23,9 +35,12 @@ export default function ProgressView({
   studentName?: string;
 }) {
   const { attendance, evaluations, sessions, medals, rank, improvement, termGrade } = data;
+  const attended = attendance.present + attendance.late;
+  const marked = attended + attendance.absent;
+  const attendanceRate = marked > 0 ? Math.round((attended / marked) * 100) : 0;
 
   return (
-    <div className="w-full max-w-full space-y-5 overflow-x-hidden">
+    <div className="w-full max-w-full space-y-5 overflow-x-hidden [content-visibility:auto]">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           {studentName && (
@@ -47,14 +62,31 @@ export default function ProgressView({
         <TuitionPill paid={data.tuitionPaid} />
       </header>
 
+      <Card className="!p-4 border-[#7c3aed]/30 bg-[#7c3aed]/5 dark:border-[#7c3aed]/40 dark:bg-[#7c3aed]/10">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#7c3aed] text-white">
+            <Sparkles className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-black text-slate-900 dark:text-white">
+              {motivationCopy(data)}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              نمره کلی {formatScore(data.score)}
+              {rank.position
+                ? ` · رتبه ${toFa(rank.position)} از ${toFa(rank.totalRanked)}`
+                : ''}
+              {marked > 0 ? ` · حضور ${toFa(attendanceRate)}٪` : ''}
+            </p>
+          </div>
+        </div>
+      </Card>
+
       {medals.length > 0 && (
         <section className="grid gap-3 sm:grid-cols-2">
           {medals.map((m) => (
-            <Card
-              key={m.code}
-              className="!p-4 flex items-center gap-4 bg-gradient-to-l from-violet-50 to-white dark:from-violet-950/40 dark:to-[#131f24]"
-            >
-              <Medal code={m.code} size={68} />
+            <Card key={m.code} className="!p-4 flex items-center gap-4">
+              <Medal code={m.code} size={64} />
               <div>
                 <p className="text-sm font-black text-slate-900 dark:text-white">{m.title}</p>
                 <p className="mt-1 text-xs font-bold leading-5 text-slate-500 dark:text-slate-400">
@@ -127,9 +159,9 @@ export default function ProgressView({
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="!overflow-hidden">
+        <Card>
           <SectionTitle title="مهارت‌ها" hint="میانگین از ۵" />
-          <RadarChart
+          <SkillBars
             axes={[
               { label: 'شنیدن', value: evaluations.averages.listening },
               { label: 'نوشتن', value: evaluations.averages.writing },

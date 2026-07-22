@@ -24,6 +24,24 @@ export class ApiError extends Error {
   }
 }
 
+/** Prefer first Zod/field detail when present — surfaces real blog validation bugs. */
+export function formatApiError(error: unknown, fallback: string): string {
+  if (!(error instanceof ApiError)) return fallback;
+  if (Array.isArray(error.details) && error.details.length > 0) {
+    const messages = error.details
+      .map((d) => {
+        if (typeof d === 'string') return d;
+        if (d && typeof d === 'object' && 'message' in d) {
+          return String((d as { message: unknown }).message);
+        }
+        return '';
+      })
+      .filter(Boolean);
+    if (messages.length) return messages.slice(0, 3).join(' · ');
+  }
+  return error.message || fallback;
+}
+
 export async function parseResult<T>(res: Response): Promise<T> {
   const body = (await res.json().catch(() => null)) as ApiResult<T> | null;
 

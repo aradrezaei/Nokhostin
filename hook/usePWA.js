@@ -138,7 +138,7 @@ export function usePWA() {
     if (granted && registration) {
       registration.showNotification('نخستین', {
         body: 'نوتیفیکیشن با موفقیت فعال شد! 🎉',
-        icon: '/icons/icon-192x192.png',
+        icon: '/icons/icon-192.png',
         badge: '/icons/badge-72x72.png',
         vibrate: [200, 100, 200],
         tag: 'test-notification',

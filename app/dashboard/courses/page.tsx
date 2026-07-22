@@ -1,34 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import { BookOpen } from 'lucide-react';
-import { ApiError } from '@/lib/api';
-import { useAuth } from '@/lib/auth';
 import type { MyClassEntry } from '@/lib/types';
+import { useMyClasses } from '@/hook/useMyClasses';
 import { ClassCard } from '@/components/panel/ClassCard';
 import { Alert } from '@/components/panel/ui';
 import { EmptyState, Spinner } from '@/components/panel/widgets';
 
 export default function StudentCoursesPage() {
-  const { request } = useAuth();
-  const [items, setItems] = useState<MyClassEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setItems(await request<MyClassEntry[]>('/me/classes'));
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'خطا در دریافت کلاس‌ها.');
-    } finally {
-      setLoading(false);
-    }
-  }, [request]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
+  const { items, loading, error } = useMyClasses();
 
   return (
     <div className="space-y-5">
@@ -46,7 +26,7 @@ export default function StudentCoursesPage() {
         <EmptyState icon={<BookOpen className="h-6 w-6" />} title="کلاسی ثبت نشده" />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {items.map((entry) => (
+          {items.map((entry: MyClassEntry) => (
             <ClassCard
               key={entry.enrollmentId}
               href={`/dashboard/courses/${entry.class.id}`}

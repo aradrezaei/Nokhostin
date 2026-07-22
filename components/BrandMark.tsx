@@ -25,7 +25,7 @@ export default function BrandMark({
         className={`flex ${size} shrink-0 items-center justify-center overflow-hidden rounded-xl ${tile}`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-white.png" alt="" className="h-full w-full scale-[1.12] object-contain" />
+        <img src="/brand/logo-white.png" alt="" className="h-full w-full scale-[1.12] object-contain" />
       </span>
       {!compact && (
         <span className="block leading-none">

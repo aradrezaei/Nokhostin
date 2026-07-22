@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ImagePlus, Save, Send } from 'lucide-react';
-import { ApiError } from '@/lib/api';
+import { formatApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { MediaAsset, PostDetail, Taxonomy } from '@/lib/types';
 import { Alert, Button, Card, Field, Select, Textarea, TextInput } from '@/components/panel/ui';
@@ -15,6 +15,29 @@ import BlockEditor, {
 
 interface Props {
   initial?: PostDetail;
+}
+
+/** Mirrors backend slugify so custom slugs don't fail Zod before save. */
+function normalizeSlug(input: string): string {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/[\u064A]/g, '\u06cc')
+    .replace(/[\u0643]/g, '\u06a9')
+    .replace(/[\u200c\s]+/g, '-')
+    .replace(/[^a-z0-9\u0600-\u06ff-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 160);
+}
+
+function isValidUrl(value: string): boolean {
+  try {
+    const u = new URL(value);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 export default function PostEditor({ initial }: Props) {
@@ -52,21 +75,19 @@ export default function PostEditor({ initial }: Props) {
 
   const uploadCover = useCallback(
     async (file: File) => {
-      if (title.trim().length < 3) {
-        setError('برای تصویر کاور ابتدا عنوان پست را وارد کنید (به عنوان alt استفاده می‌شود).');
-        return;
-      }
+      const alt = title.trim().length >= 3 ? title.trim() : 'کاور پست';
       setCoverUploading(true);
       setError('');
       try {
         const fd = new FormData();
         fd.append('file', file);
-        fd.append('alt', title.trim());
+        fd.append('alt', alt);
         setCover(await request<MediaAsset>('/admin/media', { method: 'POST', body: fd }));
       } catch (e) {
-        setError(e instanceof ApiError ? e.message : 'آپلود کاور ناموفق بود.');
+        setError(formatApiError(e, 'آپلود کاور ناموفق بود.'));
       } finally {
         setCoverUploading(false);
+        if (coverRef.current) coverRef.current.value = '';
       }
     },
     [request, title],
@@ -77,11 +98,12 @@ export default function PostEditor({ initial }: Props) {
       .split(/[،,]/)
       .map((k) => k.trim())
       .filter(Boolean);
+    const normalizedSlug = normalizeSlug(slug);
     return {
       title: title.trim(),
       excerpt: excerpt.trim(),
       content: toContentBlocks(blocks),
-      slug: slug.trim() || undefined,
+      slug: normalizedSlug || undefined,
       coverMediaId: cover?.id,
       categoryId: categoryId || undefined,
       tagIds,
@@ -95,8 +117,48 @@ export default function PostEditor({ initial }: Props) {
     if (title.trim().length < 3) return 'عنوان باید حداقل ۳ کاراکتر باشد.';
     if (excerpt.trim().length < 10) return 'خلاصه باید حداقل ۱۰ کاراکتر باشد.';
     if (blocks.length === 0) return 'حداقل یک بلاک محتوا اضافه کنید.';
-    const image = blocks.find((b) => b.type === 'image' && !b.mediaId);
-    if (image) return 'برای بلاک تصویر باید یک عکس آپلود کنید.';
+    if (slug.trim() && !normalizeSlug(slug)) {
+      return 'اسلاگ فقط می‌تواند شامل حروف، عدد و خط تیره باشد.';
+    }
+
+    for (let i = 0; i < blocks.length; i += 1) {
+      const b = blocks[i]!;
+      const n = i + 1;
+      switch (b.type) {
+        case 'heading':
+          if (!b.text.trim()) return `تیتر بلاک ${n} خالی است.`;
+          break;
+        case 'paragraph':
+          if (!b.text.trim()) return `پاراگراف بلاک ${n} خالی است.`;
+          break;
+        case 'image':
+          if (!b.mediaId) return `برای بلاک تصویر ${n} باید یک عکس آپلود کنید.`;
+          if (b.alt.trim().length < 3) {
+            return `متن جایگزین تصویر بلاک ${n} حداقل ۳ کاراکتر باشد.`;
+          }
+          break;
+        case 'quote':
+          if (!b.text.trim()) return `نقل‌قول بلاک ${n} خالی است.`;
+          break;
+        case 'list': {
+          const items = b.items
+            .split('\n')
+            .map((item) => item.trim())
+            .filter(Boolean);
+          if (items.length === 0) return `لیست بلاک ${n} حداقل یک آیتم می‌خواهد.`;
+          break;
+        }
+        case 'code':
+          if (!b.code.trim()) return `کد بلاک ${n} خالی است.`;
+          break;
+        case 'embed':
+          if (!b.url.trim()) return `آدرس ویدیو بلاک ${n} خالی است.`;
+          if (!isValidUrl(b.url.trim())) return `آدرس ویدیو بلاک ${n} معتبر نیست.`;
+          break;
+        default:
+          break;
+      }
+    }
     return null;
   };
 
@@ -126,7 +188,7 @@ export default function PostEditor({ initial }: Props) {
       router.push('/admin/blog');
       router.refresh();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'ذخیره پست ناموفق بود.');
+      setError(formatApiError(e, 'ذخیره پست ناموفق بود.'));
       setSaving(false);
     }
   };

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'nakhostin-v1.0.0';
+const CACHE_VERSION = 'nakhostin-v1.1.0';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_DYNAMIC = `${CACHE_VERSION}-dynamic`;
 const CACHE_IMAGES = `${CACHE_VERSION}-images`;
@@ -10,11 +10,12 @@ const MAX_IMAGE_CACHE = 100;
 // فایل‌های استاتیک که باید کش شوند
 const STATIC_ASSETS = [
   '/',
-  '/offline',
-  '/manifest.json',
+  '/offline.html',
+  '/site.webmanifest',
   '/favicon.ico',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/brand/logo-white.png',
 ];
 
 // API endpoints که باید کش شوند
@@ -183,7 +184,7 @@ async function networkFirstStrategy(request, cacheName, timeout = 5000) {
 
     // اگر HTML است، صفحه آفلاین نشون بده
     if (request.headers.get('accept')?.includes('text/html')) {
-      const offlinePage = await caches.match('/offline');
+      const offlinePage = await caches.match('/offline.html');
       if (offlinePage) return offlinePage;
     }
 
@@ -280,7 +281,7 @@ self.addEventListener('push', (event) => {
   let data = {
     title: 'آموزشگاه نخستین',
     body: 'پیام جدید دریافت شد',
-    icon: '/icons/icon-192x192.png',
+    icon: '/icons/icon-192.png',
   };
 
   if (event.data) {
@@ -293,7 +294,7 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: data.icon || '/icons/icon-192x192.png',
+    icon: data.icon || '/icons/icon-192.png',
     badge: '/icons/badge-72x72.png',
     image: data.image,
     vibrate: [200, 100, 200, 100, 200],
@@ -452,7 +453,7 @@ async function updateContent() {
     if (data.hasUpdates) {
       await self.registration.showNotification('📚 محتوای جدید!', {
         body: 'دوره‌های جدید اضافه شده است',
-        icon: '/icons/icon-192x192.png',
+        icon: '/icons/icon-192.png',
         badge: '/icons/badge-72x72.png',
         tag: 'content-update',
         data: { url: '/courses' },

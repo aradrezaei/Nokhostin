@@ -7,6 +7,7 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 type Variant = 'primary' | 'ghost' | 'danger' | 'subtle';
 
@@ -78,15 +79,29 @@ export function Textarea({
   return <textarea className={`${controlClass} ${className}`} {...props} />;
 }
 
+/**
+ * RTL-safe select: native arrow removed, custom chevron on inline-end
+ * so it never mirrors wrong or overlaps Persian text.
+ */
 export function Select({
   className = '',
   children,
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select className={`${controlClass} cursor-pointer ${className}`} {...props}>
-      {children}
-    </select>
+    <div className={`relative ${className || 'w-full'}`}>
+      <select
+        {...props}
+        className={`${controlClass} nk-select w-full cursor-pointer appearance-none pe-11`}
+      >
+        {children}
+      </select>
+      <ChevronDown
+        aria-hidden
+        strokeWidth={2.5}
+        className="pointer-events-none absolute end-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
+      />
+    </div>
   );
 }
 
