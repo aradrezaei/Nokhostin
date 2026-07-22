@@ -20,9 +20,7 @@ export default function AdminStudentProgressPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setData(
-        await request<ClassProgress>(`/classes/${id}/students/${studentId}/progress`),
-      );
+      setData(await request<ClassProgress>(`/classes/${id}/students/${studentId}/progress`));
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'خطا در دریافت روند رشد.');
     } finally {

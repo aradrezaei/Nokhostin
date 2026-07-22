@@ -57,7 +57,9 @@ export default function AdminBlogPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white">مدیریت وبلاگ</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">نوشتن، ویرایش و انتشار مقالات</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            نوشتن، ویرایش و انتشار مقالات
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="ghost" onClick={() => setTaxOpen(true)}>
@@ -84,7 +86,11 @@ export default function AdminBlogPage() {
             >
               {post.cover ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={post.cover.thumbnailUrl ?? post.cover.url} alt={post.cover.alt} className="h-16 w-24 rounded-lg object-cover" />
+                <img
+                  src={post.cover.thumbnailUrl ?? post.cover.url}
+                  alt={post.cover.alt}
+                  className="h-16 w-24 rounded-lg object-cover"
+                />
               ) : (
                 <div className="h-16 w-24 rounded-lg bg-slate-100 dark:bg-slate-800" />
               )}
@@ -95,8 +101,16 @@ export default function AdminBlogPage() {
                   {post.category ? ` · ${post.category.name}` : ''}
                 </p>
               </div>
-              <Badge tone={post.status === 'published' ? 'green' : post.status === 'draft' ? 'amber' : 'gray'}>
-                {post.status === 'published' ? 'منتشرشده' : post.status === 'draft' ? 'پیش‌نویس' : 'بایگانی'}
+              <Badge
+                tone={
+                  post.status === 'published' ? 'green' : post.status === 'draft' ? 'amber' : 'gray'
+                }
+              >
+                {post.status === 'published'
+                  ? 'منتشرشده'
+                  : post.status === 'draft'
+                    ? 'پیش‌نویس'
+                    : 'بایگانی'}
               </Badge>
               <div className="flex items-center gap-1">
                 {post.status === 'published' && SITE_URL && (
@@ -110,13 +124,25 @@ export default function AdminBlogPage() {
                     <Eye className="h-4 w-4" />
                   </a>
                 )}
-                <Link href={`/admin/blog/${post.id}`} className="rounded-lg p-2 text-slate-400 hover:text-violet-600" title="ویرایش">
+                <Link
+                  href={`/admin/blog/${post.id}`}
+                  className="rounded-lg p-2 text-slate-400 hover:text-violet-600"
+                  title="ویرایش"
+                >
                   <Pencil className="h-4 w-4" />
                 </Link>
-                <button onClick={() => remove(post)} className="rounded-lg p-2 text-slate-400 hover:text-rose-600" title="حذف">
+                <button
+                  onClick={() => remove(post)}
+                  className="rounded-lg p-2 text-slate-400 hover:text-rose-600"
+                  title="حذف"
+                >
                   <Trash2 className="h-4 w-4" />
                 </button>
-                <Button variant="subtle" onClick={() => togglePublish(post)} className="!px-3 !py-1.5">
+                <Button
+                  variant="subtle"
+                  onClick={() => togglePublish(post)}
+                  className="!px-3 !py-1.5"
+                >
                   {post.status === 'published' ? 'لغو انتشار' : 'انتشار'}
                 </Button>
               </div>
@@ -158,7 +184,10 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
   const addCategory = async () => {
     if (catName.trim().length < 2) return;
     try {
-      await request('/admin/blog/categories', { method: 'POST', body: JSON.stringify({ name: catName.trim() }) });
+      await request('/admin/blog/categories', {
+        method: 'POST',
+        body: JSON.stringify({ name: catName.trim() }),
+      });
       setCatName('');
       await load();
     } catch (e) {
@@ -169,7 +198,10 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
   const addTag = async () => {
     if (tagName.trim().length < 2) return;
     try {
-      await request('/admin/blog/tags', { method: 'POST', body: JSON.stringify({ name: tagName.trim() }) });
+      await request('/admin/blog/tags', {
+        method: 'POST',
+        body: JSON.stringify({ name: tagName.trim() }),
+      });
       setTagName('');
       await load();
     } catch (e) {
@@ -193,13 +225,20 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
         <div>
           <Field label="دسته جدید">
             <div className="flex gap-2">
-              <TextInput value={catName} onChange={(e) => setCatName(e.target.value)} placeholder="نام دسته" />
+              <TextInput
+                value={catName}
+                onChange={(e) => setCatName(e.target.value)}
+                placeholder="نام دسته"
+              />
               <Button onClick={addCategory}>افزودن</Button>
             </div>
           </Field>
           <div className="mt-2 flex flex-wrap gap-2">
             {categories.map((c) => (
-              <span key={c.id} className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold dark:bg-slate-800">
+              <span
+                key={c.id}
+                className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold dark:bg-slate-800"
+              >
                 {c.name}
                 <button onClick={() => removeItem('categories', c.id)} className="text-rose-500">
                   ×
@@ -211,13 +250,20 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
         <div>
           <Field label="تگ جدید">
             <div className="flex gap-2">
-              <TextInput value={tagName} onChange={(e) => setTagName(e.target.value)} placeholder="نام تگ" />
+              <TextInput
+                value={tagName}
+                onChange={(e) => setTagName(e.target.value)}
+                placeholder="نام تگ"
+              />
               <Button onClick={addTag}>افزودن</Button>
             </div>
           </Field>
           <div className="mt-2 flex flex-wrap gap-2">
             {tags.map((t) => (
-              <span key={t.id} className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold dark:bg-slate-800">
+              <span
+                key={t.id}
+                className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold dark:bg-slate-800"
+              >
                 {t.name}
                 <button onClick={() => removeItem('tags', t.id)} className="text-rose-500">
                   ×

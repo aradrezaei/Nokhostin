@@ -122,7 +122,9 @@ export default function MentorAttendancePage() {
               بازگشت به کلاس
             </Link>
           </p>
-          <h1 className="mt-1 text-2xl font-black text-slate-900 dark:text-white">ثبت حضور و غیاب</h1>
+          <h1 className="mt-1 text-2xl font-black text-slate-900 dark:text-white">
+            ثبت حضور و غیاب
+          </h1>
           <p className="mt-1 text-sm font-bold text-slate-400">
             برای تأخیر، دقیقه‌ها را وارد کنید — پیامک خودکار ارسال می‌شود.
           </p>
@@ -200,7 +202,9 @@ export default function MentorAttendancePage() {
                         }))
                       }
                     />
-                    <span className="text-xs font-bold text-slate-400">{toFa(d.lateMinutes)} دقیقه</span>
+                    <span className="text-xs font-bold text-slate-400">
+                      {toFa(d.lateMinutes)} دقیقه
+                    </span>
                   </div>
                 )}
               </Card>

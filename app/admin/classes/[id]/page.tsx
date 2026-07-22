@@ -10,15 +10,7 @@ import { downloadAuthed } from '@/lib/download';
 import { CLASS_STATUS_LABEL, formatDate, formatSchedule, toFa } from '@/lib/format';
 import type { ClassDetail, ManagedUser, Paginated } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  Field,
-  Modal,
-  TextInput,
-} from '@/components/panel/ui';
+import { Alert, Badge, Button, Card, Field, Modal, TextInput } from '@/components/panel/ui';
 import { Spinner, TuitionPill } from '@/components/panel/widgets';
 
 export default function AdminClassDetailPage() {
@@ -290,7 +282,11 @@ export default function AdminClassDetailPage() {
               <Badge
                 tone={s.status === 'held' ? 'green' : s.status === 'canceled' ? 'gray' : 'violet'}
               >
-                {s.status === 'held' ? 'برگزارشده' : s.status === 'canceled' ? 'لغو' : 'برنامه‌ریزی'}
+                {s.status === 'held'
+                  ? 'برگزارشده'
+                  : s.status === 'canceled'
+                    ? 'لغو'
+                    : 'برنامه‌ریزی'}
               </Badge>
             </div>
           ))}

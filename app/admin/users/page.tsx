@@ -97,11 +97,7 @@ export default function AdminUsersPage() {
 
   const removeUser = async (u: ManagedUser) => {
     const roleWord = u.role === 'mentor' ? 'استاد' : 'هنرجو';
-    if (
-      !confirm(
-        `«${u.fullName}» (${roleWord}) برای همیشه حذف شود؟\nاین کار برگشت‌پذیر نیست.`,
-      )
-    ) {
+    if (!confirm(`«${u.fullName}» (${roleWord}) برای همیشه حذف شود؟\nاین کار برگشت‌پذیر نیست.`)) {
       return;
     }
     try {
@@ -252,7 +248,9 @@ export default function AdminUsersPage() {
             <TextInput
               dir="ltr"
               value={form.mobile}
-              onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, '').slice(0, 11) }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, '').slice(0, 11) }))
+              }
               placeholder="09123456789"
             />
           </Field>
@@ -271,7 +269,10 @@ export default function AdminUsersPage() {
             <Button variant="ghost" onClick={() => setModal(null)}>
               انصراف
             </Button>
-            <Button onClick={submitCreate} disabled={saving || form.fullName.length < 2 || form.mobile.length !== 11}>
+            <Button
+              onClick={submitCreate}
+              disabled={saving || form.fullName.length < 2 || form.mobile.length !== 11}
+            >
               {saving ? 'در حال ثبت…' : 'ثبت'}
             </Button>
           </div>

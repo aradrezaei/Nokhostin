@@ -150,14 +150,22 @@ export default function LoginSection() {
         className="login-close fixed top-4 end-4 flex h-11 w-11 items-center justify-center rounded-full sm:top-5 sm:end-5"
       >
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path
+            d="M5 5L15 15M15 5L5 15"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </svg>
       </button>
 
       <div className="w-full max-w-[380px] py-16">
         {step === 'phone' ? (
           <>
-            <h1 id="login-title" className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]">
+            <h1
+              id="login-title"
+              className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]"
+            >
               ورود به حساب کاربری
             </h1>
             <p className="login-desc mt-3 text-[14px] leading-6 sm:text-[15px]">
@@ -201,11 +209,18 @@ export default function LoginSection() {
           </>
         ) : (
           <>
-            <h1 id="login-title" className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]">
+            <h1
+              id="login-title"
+              className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]"
+            >
               کد تایید را وارد کنید
             </h1>
             <p className="login-desc mt-3 text-[14px] leading-6 sm:text-[15px]">
-              کد ارسال‌شده به شماره <span dir="ltr" className="font-bold">{phone}</span> را وارد کنید.
+              کد ارسال‌شده به شماره{' '}
+              <span dir="ltr" className="font-bold">
+                {phone}
+              </span>{' '}
+              را وارد کنید.
             </p>
 
             <form className="mt-8 flex flex-col gap-5" onSubmit={handleCodeSubmit} noValidate>

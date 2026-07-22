@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  CalendarClock,
-  Clock3,
-  TrendingUp,
-  Trophy,
-  UserCheck,
-  UserX,
-} from 'lucide-react';
+import { CalendarClock, Clock3, TrendingUp, Trophy, UserCheck, UserX } from 'lucide-react';
 import type { ClassProgress } from '@/lib/types';
 import { formatScore, formatSchedule, toFa } from '@/lib/format';
 import Medal from '@/components/panel/Medal';
@@ -16,11 +9,7 @@ import AttendanceBar from '@/components/panel/viz/AttendanceBar';
 import LineChart from '@/components/panel/viz/LineChart';
 import ProgressRing from '@/components/panel/viz/ProgressRing';
 import RadarChart from '@/components/panel/viz/RadarChart';
-import {
-  SectionTitle,
-  StatTile,
-  TuitionPill,
-} from '@/components/panel/widgets';
+import { SectionTitle, StatTile, TuitionPill } from '@/components/panel/widgets';
 
 /**
  * Shared, mobile-first progress surface for student / mentor / admin.
@@ -171,9 +160,7 @@ export default function ProgressView({
               <p className="flex items-center gap-1.5 text-lg font-black text-slate-900 dark:text-white">
                 <Trophy className="h-4 w-4 shrink-0 text-amber-500" />
                 <span className="truncate">
-                  {rank.position
-                    ? `${toFa(rank.position)} از ${toFa(rank.totalRanked)}`
-                    : '—'}
+                  {rank.position ? `${toFa(rank.position)} از ${toFa(rank.totalRanked)}` : '—'}
                 </span>
               </p>
             </div>

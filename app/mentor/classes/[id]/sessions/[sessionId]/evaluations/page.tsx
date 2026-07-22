@@ -136,7 +136,9 @@ export default function MentorEvaluationsPage() {
               <Card key={row.studentId} className="!p-4">
                 <div className="mb-3 flex items-center gap-3">
                   <Avatar name={row.fullName} seed={row.studentId} size={40} />
-                  <p className="text-sm font-black text-slate-900 dark:text-white">{row.fullName}</p>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">
+                    {row.fullName}
+                  </p>
                 </div>
                 <div className="space-y-3">
                   {SKILL_LABELS.map((skill) => (

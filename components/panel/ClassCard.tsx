@@ -15,14 +15,7 @@ export function ClassCard({
 }: {
   item: Pick<
     ClassSummary,
-    | 'id'
-    | 'title'
-    | 'termNumber'
-    | 'totalSessions'
-    | 'schedule'
-    | 'status'
-    | 'course'
-    | 'teacher'
+    'id' | 'title' | 'termNumber' | 'totalSessions' | 'schedule' | 'status' | 'course' | 'teacher'
   > & { studentCount?: number; sessionsHeld?: number };
   href: string;
   tuitionPaid?: boolean;
@@ -62,10 +55,7 @@ export function ClassCard({
             <span>{toFa(Math.round(pct))}٪</span>
           </div>
           <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            <div
-              className="h-full rounded-full bg-[#7c3aed]"
-              style={{ width: `${pct}%` }}
-            />
+            <div className="h-full rounded-full bg-[#7c3aed]" style={{ width: `${pct}%` }} />
           </div>
         </div>
 

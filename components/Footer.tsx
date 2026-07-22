@@ -2,13 +2,7 @@ import Link from 'next/link';
 import BrandMark from '@/components/BrandMark';
 import LinkColumn from '@/components/LinkColumn';
 import SocialLinks from '@/components/SocialLinks';
-import {
-  FOOTER_ABOUT,
-  FOOTER_COURSES,
-  FOOTER_LEARN,
-  LEGAL_LINKS,
-  SITE,
-} from '@/lib/site';
+import { FOOTER_ABOUT, FOOTER_COURSES, FOOTER_LEARN, LEGAL_LINKS, SITE } from '@/lib/site';
 
 /**
  * Duolingo-inspired footer: vivid brand band, chunky 3D CTAs, soft course pills,

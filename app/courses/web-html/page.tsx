@@ -170,7 +170,9 @@ export default function HTMLCSSCoursePage() {
               <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 leading-relaxed max-w-xl font-medium">
                 بنیانِ وب فرانت‌اند را اصولی یاد بگیرید. این دوره به صورت هم‌زمان{' '}
                 <span className="text-gray-900 dark:text-white font-bold">حضوری (کارگاهی)</span> و{' '}
-                <span className="text-gray-900 dark:text-white font-bold">آنلاین (استریم زنده)</span>{' '}
+                <span className="text-gray-900 dark:text-white font-bold">
+                  آنلاین (استریم زنده)
+                </span>{' '}
                 برگزار شده و در نهایت منجر به صدور{' '}
                 <span className="text-purple-600 dark:text-purple-400 font-bold">
                   مدرک رسمی سازمان فنی و حرفه‌ای کشور
@@ -185,7 +187,9 @@ export default function HTMLCSSCoursePage() {
                     <MapPin size={18} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">برگزاری حضوری</h4>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                      برگزاری حضوری
+                    </h4>
                     <p className="text-[11px] text-gray-400 mt-0.5">سایت‌های مجهز آکادمی</p>
                   </div>
                 </div>
@@ -194,7 +198,9 @@ export default function HTMLCSSCoursePage() {
                     <Video size={18} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">برگزاری آنلاین</h4>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                      برگزاری آنلاین
+                    </h4>
                     <p className="text-[11px] text-gray-400 mt-0.5">پخش زنده و آرشیو ابدی</p>
                   </div>
                 </div>

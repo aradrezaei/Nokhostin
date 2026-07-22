@@ -74,9 +74,7 @@ export default function UserMenu() {
           className="nav-dropdown absolute left-0 top-[calc(100%+8px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-[0_16px_40px_-12px_rgba(15,23,42,0.2)] dark:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.55)]"
         >
           <div className="border-b border-[var(--nav-border)] px-3.5 py-3">
-            <p className="truncate text-sm font-semibold text-[var(--nav-ink)]">
-              {user.fullName}
-            </p>
+            <p className="truncate text-sm font-semibold text-[var(--nav-ink)]">{user.fullName}</p>
             <p className="mt-0.5 text-[11px] font-medium text-[var(--brand)]">
               {ROLE_LABEL[user.role]}
             </p>

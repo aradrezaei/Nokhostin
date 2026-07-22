@@ -48,7 +48,15 @@ export default function Medal({
       {/* medal body */}
       <circle cx="50" cy="60" r="30" fill={t.ring} />
       <circle cx="50" cy="60" r="26" fill={`url(#m-${gid})`} />
-      <circle cx="50" cy="60" r="26" fill="none" stroke="#ffffff" strokeOpacity="0.5" strokeWidth="1.5" />
+      <circle
+        cx="50"
+        cy="60"
+        r="26"
+        fill="none"
+        stroke="#ffffff"
+        strokeOpacity="0.5"
+        strokeWidth="1.5"
+      />
       {/* sheen */}
       <path d="M32 46 A26 26 0 0 1 66 44 Q50 40 32 46 Z" fill="#ffffff" opacity="0.25" />
 

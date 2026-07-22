@@ -94,24 +94,24 @@ export default function DashboardHome() {
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-          {items.slice(0, 4).map((entry) => (
-            <ClassCard
-              key={entry.enrollmentId}
-              href={`/dashboard/courses/${entry.class.id}`}
-              tuitionPaid={entry.tuitionPaid}
-              item={{
-                id: entry.class.id,
-                title: entry.class.title,
-                termNumber: entry.class.termNumber,
-                totalSessions: entry.class.totalSessions,
-                schedule: entry.class.schedule,
-                status: entry.class.status,
-                course: entry.class.course,
-                teacher: entry.class.teacher,
-                sessionsHeld: entry.class.sessionsHeld,
-              }}
-            />
-          ))}
+            {items.slice(0, 4).map((entry) => (
+              <ClassCard
+                key={entry.enrollmentId}
+                href={`/dashboard/courses/${entry.class.id}`}
+                tuitionPaid={entry.tuitionPaid}
+                item={{
+                  id: entry.class.id,
+                  title: entry.class.title,
+                  termNumber: entry.class.termNumber,
+                  totalSessions: entry.class.totalSessions,
+                  schedule: entry.class.schedule,
+                  status: entry.class.status,
+                  course: entry.class.course,
+                  teacher: entry.class.teacher,
+                  sessionsHeld: entry.class.sessionsHeld,
+                }}
+              />
+            ))}
           </div>
         )}
       </section>

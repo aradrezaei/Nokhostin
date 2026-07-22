@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ComponentType,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -96,9 +90,7 @@ function CourseMenu({ onNavigate }: { onNavigate: () => void }) {
     >
       <div className="flex items-center justify-between gap-4 border-b border-[var(--nav-border)] px-5 py-3.5">
         <div>
-          <p className="text-[13px] font-semibold text-[var(--nav-ink)]">
-            دپارتمان‌های آموزشی
-          </p>
+          <p className="text-[13px] font-semibold text-[var(--nav-ink)]">دپارتمان‌های آموزشی</p>
           <p className="mt-0.5 text-[11px] text-[var(--nav-muted-ink)]">
             مسیر یادگیری‌ات را انتخاب کن
           </p>
@@ -189,8 +181,7 @@ function MobileMenu({
 
   if (!open) return null;
 
-  const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 
   return (
     <div
@@ -404,8 +395,7 @@ export default function Navbar() {
     });
   };
 
-  const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 
   const openCourseMenu = () => {
     if (courseMenuTimerRef.current) clearTimeout(courseMenuTimerRef.current);

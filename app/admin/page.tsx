@@ -2,14 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  BookMarked,
-  Building2,
-  GraduationCap,
-  Newspaper,
-  UserCog,
-  Users,
-} from 'lucide-react';
+import { BookMarked, Building2, GraduationCap, Newspaper, UserCog, Users } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import type { Paginated } from '@/lib/types';
 import { toFa } from '@/lib/format';

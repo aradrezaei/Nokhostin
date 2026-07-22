@@ -15,12 +15,7 @@ export default function ProfilePage() {
     { label: 'نقش', value: ROLE_LABEL[user.role] },
     {
       label: 'نوع هنرجو',
-      value:
-        user.role !== 'student'
-          ? '—'
-          : user.studentType === 'online'
-            ? 'آنلاین'
-            : 'حضوری',
+      value: user.role !== 'student' ? '—' : user.studentType === 'online' ? 'آنلاین' : 'حضوری',
     },
     { label: 'وضعیت حساب', value: user.status === 'active' ? 'فعال' : 'غیرفعال' },
   ];
@@ -38,7 +33,9 @@ export default function ProfilePage() {
       <Card className="divide-y divide-slate-100 !p-0 dark:divide-slate-800">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-4">
-            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">{row.label}</span>
+            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
+              {row.label}
+            </span>
             <span
               dir={row.ltr ? 'ltr' : undefined}
               className="text-sm font-black text-slate-900 dark:text-white"

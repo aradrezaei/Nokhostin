@@ -1,7 +1,14 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Building2, BookMarked, GraduationCap, LayoutDashboard, Newspaper, Users } from 'lucide-react';
+import {
+  Building2,
+  BookMarked,
+  GraduationCap,
+  LayoutDashboard,
+  Newspaper,
+  Users,
+} from 'lucide-react';
 import PanelLayout from '@/components/panel/PanelLayout';
 
 const NAV = [

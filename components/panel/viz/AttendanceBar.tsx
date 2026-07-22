@@ -40,7 +40,10 @@ export default function AttendanceBar({
       </div>
       <div className="flex flex-wrap gap-x-5 gap-y-1.5">
         {segments.map((s) => (
-          <span key={s.key} className="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300">
+          <span
+            key={s.key}
+            className="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
             <span className={`h-2.5 w-2.5 rounded-full ${s.color}`} />
             {s.label}
             <span className="text-slate-400 dark:text-slate-500">({toFa(s.value)})</span>

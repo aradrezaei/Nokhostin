@@ -65,7 +65,7 @@ export default function FAQSection() {
             >
               <summary className="flex items-center justify-between gap-4 p-4 text-sm md:text-base font-bold text-gray-900 dark:text-white cursor-pointer list-none select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:rounded-xl">
                 <span>{item.question}</span>
-                <span 
+                <span
                   className="text-blue-600 dark:text-blue-500 text-lg transition-transform duration-150 group-open:rotate-45"
                   aria-hidden="true"
                 >

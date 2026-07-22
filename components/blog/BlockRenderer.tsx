@@ -10,7 +10,10 @@ function renderSpan(span: Span, index: number) {
 
   if (span.href) {
     node = (
-      <a href={span.href} className="text-violet-600 underline underline-offset-2 dark:text-violet-400">
+      <a
+        href={span.href}
+        className="text-violet-600 underline underline-offset-2 dark:text-violet-400"
+      >
         {node}
       </a>
     );
@@ -18,13 +21,25 @@ function renderSpan(span: Span, index: number) {
   if (marks.includes('bold')) node = <strong className="font-black">{node}</strong>;
   if (marks.includes('italic')) node = <em>{node}</em>;
   if (marks.includes('lead')) {
-    node = <span className="text-xl font-bold leading-9 text-slate-800 dark:text-slate-100 sm:text-2xl">{node}</span>;
+    node = (
+      <span className="text-xl font-bold leading-9 text-slate-800 dark:text-slate-100 sm:text-2xl">
+        {node}
+      </span>
+    );
   }
 
   return <span key={index}>{node}</span>;
 }
 
-function EmbedFrame({ provider, url, title }: { provider: 'youtube' | 'aparat'; url: string; title?: string }) {
+function EmbedFrame({
+  provider,
+  url,
+  title,
+}: {
+  provider: 'youtube' | 'aparat';
+  url: string;
+  title?: string;
+}) {
   let src = url;
   if (provider === 'youtube') {
     const id = url.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1];
@@ -50,11 +65,18 @@ function EmbedFrame({ provider, url, title }: { provider: 'youtube' | 'aparat'; 
 function BlogImage({ media, alt, caption }: { media?: MediaAsset; alt: string; caption?: string }) {
   if (!media) return null;
   const style: CSSProperties = media.placeholder
-    ? { backgroundImage: `url(${media.placeholder})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    ? {
+        backgroundImage: `url(${media.placeholder})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
     : {};
   return (
     <figure className="my-6">
-      <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700" style={style}>
+      <div
+        className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700"
+        style={style}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={media.url}
@@ -67,7 +89,9 @@ function BlogImage({ media, alt, caption }: { media?: MediaAsset; alt: string; c
         />
       </div>
       {caption && (
-        <figcaption className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">{caption}</figcaption>
+        <figcaption className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
+          {caption}
+        </figcaption>
       )}
     </figure>
   );
@@ -91,18 +115,37 @@ export default function BlockRenderer({
                 : block.level === 3
                   ? 'mt-6 text-xl font-black text-slate-900 dark:text-white sm:text-2xl'
                   : 'mt-4 text-lg font-bold text-slate-900 dark:text-white';
-            if (block.level === 2) return <h2 key={index} className={cls}>{block.text}</h2>;
-            if (block.level === 3) return <h3 key={index} className={cls}>{block.text}</h3>;
-            return <h4 key={index} className={cls}>{block.text}</h4>;
+            if (block.level === 2)
+              return (
+                <h2 key={index} className={cls}>
+                  {block.text}
+                </h2>
+              );
+            if (block.level === 3)
+              return (
+                <h3 key={index} className={cls}>
+                  {block.text}
+                </h3>
+              );
+            return (
+              <h4 key={index} className={cls}>
+                {block.text}
+              </h4>
+            );
           }
           case 'paragraph':
             return (
-              <p key={index}>
-                {(block.spans as Span[]).map((span, i) => renderSpan(span, i))}
-              </p>
+              <p key={index}>{(block.spans as Span[]).map((span, i) => renderSpan(span, i))}</p>
             );
           case 'image':
-            return <BlogImage key={index} media={mediaMap[block.mediaId]} alt={block.alt} caption={block.caption} />;
+            return (
+              <BlogImage
+                key={index}
+                media={mediaMap[block.mediaId]}
+                alt={block.alt}
+                caption={block.caption}
+              />
+            );
           case 'quote':
             return (
               <blockquote
@@ -110,7 +153,11 @@ export default function BlockRenderer({
                 className="my-6 border-r-4 border-violet-500 bg-violet-50 px-5 py-4 text-slate-700 dark:bg-violet-950/30 dark:text-slate-200"
               >
                 <p className="font-medium">{block.text}</p>
-                {block.cite && <cite className="mt-2 block text-sm not-italic text-slate-500">— {block.cite}</cite>}
+                {block.cite && (
+                  <cite className="mt-2 block text-sm not-italic text-slate-500">
+                    — {block.cite}
+                  </cite>
+                )}
               </blockquote>
             );
           case 'list':
@@ -129,12 +176,23 @@ export default function BlockRenderer({
             );
           case 'code':
             return (
-              <pre key={index} dir="ltr" className="my-6 overflow-x-auto rounded-2xl bg-slate-900 p-4 text-left text-sm text-slate-100">
+              <pre
+                key={index}
+                dir="ltr"
+                className="my-6 overflow-x-auto rounded-2xl bg-slate-900 p-4 text-left text-sm text-slate-100"
+              >
                 <code>{block.code}</code>
               </pre>
             );
           case 'embed':
-            return <EmbedFrame key={index} provider={block.provider} url={block.url} title={block.title} />;
+            return (
+              <EmbedFrame
+                key={index}
+                provider={block.provider}
+                url={block.url}
+                title={block.title}
+              />
+            );
           case 'divider':
             return <hr key={index} className="my-8 border-slate-200 dark:border-slate-800" />;
           default:

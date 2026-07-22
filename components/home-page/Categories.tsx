@@ -215,7 +215,10 @@ export default function CategoriesSection() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
-          <h2 id="categories-section-heading" className="text-3xl font-extrabold text-[#4B4B4B] dark:text-white">
+          <h2
+            id="categories-section-heading"
+            className="text-3xl font-extrabold text-[#4B4B4B] dark:text-white"
+          >
             دسته‌بندی‌ها
           </h2>
           <button type="button" className="text-sm font-extrabold text-[#1CB0F6] hover:underline">

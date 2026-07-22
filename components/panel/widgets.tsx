@@ -38,12 +38,22 @@ export function SectionTitle({ title, hint }: { title: string; hint?: string }) 
   return (
     <div className="mb-3">
       <h2 className="text-lg font-black text-slate-900 dark:text-white">{title}</h2>
-      {hint && <p className="mt-0.5 text-xs font-bold text-slate-400 dark:text-slate-500">{hint}</p>}
+      {hint && (
+        <p className="mt-0.5 text-xs font-bold text-slate-400 dark:text-slate-500">{hint}</p>
+      )}
     </div>
   );
 }
 
-export function EmptyState({ icon, title, hint }: { icon?: ReactNode; title: string; hint?: string }) {
+export function EmptyState({
+  icon,
+  title,
+  hint,
+}: {
+  icon?: ReactNode;
+  title: string;
+  hint?: string;
+}) {
   return (
     <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 px-6 py-12 text-center dark:border-slate-700">
       {icon && (

@@ -5,7 +5,16 @@ import { BookMarked, Plus, Trash2 } from 'lucide-react';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Course, Institute, Paginated } from '@/lib/types';
-import { Alert, Button, Card, Field, Modal, Select, TextInput, Textarea } from '@/components/panel/ui';
+import {
+  Alert,
+  Button,
+  Card,
+  Field,
+  Modal,
+  Select,
+  TextInput,
+  Textarea,
+} from '@/components/panel/ui';
 import { EmptyState, Spinner } from '@/components/panel/widgets';
 
 export default function AdminCoursesPage() {
@@ -207,10 +216,7 @@ export default function AdminCoursesPage() {
             <Button variant="ghost" onClick={() => setOpen(false)}>
               انصراف
             </Button>
-            <Button
-              onClick={submit}
-              disabled={saving || form.name.length < 2 || !form.instituteId}
-            >
+            <Button onClick={submit} disabled={saving || form.name.length < 2 || !form.instituteId}>
               {saving ? 'در حال ثبت…' : 'ثبت'}
             </Button>
           </div>

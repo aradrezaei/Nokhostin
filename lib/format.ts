@@ -48,7 +48,9 @@ export function formatDate(value: string | Date | null | undefined): string {
 }
 
 /** Human schedule, e.g. «شنبه و دوشنبه · ۱۷:۳۰». */
-export function formatSchedule(schedule: { days: WeekDay[]; time: string } | null | undefined): string {
+export function formatSchedule(
+  schedule: { days: WeekDay[]; time: string } | null | undefined,
+): string {
   if (!schedule || schedule.days.length === 0) return '—';
   const ordered = WEEKDAYS_ORDER.filter((d) => schedule.days.includes(d));
   const days = ordered.map((d) => WEEKDAY_LABEL[d]).join(' و ');

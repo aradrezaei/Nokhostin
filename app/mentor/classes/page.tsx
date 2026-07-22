@@ -39,7 +39,9 @@ export default function MentorClassesPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white">کلاس‌های من</h1>
-          <p className="mt-1 text-sm font-bold text-slate-400">فقط کلاس‌هایی که استاد آن‌ها هستید</p>
+          <p className="mt-1 text-sm font-bold text-slate-400">
+            فقط کلاس‌هایی که استاد آن‌ها هستید
+          </p>
         </div>
         <Select value={status} onChange={(e) => setStatus(e.target.value)} className="w-44">
           <option value="">همه</option>

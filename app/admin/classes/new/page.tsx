@@ -5,13 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { WEEKDAY_LABEL, WEEKDAYS_ORDER } from '@/lib/format';
-import type {
-  Course,
-  Institute,
-  ManagedUser,
-  Paginated,
-  WeekDay,
-} from '@/lib/types';
+import type { Course, Institute, ManagedUser, Paginated, WeekDay } from '@/lib/types';
 import { Alert, Button, Card, Field, Select, TextInput } from '@/components/panel/ui';
 
 export default function AdminNewClassPage() {

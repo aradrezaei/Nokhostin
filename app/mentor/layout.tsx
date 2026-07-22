@@ -11,7 +11,12 @@ const NAV = [
 
 export default function MentorLayout({ children }: { children: ReactNode }) {
   return (
-    <PanelLayout title="پنل استاد" subtitle="آموزشگاه نخستین" allowedRoles={['mentor']} navItems={NAV}>
+    <PanelLayout
+      title="پنل استاد"
+      subtitle="آموزشگاه نخستین"
+      allowedRoles={['mentor']}
+      navItems={NAV}
+    >
       {children}
     </PanelLayout>
   );

@@ -48,7 +48,9 @@ export default async function BlogListPage() {
 
         {items.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[rgba(124,58,237,0.18)] bg-[rgba(124,58,237,0.05)] py-20 text-center dark:border-[rgba(167,139,250,0.28)]">
-            <p className="text-base text-[#665f7d] dark:text-[#a99fc4]">هنوز مقاله‌ای منتشر نشده است.</p>
+            <p className="text-base text-[#665f7d] dark:text-[#a99fc4]">
+              هنوز مقاله‌ای منتشر نشده است.
+            </p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
