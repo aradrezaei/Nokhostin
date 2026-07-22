@@ -7,7 +7,7 @@ import { Download, Plus, Trash2, UserPlus } from 'lucide-react';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { downloadAuthed } from '@/lib/download';
-import { CLASS_STATUS_LABEL, formatDate, formatSchedule, toFa } from '@/lib/format';
+import { CLASS_STATUS_LABEL, SESSION_STATUS_LABEL, formatDate, formatSchedule, toFa } from '@/lib/format';
 import type { ClassDetail, ManagedUser, Paginated } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Badge, Button, Card, Field, Modal, TextInput } from '@/components/panel/ui';
@@ -280,13 +280,9 @@ export default function AdminClassDetailPage() {
                 <p className="text-xs font-bold text-slate-400">{formatDate(s.scheduledDate)}</p>
               </div>
               <Badge
-                tone={s.status === 'held' ? 'green' : s.status === 'canceled' ? 'gray' : 'violet'}
+                tone={s.status === 'held' ? 'green' : s.status === 'canceled' ? 'amber' : 'violet'}
               >
-                {s.status === 'held'
-                  ? 'برگزارشده'
-                  : s.status === 'canceled'
-                    ? 'لغو'
-                    : 'برنامه‌ریزی'}
+                {SESSION_STATUS_LABEL[s.status] ?? s.status}
               </Badge>
             </div>
           ))}
