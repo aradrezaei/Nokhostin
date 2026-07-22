@@ -92,7 +92,7 @@ export default function HomePage() {
     <>
       <HeroSection />
       <CategoriesSection />
-      <CourseSlider />
+      {/* <CourseSlider /> */}
       {/* <EbookSlider /> */}
       <CertificateSection />
       {/* <TestimonialsSlider /> */}

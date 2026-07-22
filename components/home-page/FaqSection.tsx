@@ -1,78 +1,89 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
+// ─── SVG Icons (بدون کتابخانه) ────────────────────────────────────────────────
+
+const PlusIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+  >
+    <path d="M8 2V14M2 8H14" />
+  </svg>
+);
+
+const MinusIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+  >
+    <path d="M2 8H14" />
+  </svg>
+);
+
+// ─── Data ──────────────────────────────────────────────────────────────────────
 
 interface FAQItem {
   id: number;
   question: string;
   answer: string;
-  category: 'general' | 'courses' | 'payment' | 'certificate';
 }
-
-// ─── Data ───────────────────────────────────────────────────────────────────────
 
 const FAQS: FAQItem[] = [
   {
     id: 1,
-    category: 'general',
     question: 'آیا دوره‌ها به‌صورت آنلاین هستند یا حضوری؟',
-    answer:
-      'ما در آموزشگاه نخستین افتخار داریم دو نوع دوره حضوری و آنلاین رو خدمت مهارت آموزانمان ارائه دهیم.',
+    answer: 'ما در آموزشگاه نخستین هم دوره‌های حضوری و هم آنلاین داریم.',
   },
   {
     id: 2,
-    category: 'courses',
-    question: 'آیا برای شروع دوره‌ها نیاز به پیش‌نیاز خاصی دارم؟',
-    answer:
-      'برای دوره های پایه نیازی ببه پیش نیاز نیست اما دوره های سطح بالاتر نیازمند پیشنیاز های خاص خود هستند که در صفحه توضیحات همان دوره ذکر شده است.',
+    question: 'آیا برای شروع دوره‌ها نیاز به پیش‌نیاز است؟',
+    answer: 'دوره‌های پایه خیر، اما دوره‌های پیشرفته نیاز به بررسی دارند.',
   },
   {
     id: 3,
-    category: 'payment',
-    question: 'شرایط برگذاری دوره های حضوری به چه صورت است؟',
-    answer:
-      'ابتدا شما یک لیست از زمان های آزادتون به ما میدهید و سپس ما طبق آنها برایتان کلاس تشکیل میدهیم.',
+    question: 'شرایط برگزاری دوره‌های حضوری چیست؟',
+    answer: 'طبق زمان‌بندی آزاد شما، کلاس‌ها تنظیم می‌شود.',
   },
   {
     id: 4,
-    category: 'certificate',
     question: 'گواهی‌نامه دوره چه اعتباری دارد؟',
-    answer: 'ما در نخستین دو نوع گواهینامه صادر میکنیم که هر دو اعتبار بالایی دارند.',
+    answer: 'ما دو نوع گواهی با اعتبار بالا ارائه می‌دهیم.',
   },
   {
     id: 5,
-    category: 'courses',
-    question: 'آیا امکان دانلود ویدیوها برای مشاهده آفلاین وجود دارد؟',
-    answer:
-      'امکان دانلود ویدیو ها وجود ندارد اما تا ۶ ماه محتویات دوره در دسترس شما قرار دارد به همراه تیم پشتیبانیه ما.',
+    question: 'امکان مشاهده آفلاین ویدیوها وجود دارد؟',
+    answer: 'دانلود خیر، اما تا ۶ ماه به محتوا و پشتیبانی دسترسی دارید.',
   },
   {
     id: 6,
-    category: 'payment',
-    question: 'آیا امکان خرید اقساطی دوره‌ها وجود دارد؟',
-    answer:
-      'در هر دو نوع دوره هم حضوری و هم آنلاین امکان  پرداخت اقساطی وجود دارد اما با توجه به نوع دوره شرایط اقساط فرق میکند.',
+    question: 'امکان خرید اقساطی وجود دارد؟',
+    answer: 'بله، شرایط اقساطی برای تمام دوره‌ها فراهم است.',
   },
   {
     id: 7,
-    category: 'general',
-    question: 'تیم پشتیبانی چگونه و در چه ساعاتی پاسخگو است؟',
-    answer:
-      'تیم پشتیبانی ما از شنبه تا چهارشنبه ۸ تا ۲۰ و پنجشنبه‌ها ۸ تا ۱۴ آماده پاسخگویی است. می‌توانید از طریق چت آنلاین و تلفن با ما در ارتباط باشید. میانگین زمان پاسخ‌دهی ما کمتر از ۲ ساعت است.',
+    question: 'ساعات پاسخ‌دهی تیم پشتیبانی؟',
+    answer: 'شنبه تا چهارشنبه ۸ تا ۲۰، پنجشنبه‌ها ۸ تا ۱۴.',
   },
   {
     id: 8,
-    category: 'certificate',
-    question: 'چه زمانی گواهی‌نامه دوره صادر می‌شود؟',
-    answer:
-      'بعد از قبول شدن در امتحان داخلیه آموزشگاه مدرک داخلی آموزشگاه برای شما صادر میشود اما اگر به مدرک فنی و حرفه ای نیاز دارید پس از قبول شدن در ازمون داخلی  به نزدیکترین مرکز آموزشی در استان خود شمارا معرفی میکنیم و پس از قبول شدن در امتحان فنی و حرفه ای مدرک شما صادر میشود.',
+    question: 'چه زمانی گواهی‌نامه صادر می‌شود؟',
+    answer: 'پس از قبولی در آزمون داخلی و در صورت نیاز، آزمون فنی‌وحرفه‌ای.',
   },
 ];
 
-// ─── FAQ Item ──────────────────────────────────────────────────────────────────
+// ─── FAQ Component ─────────────────────────────────────────────────────────────
 
 function FAQRow({
   item,
@@ -85,43 +96,39 @@ function FAQRow({
 }) {
   return (
     <div
-      className={`border rounded-xl overflow-hidden transition-colors duration-200 ${
-        isOpen
-          ? 'border-purple-200 dark:border-purple-800 bg-white dark:bg-gray-900'
-          : 'border-gray-100 dark:border-gray-800/60 bg-white dark:bg-gray-900 hover:border-gray-200 dark:hover:border-gray-700'
-      }`}
+      className={`
+      border-2 border-[#E5E5E5] dark:border-[#37464F] 
+      border-b-[6px] rounded-2xl overflow-hidden
+      ${isOpen ? 'bg-[#f0fcff] dark:bg-[#1a2d33]' : 'bg-white dark:bg-[#202F36]'}
+    `}
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between gap-4 px-5 py-4 text-right"
-        aria-expanded={isOpen}
+        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-right"
       >
-        <span className="text-sm font-bold">{item.question}</span>
+        <span className="text-[15px] font-extrabold text-[#4B4B4B] dark:text-white">
+          {item.question}
+        </span>
         <span
-          className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
-            isOpen
-              ? ' bg-slate-300 dark:bg-slate-700 text-white'
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-400'
-          }`}
+          className={`
+          flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center
+          ${isOpen ? 'bg-[#1CB0F6] text-white' : 'bg-[#E5E5E5] dark:bg-[#37464F] text-[#77858F]'}
+        `}
         >
-          {isOpen ? <Minus size={12} /> : <Plus size={12} />}
+          {isOpen ? <MinusIcon /> : <PlusIcon />}
         </span>
       </button>
 
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <p className="px-5 pb-5 pt-4 text-sm text-gray-500 dark:text-gray-400 leading-7 border-t border-gray-50 dark:border-gray-800">
+      {isOpen && (
+        <div className="px-6 pb-5 text-[14px] font-bold text-[#77858F] dark:text-[#AFAFAF] leading-7 border-t-2 border-[#E5E5E5] dark:border-[#37464F] pt-4">
           {item.answer}
-        </p>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Main Component ─────────────────────────────────────────────────────────────
+// ─── Main Section ─────────────────────────────────────────────────────────────
 
 export default function FAQSection() {
   const [openId, setOpenId] = useState<number | null>(null);
@@ -133,32 +140,20 @@ export default function FAQSection() {
   const rightCol = FAQS.slice(half);
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-950" dir="rtl">
-      <div className="max-w-screen-xl mx-auto px-6">
-        {/* ── Header ── */}
-        <div className="max-w-xl mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-snug">
-            سوالات{' '}
-            <span className="relative">
-              متداول
-              <span className="absolute -bottom-1 right-0 left-0 h-[4px] bg-purple-500 rounded-full" />
-            </span>
+    <section className="py-20 bg-white dark:bg-[#131F24]" dir="rtl">
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-extrabold text-[#4B4B4B] dark:text-white mb-4">
+            سوالات متداول
           </h2>
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 leading-7">
-            پاسخ سوالات رایج را اینجا بیابید. اگر پاسخ خود را نیافتید,
-            <a href="./contact" className="text-purple-700 dark:text-purple-500">
-              {' '}
-              تیم پشتیبانی{' '}
-            </a>
-            ما آماده کمک است.
+          <p className="text-lg font-bold text-[#AFAFAF] dark:text-[#77858F]">
+            پاسخ سریع به سوالات پرتکرار شما.
           </p>
         </div>
 
-        {/* ── Two-column grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {/* Right column */}
-          <div className="flex flex-col gap-3">
-            {rightCol.map((item) => (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
+            {leftCol.map((item) => (
               <FAQRow
                 key={item.id}
                 item={item}
@@ -167,10 +162,8 @@ export default function FAQSection() {
               />
             ))}
           </div>
-
-          {/* Left column */}
-          <div className="flex flex-col gap-3">
-            {leftCol.map((item) => (
+          <div className="flex flex-col gap-4">
+            {rightCol.map((item) => (
               <FAQRow
                 key={item.id}
                 item={item}

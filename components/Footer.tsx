@@ -1,178 +1,149 @@
 import Link from 'next/link';
+import BrandMark from '@/components/BrandMark';
+import LinkColumn from '@/components/LinkColumn';
+import SocialLinks from '@/components/SocialLinks';
+import {
+  FOOTER_ABOUT,
+  FOOTER_COURSES,
+  FOOTER_LEARN,
+  LEGAL_LINKS,
+  SITE,
+} from '@/lib/site';
 
+/**
+ * Duolingo-inspired footer: vivid brand band, chunky 3D CTAs, soft course pills,
+ * static wave divider — no JS animation, weak-device friendly.
+ */
 export default function Footer() {
-  const quickLinks = [
-    { label: 'خانه', href: '/' },
-    { label: 'همه دوره‌ها', href: '/courses' },
-    { label: 'انواع دوره ها', href: '/course-types' },
-    { label: 'اساتید', href: '/teachers' },
-    { label: 'درباره ما', href: '/about' },
-    { label: 'بلاگ', href: '/blog' },
-    { label: 'تماس با ما', href: '/contact' },
-  ];
-
-  const categories = [
-    'برنامه‌نویسی',
-    'هوش مصنوعی',
-    'طراحی گرافیک',
-    'رباتیک',
-    'موسیقی',
-    'مهارت‌های مالی',
-    'هنرهای دستی',
-    'عکاسی',
-  ];
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-800">
-      <div className="relative max-w-7xl   mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {/* links */}
-          <div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 relative inline-block">
-              لینک‌های سریع
-              <span className="absolute -bottom-2 left-0 w-12 h-1 bg-purple-500 rounded-full" />
-            </h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-300" // فقط کلاس‌های مربوط به رنگ و transition حذف شدند
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+    <footer
+      dir="rtl"
+      itemScope
+      itemType="https://schema.org/EducationalOrganization"
+      className="relative overflow-hidden bg-[#7c3aed] text-white [content-visibility:auto] [contain-intrinsic-size:1px_1100px]"
+    >
+      <meta itemProp="name" content={SITE.name} />
 
-          {/* categroies */}
-          <div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 relative inline-block">
-              دسته‌بندی دوره‌ها
-              <span className="absolute -bottom-2 left-0 w-12 h-1 bg-purple-500 rounded-full" />
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {categories.map((cat) => (
-                <Link
-                  key={cat}
-                  href="/categories"
-                  className="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-100 dark:hover:bg-white/5 px-4 py-2 rounded-lg text-sm  border border-slate-200 dark:border-white/10 hover:border-purple-400/50"
-                >
-                  {cat}
-                </Link>
-              ))}
-            </div>
-          </div>
+      {/* static decorative blobs — paint once, no animation */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#a78bfa]/25"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -right-16 h-72 w-72 rounded-full bg-[#5b21b6]/40"
+      />
 
-          {/* contact */}
-          <div className="space-y-6 ">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 relative inline-block">
-              تماس با ما
-              <span className="absolute -bottom-2 left-0 w-12 h-1 bg-purple-500 rounded-full" />
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl  border border-purple-300 dark:border-purple-500/30">
-                  <svg
-                    className="w-5 h-5  text-purple-600 dark:text-purple-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-500">تلفن پشتیبانی</p>
-                  <p className="font-semibold text-slate-900 dark:text-white">021-65565004</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl lg border border-blue-300 dark:border-blue-500/30">
-                  <svg
-                    className="w-5 h-5 text-purple-600 dark:text-purple-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>{' '}
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-500">ایمیل</p>
-                  <p className="font-semibold text-slate-900 dark:text-white">
-                    info@nakhostin.academy
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl border border-indigo-300 dark:border-indigo-500/30">
-                  <svg
-                    className="w-5 h-5 text-purple-600 dark:text-purple-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>{' '}
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-500">آدرس</p>
-                  <p className="font-semibold text-slate-900 dark:text-white">
-                    تهران، اندیشه، فاز ۱، نرسیده به شاهد غربی
-                  </p>
-                </div>
-              </div>
-            </div>
+      {/* wave lip (Duolingo-style section join) */}
+      <div className="relative bg-[#fcfbff] dark:bg-[#0b1418]" aria-hidden>
+        <svg
+          viewBox="0 0 1440 48"
+          preserveAspectRatio="none"
+          className="block h-8 w-full text-[#7c3aed] sm:h-10"
+        >
+          <path
+            fill="currentColor"
+            d="M0,32 C240,64 480,0 720,24 C960,48 1200,8 1440,32 L1440,48 L0,48 Z"
+          />
+        </svg>
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-6 pb-12 pt-4">
+        {/* hero strip */}
+        <div className="mb-10 flex flex-col gap-6 rounded-3xl border-2 border-white/15 border-b-4 bg-[#6d28d9]/50 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <BrandMark tone="footer" />
+            <p className="mt-4 max-w-md text-base font-bold leading-7 text-[#ede9fe]">
+              یاد بگیر. تمرین کن. بدرخش. — مسیر مهارت، قدم‌به‌قدم مثل یک بازی.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/courses"
+              className="inline-flex items-center rounded-2xl border-2 border-[#5b21b6] border-b-4 bg-white px-5 py-3 text-sm font-black text-[#5b21b6]"
+            >
+              شروع یادگیری
+            </Link>
+            <a
+              href={SITE.phoneHref}
+              itemProp="telephone"
+              className="inline-flex items-center rounded-2xl border-2 border-white/25 border-b-4 bg-white/10 px-5 py-3 text-sm font-black text-white"
+            >
+              {SITE.phoneDisplay}
+            </a>
           </div>
         </div>
 
-        <div className="mt-16 mb-8   h-px bg-slate-200 dark:bg-slate-800  rounded-2xl" />
-
-        {/* end */}
-        <div className="flex flex-col justify-center text-center items-center gap-4 text-sm text-slate-600 dark:text-slate-500">
-          <div className="flex items-center gap-8">
-            <Link
-              href="/privacy"
-              className="hover:text-purple-600 dark:hover:text-purple-400 transition"
-            >
-              حریم خصوصی
-            </Link>
-            <Link
-              href="/terms"
-              className="hover:text-purple-600 dark:hover:text-purple-400 transition"
-            >
-              شرایط استفاده
-            </Link>
-            <Link
-              href="/faq"
-              className="hover:text-purple-600 dark:hover:text-purple-400 transition"
-            >
-              سوالات متداول
-            </Link>
+        {/* columns */}
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
+          <LinkColumn
+            title="آموزشگاه"
+            items={FOOTER_ABOUT}
+            titleClassName="text-white"
+            linkClassName="text-[15px] font-bold text-white"
+          />
+          <LinkColumn
+            title="یادگیری"
+            items={FOOTER_LEARN}
+            titleClassName="text-white"
+            linkClassName="text-[15px] font-bold text-white"
+          />
+          <LinkColumn
+            title="دوره‌ها"
+            items={FOOTER_COURSES.slice(0, 6)}
+            titleClassName="text-white"
+            linkClassName="text-[15px] font-bold text-white"
+          />
+          <div>
+            <h3 className="mb-5 text-sm font-black">ارتباط</h3>
+            <ul className="space-y-3 text-[15px] font-bold text-white">
+              <li>
+                <a href={`mailto:${SITE.email}`} itemProp="email">
+                  {SITE.email}
+                </a>
+              </li>
+              <li itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
+                <span itemProp="streetAddress">{SITE.address}</span>
+              </li>
+            </ul>
+            <SocialLinks className="mt-5" />
           </div>
-          <p>©آموزشگاه آزاد فنی و حرفه ای نخستین • تمام حقوق محفوظ است</p>
+        </div>
+
+        {/* course pill strip — Duolingo language-row vibe */}
+        <div className="mt-12 border-t border-white/15 pt-8">
+          <p className="mb-4 text-xs font-black uppercase tracking-wide text-[#c4b5fd]">
+            مسیرهای محبوب
+          </p>
+          <ul className="flex flex-wrap gap-2">
+            {FOOTER_COURSES.map((c) => (
+              <li key={c.href}>
+                <Link
+                  href={c.href}
+                  className="inline-flex items-center rounded-full border-2 border-white/20 border-b-4 bg-white/10 px-3.5 py-1.5 text-xs font-black text-white"
+                >
+                  {c.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="relative border-t border-white/15 bg-[#5b21b6]">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5 text-sm font-bold text-[#c4b5fd] sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {year} {SITE.name}
+          </p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+            {LEGAL_LINKS.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href}>{item.label}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

@@ -170,7 +170,7 @@ export default function HTMLCSSCoursePage() {
               <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 leading-relaxed max-w-xl font-medium">
                 بنیانِ وب فرانت‌اند را اصولی یاد بگیرید. این دوره به صورت هم‌زمان{' '}
                 <span className="text-gray-900 dark:text-white font-bold">حضوری (کارگاهی)</span> و{' '}
-                <span class="text-gray-900 dark:text-white font-bold">آنلاین (استریم زنده)</span>{' '}
+                <span className="text-gray-900 dark:text-white font-bold">آنلاین (استریم زنده)</span>{' '}
                 برگزار شده و در نهایت منجر به صدور{' '}
                 <span className="text-purple-600 dark:text-purple-400 font-bold">
                   مدرک رسمی سازمان فنی و حرفه‌ای کشور
@@ -185,8 +185,8 @@ export default function HTMLCSSCoursePage() {
                     <MapPin size={18} />
                   </div>
                   <div>
-                    <h4 class="font-bold text-gray-900 dark:text-white text-sm">برگزاری حضوری</h4>
-                    <p class="text-[11px] text-gray-400 mt-0.5">سایت‌های مجهز آکادمی</p>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">برگزاری حضوری</h4>
+                    <p className="text-[11px] text-gray-400 mt-0.5">سایت‌های مجهز آکادمی</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-800/60 rounded-2xl">
@@ -194,8 +194,8 @@ export default function HTMLCSSCoursePage() {
                     <Video size={18} />
                   </div>
                   <div>
-                    <h4 class="font-bold text-gray-900 dark:text-white text-sm">برگزاری آنلاین</h4>
-                    <p class="text-[11px] text-gray-400 mt-0.5">پخش زنده و آرشیو ابدی</p>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">برگزاری آنلاین</h4>
+                    <p className="text-[11px] text-gray-400 mt-0.5">پخش زنده و آرشیو ابدی</p>
                   </div>
                 </div>
               </div>
@@ -254,12 +254,12 @@ export default function HTMLCSSCoursePage() {
                     <span className="text-gray-900 dark:text-white font-bold">
                       Build The Modern Web
                     </span>
-                    &lt;/<span class="text-indigo-600 dark:text-indigo-400">h1</span>&gt;
+                    &lt;/<span className="text-indigo-600 dark:text-indigo-400">h1</span>&gt;
                   </p>
                   <p className="pl-4 text-purple-600 dark:text-purple-400">
                     &lt;<span className="text-indigo-600 dark:text-indigo-400">p</span>&gt;
                     <span className="text-gray-500">HTML5 & CSS3 Professional Course</span>&lt;/
-                    <span class="text-indigo-600 dark:text-indigo-400">p</span>&gt;
+                    <span className="text-indigo-600 dark:text-indigo-400">p</span>&gt;
                   </p>
                   <p className="text-purple-600 dark:text-purple-400">
                     &lt;/<span className="text-indigo-600 dark:text-indigo-400">div</span>&gt;
@@ -368,7 +368,7 @@ export default function HTMLCSSCoursePage() {
       {/* ─── ACCORDION SYLLABUS SECTION (سرفصل‌های لوکس آکاردئونی) ─── */}
       <section
         id="syllabus"
-        class="py-24 bg-gray-50/30 dark:bg-gray-950/40 border-t border-gray-100 dark:border-gray-900"
+        className="py-24 bg-gray-50/30 dark:bg-gray-950/40 border-t border-gray-100 dark:border-gray-900"
       >
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">

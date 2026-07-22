@@ -1,148 +1,235 @@
 'use client';
 
-import { Award, Globe, Building2, Landmark, Plane, BookOpen } from 'lucide-react';
+// آیکون‌های تمیز، دقیق و استاندارد (خط‌محور، بدون نیاز به کتابخانه)
+// نکته: تمام SVGها aria-hidden هستند چون صرفاً تزئینی‌اند و متن کنارشان محتوا را توضیح می‌دهد.
+const icons = {
+  Medal: () => (
+    <svg
+      className="w-full h-full"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle cx="12" cy="8" r="7" />
+      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+    </svg>
+  ),
+  Globe: () => (
+    <svg
+      className="w-full h-full"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  ),
+  Plane: () => (
+    <svg
+      className="w-full h-full"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <line x1="22" y1="2" x2="11" y2="13" />
+      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+    </svg>
+  ),
+  Bank: () => (
+    <svg
+      className="w-full h-full"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <line x1="3" y1="22" x2="21" y2="22" />
+      <line x1="6" y1="18" x2="6" y2="11" />
+      <line x1="10" y1="18" x2="10" y2="11" />
+      <line x1="14" y1="18" x2="14" y2="11" />
+      <line x1="18" y1="18" x2="18" y2="11" />
+      <polygon points="12 2 21 8 3 8 12 2" />
+    </svg>
+  ),
+  Store: () => (
+    <svg
+      className="w-full h-full"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <path d="M3 6h18" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  ),
+  Briefcase: () => (
+    <svg
+      className="w-full h-full"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    </svg>
+  ),
+};
 
-const certificateBenefits = [
+const benefits = [
   {
-    title: 'مدرک رسمی',
-    desc: 'صادر شده توسط سازمان آموزش فنی و حرفه‌ای کشور',
-    icon: Award,
-    color: 'text-violet-600 dark:text-violet-400',
-    bg: 'bg-violet-50 dark:bg-violet-900/20',
-    ring: 'ring-violet-200 dark:ring-violet-800',
+    title: 'مدرک فنی و حرفه‌ای',
+    desc: 'معتبر در سراسر کشور',
+    icon: icons.Medal,
+    color: 'text-[#58CC02]',
+    bg: 'bg-[#ddf4c4] dark:bg-[#2b4216]',
+    border: 'border-[#58CC02]',
+    hoverBorder: 'hover:border-[#58CC02]',
   },
   {
-    title: 'بین‌المللی',
-    desc: 'قابلیت ترجمه رسمی و معتبر در سراسر دنیا',
-    icon: Globe,
-    color: 'text-sky-600 dark:text-sky-400',
-    bg: 'bg-sky-50 dark:bg-sky-900/20',
-    ring: 'ring-sky-200 dark:ring-sky-800',
+    title: 'اعتبار جهانی',
+    desc: 'قابل ترجمه رسمی برای خارج',
+    icon: icons.Globe,
+    color: 'text-[#1CB0F6]',
+    bg: 'bg-[#d1effc] dark:bg-[#123e53]',
+    border: 'border-[#1CB0F6]',
+    hoverBorder: 'hover:border-[#1CB0F6]',
   },
   {
-    title: 'مهاجرت',
-    desc: 'امتیاز مثبت در پرونده‌های مهاجرتی و کاری',
-    icon: Plane,
-    color: 'text-rose-600 dark:text-rose-400',
-    bg: 'bg-rose-50 dark:bg-rose-900/20',
-    ring: 'ring-rose-200 dark:ring-rose-800',
+    title: 'امتیاز مهاجرت',
+    desc: 'امتیاز طلایی برای ویزای کار',
+    icon: icons.Plane,
+    color: 'text-[#CE82FF]',
+    bg: 'bg-[#f4e0ff] dark:bg-[#402354]',
+    border: 'border-[#CE82FF]',
+    hoverBorder: 'hover:border-[#CE82FF]',
   },
   {
     title: 'وام خوداشتغالی',
-    desc: 'امکان دریافت وام‌های کم‌بهره کسب‌وکار',
-    icon: Landmark,
-    color: 'text-amber-600 dark:text-amber-400',
-    bg: 'bg-amber-50 dark:bg-amber-900/20',
-    ring: 'ring-amber-200 dark:ring-amber-800',
+    desc: 'امکان دریافت وام با بهره کم',
+    icon: icons.Bank,
+    color: 'text-[#E5A100]', // کمی تیره‌تر از زرد اصلی برای کنتراست بهتر روی پس‌زمینه روشن
+    bg: 'bg-[#fff0b3] dark:bg-[#4d3f00]',
+    border: 'border-[#E5A100]',
+    hoverBorder: 'hover:border-[#E5A100]',
   },
   {
     title: 'پروانه کسب',
-    desc: 'مجوز رسمی برای راه‌اندازی کسب‌وکار مستقل',
-    icon: Building2,
-    color: 'text-emerald-600 dark:text-emerald-400',
-    bg: 'bg-emerald-50 dark:bg-emerald-900/20',
-    ring: 'ring-emerald-200 dark:ring-emerald-800',
+    desc: 'مجوز رسمی راه‌اندازی کار',
+    icon: icons.Store,
+    color: 'text-[#FF4B4B]',
+    bg: 'bg-[#ffdbdb] dark:bg-[#4a1313]',
+    border: 'border-[#FF4B4B]',
+    hoverBorder: 'hover:border-[#FF4B4B]',
   },
   {
-    title: 'اعتبار در رزومه',
-    desc: 'تمایز حرفه‌ای در میان رقبا و بازار کار',
-    icon: BookOpen,
-    color: 'text-indigo-600 dark:text-indigo-400',
-    bg: 'bg-indigo-50 dark:bg-indigo-900/20',
-    ring: 'ring-indigo-200 dark:ring-indigo-800',
+    title: 'استخدام سریع',
+    desc: 'یک رزومه قدرتمند و متمایز',
+    icon: icons.Briefcase,
+    color: 'text-[#2B70C9]',
+    bg: 'bg-[#d6e5f7] dark:bg-[#102a4d]',
+    border: 'border-[#2B70C9]',
+    hoverBorder: 'hover:border-[#2B70C9]',
   },
 ];
 
 export default function CertificateSection() {
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-950" dir="rtl">
-      <div className="max-w-screen-xl mx-auto px-6">
-        {/* ── Layout: text right, items left ── */}
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24  items-start">
-          {/* ── Sticky text column ── */}
-          <div className=" lg:top-24 lg:w-96 flex-shrink-0">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-snug ">
-              چرا مدرک ما
-              <br />
-              <span className="relative inline-block mt-1">
-                ارزشمند است؟
-                <span className="absolute -bottom-1 right-0 left-0 h-[4px] bg-purple-500 rounded-full" />
-              </span>
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-6 ">
-              <br />
-              مجتمع فنی و حرفه‌ای «نخستین» افتخار دارد که دو نوع مدرک مجزا را به مهارت آموزان خود
-              ارائه نماید:
-              <br />
-              1. <strong>مدرک داخلی:</strong> این مدرک به صورت رسمی توسط مجتمع فنی و حرفه‌ای
-              «نخستین» صادر می‌گردد.
-              <br />
-              2. <strong>مدرک سازمان فنی و حرفه‌ای:</strong> این مجتمع، شما را به سازمان فنی و
-              حرفه‌ای معرفی می‌نماید. آزمون مربوطه درنزدیک‌ترین شعبه محل سکونت شما برگزار خواهد شد.
-              پس از موفقیت در آزمون، مدرک سازمان فنی و حرفه‌ای توسط آن مرجع صادر خواهد شد.
-            </p>
-          </div>
+    <section
+      className="py-16 px-6 bg-white dark:bg-[#131F24]"
+      dir="rtl"
+      aria-labelledby="certificate-section-heading"
+    >
+      <div className="max-w-4xl mx-auto">
+        {/* هدر */}
+        <div className="text-center mb-12">
+          <h2
+            id="certificate-section-heading"
+            className="text-3xl md:text-4xl font-extrabold text-[#4B4B4B] dark:text-white mb-4"
+          >
+            مدارک معتبر و بین‌المللی
+          </h2>
+          <p className="text-lg font-bold text-[#5B6472] dark:text-[#94A3B8]">
+            پس از پایان دوره، مدرکی بگیرید که همه‌جا خریدار دارد.
+          </p>
+        </div>
 
-          {/* ── Benefits grid ── */}
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {certificateBenefits.map((item, i) => {
-              const Icon = item.icon;
-              // alternate card sizes for visual rhythm
-              const isFeatured = i === 0 || i === 5;
-
-              return (
-                <div
-                  key={i}
+        {/* گرید کارت‌ها */}
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {benefits.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <li key={i} className="list-none">
+                <article
+                  itemScope
+                  itemType="https://schema.org/EducationalOccupationalCredential"
                   className={`
-                    group relative flex gap-4 items-start
-                    bg-white dark:bg-gray-900
-                    border border-gray-100 dark:border-gray-800
-                    hover:border-gray-200 dark:hover:border-gray-700
-                    rounded-2xl p-3
-                    transition-all duration-200
-                    ${isFeatured ? 'sm:col-span-2 sm:flex-row sm:items-center sm:gap-6' : ''}
+                    flex flex-col items-center text-center p-6
+                    bg-white dark:bg-[#202F36]
+                    border-2 border-[#E5E5E5] dark:border-[#37464F]
+                    border-b-[6px] rounded-2xl
+                    transition-colors duration-200
+                    ${item.hoverBorder}
                   `}
                 >
-                  {/* Icon */}
+                  {/* آیکون */}
                   <div
-                    className={`
-                    flex-shrink-0 w-11 h-11 rounded-2xl
-                    flex items-center justify-center
-                    ring-1 ${item.ring} ${item.bg}
-                  
-                    ${isFeatured ? 'w-14 h-14 rounded-3xl' : ''}
-                  `}
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 border-2 ${item.bg} ${item.color} ${item.border}`}
                   >
-                    <Icon className={`${item.color} ${isFeatured ? 'w-7 h-7' : 'w-5 h-5'}`} />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <h3
-                        className={`font-bold text-gray-900 dark:text-white ${isFeatured ? 'text-base' : 'text-sm'}`}
-                      >
-                        {item.title}
-                      </h3>
-                      {isFeatured && (
-                        <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full border border-indigo-100 dark:border-indigo-800">
-                          ویژه
-                        </span>
-                      )}
+                    <div className="w-8 h-8">
+                      <Icon />
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-6">
-                      {item.desc}
-                    </p>
                   </div>
 
-                  {/* subtle number */}
-                  <span className="absolute bottom-4 left-4 text-[11px] font-black text-gray-100 dark:text-gray-800 select-none tabular-nums">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                  {/* متن */}
+                  <h3
+                    itemProp="credentialCategory"
+                    className="text-lg font-extrabold text-[#4B4B4B] dark:text-white mb-2"
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    itemProp="description"
+                    className="text-sm font-bold text-[#5B6472] dark:text-[#94A3B8]"
+                  >
+                    {item.desc}
+                  </p>
+                </article>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

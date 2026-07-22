@@ -3,6 +3,195 @@
 
 @theme {
   --color-dark: #131f24;
+  --color-brand: #7c3aed;
+  --color-brand-deep: #5b21b6;
+}
+
+/* Shared navigation tokens */
+:root {
+  --nav-bg: #fcfbff;
+  --nav-muted: #f4f1fa;
+  --nav-border: #e8e4f0;
+  --nav-ink: #1a1430;
+  --nav-muted-ink: #6b6480;
+  --brand: #7c3aed;
+  --brand-deep: #5b21b6;
+}
+
+.dark {
+  color-scheme: dark;
+  --nav-bg: #131f24;
+  --nav-muted: #1a2830;
+  --nav-border: #2a3a44;
+  --nav-ink: #f5f3ff;
+  --nav-muted-ink: #9aa8b2;
+  --brand: #a78bfa;
+  --brand-deep: #8b5cf6;
+}
+
+/* Header shell */
+.nav-header {
+  border-bottom: 1px solid transparent;
+  background: color-mix(in srgb, var(--nav-bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.nav-header--scrolled {
+  border-bottom-color: var(--nav-border);
+  background: color-mix(in srgb, var(--nav-bg) 92%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--nav-border) 80%, transparent),
+    0 8px 24px -16px rgba(15, 23, 42, 0.12);
+}
+
+.dark .nav-header--scrolled {
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--nav-border) 80%, transparent),
+    0 8px 24px -16px rgba(0, 0, 0, 0.45);
+}
+
+/* Desktop nav links */
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.8125rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--nav-muted-ink);
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.nav-link:hover {
+  color: var(--nav-ink);
+  background: var(--nav-muted);
+}
+
+.nav-link--active {
+  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 8%, transparent);
+}
+
+.nav-link--active:hover {
+  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Icon buttons (theme / menu) */
+.nav-icon-btn {
+  display: inline-flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+  border: 1px solid var(--nav-border);
+  background: transparent;
+  color: var(--nav-muted-ink);
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+.nav-icon-btn:hover {
+  color: var(--nav-ink);
+  background: var(--nav-muted);
+  border-color: color-mix(in srgb, var(--nav-border) 60%, var(--nav-muted-ink));
+}
+
+.nav-icon-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Primary CTA in nav */
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  padding-inline: 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--brand);
+  border: 1px solid color-mix(in srgb, var(--brand) 70%, black);
+  border-bottom-width: 2px;
+  border-bottom-color: color-mix(in srgb, var(--brand) 45%, black);
+  box-shadow: 0 1px 0 rgba(76, 29, 149, 0.12);
+  transition:
+    transform 120ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.nav-cta:hover {
+  background: var(--brand-deep);
+  transform: translateY(-1px);
+}
+
+.nav-cta:active {
+  transform: translateY(1px);
+  border-bottom-width: 1px;
+}
+
+.nav-cta:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@keyframes nav-dropdown-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nav-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.nav-dropdown {
+  transform-origin: top center;
+  animation: nav-dropdown-in 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav-drawer {
+  animation: nav-drawer-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-header,
+  .nav-link,
+  .nav-icon-btn,
+  .nav-cta {
+    transition: none;
+  }
+
+  .nav-dropdown,
+  .nav-drawer {
+    animation: none;
+  }
 }
 
 @font-face {
@@ -34,11 +223,7 @@
     pointer !important;
   image-rendering: pixelated;
 }
-.dark {
-  color-scheme: dark;
-}
 
-/* انیمیشن fade-in برای transitions */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -157,13 +342,6 @@
   animation-delay: 2s;
 }
 
-/* Ensure the dark mode transition is smooth */
-html.dark {
-  color-scheme: dark;
-}
-
-
-
 /* Custom utility for border-width (if not already defined in your Tailwind config) */
 .border-3 {
   border-width: 3px;
@@ -273,6 +451,18 @@ html.dark {
     }
   }
 } */
-@property --n-a { syntax: '<integer>'; initial-value: 0; inherits: false; }
-@property --n-b { syntax: '<integer>'; initial-value: 0; inherits: false; }
-@property --n-c { syntax: '<integer>'; initial-value: 0; inherits: false; }
+@property --n-a {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}
+@property --n-b {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}
+@property --n-c {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}

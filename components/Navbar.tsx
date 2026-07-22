@@ -1,625 +1,519 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentType,
+} from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Code2, BrainCircuit, Calculator, Bot, Palette, Camera, Languages } from 'lucide-react';
-// TYPES & DATA
-interface SubCategory {
-  name: string;
-  slug: string;
-}
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  Bot,
+  BrainCircuit,
+  Calculator,
+  ChevronDown,
+  ChevronLeft,
+  Code2,
+  Menu,
+  Monitor,
+  Moon,
+  Palette,
+  Sun,
+  UserRound,
+  X,
+} from 'lucide-react';
+import { useAuth } from '@/lib/auth';
+import { panelHome } from '@/lib/roles';
+import { NAV_ITEMS } from '@/lib/site';
+import UserMenu from '@/components/panel/UserMenu';
+import BrandMark from '@/components/BrandMark';
 
-interface AcademyDepartment {
+type IconComponent = ComponentType<{ className?: string; strokeWidth?: number }>;
+type CourseLink = { name: string; href: string };
+type Department = {
   id: string;
   title: string;
-  icon: string;
-  badge?: string;
-  subItems: SubCategory[];
-}
+  icon: IconComponent;
+  courses: CourseLink[];
+};
 
-const NAV_ITEMS = [
-  { href: '/', label: 'خانه' },
-  { href: '/courses', label: 'دوره‌ها' },
-  { href: '/contact', label: 'تماس با ما' },
-  { href: '/blog', label: 'مجله علمی' },
-  { href: '/about', label: 'درباره آکادمی' },
-];
-
-const ACADEMY_DEPARTMENTS: AcademyDepartment[] = [
+const DEPARTMENTS: Department[] = [
   {
     id: 'programming',
-    title: 'برنامه نویسی',
-    icon: <Code2 />,
-    subItems: [
-      { name: 'پایتون', slug: 'frontend' },
-      { name: ' بک‌اند (/)', slug: 'backend' },
-      { name: 'هوش مصنوعی و یادگیری ماشین', slug: 'ai-ml' },
-      { name: 'امنیت شبکه و تست نفوذ', slug: 'security' },
+    title: 'برنامه‌نویسی',
+    icon: Code2,
+    courses: [
+      { name: 'آموزش پایتون', href: '/courses/python-programming' },
+      { name: 'طراحی وب HTML و CSS', href: '/courses/web-html' },
+      { name: 'برنامه‌نویسی PHP', href: '/courses/php-course' },
     ],
   },
   {
     id: 'ai',
     title: 'هوش مصنوعی',
-    icon: <BrainCircuit />,
-    subItems: [
-      { name: 'توسعه فرانت‌اند (React/ .js)', slug: 'frontend' },
-      { name: 'برنامه‌نویسی بک‌اند (Node.js/Python)', slug: 'backend' },
-      { name: 'هوش مصنوعی و یادگیری ماشین', slug: 'ai-ml' },
-      { name: 'امنیت شبکه و تست نفوذ', slug: 'security' },
-    ],
+    icon: BrainCircuit,
+    courses: [{ name: 'دوره هوش مصنوعی', href: '/courses/ai' }],
   },
   {
-    id: 'accounting',
-    title: 'امور مالی و حسابداری ',
-    icon: <Calculator />,
-    subItems: [
-      { name: 'حسابداری ویژه بازار کار', slug: 'job-accounting' },
-      { name: 'قوانین مالیاتی و اظهارنامه', slug: 'tax-laws' },
-      { name: 'حسابداری مکانیزه (هلو و سپیدار)', slug: 'software-accounting' },
-    ],
+    id: 'computer',
+    title: 'مهارت‌های کامپیوتر',
+    icon: Monitor,
+    courses: [{ name: 'مهارت‌های هفت‌گانه ICDL', href: '/courses/icdl' }],
+  },
+  {
+    id: 'finance',
+    title: 'مالی و حسابداری',
+    icon: Calculator,
+    courses: [{ name: 'حسابداری و مالیات', href: '/courses/accounting' }],
   },
   {
     id: 'robotics',
     title: 'رباتیک',
-    icon: <Bot />,
-    subItems: [
-      { name: 'اینترنت اشیاء (IoT)', slug: 'iot' },
-      { name: 'طراحی و عیب‌یابی مدارهای الکترونیکی', slug: 'circuits' },
-      { name: 'برنامه‌نویسی میکروکنترلرها', slug: 'mcu' },
-    ],
+    icon: Bot,
+    courses: [{ name: 'دوره تخصصی رباتیک', href: '/courses/robotics' }],
   },
   {
-    id: 'photography',
-    title: 'عکاسی',
-    icon: <Camera />,
-    subItems: [
-      { name: 'طراحی گرافیک خلاقانه', slug: 'graphics' },
-      { name: 'تدوین ویدیو و جلوه‌های ویژه', slug: 'video-editing' },
-      { name: 'طراحی رابط کاربری (UI/UX)', slug: 'ui-ux' },
-    ],
-  },
-  {
-    id: 'language',
-    title: 'زبان',
-    icon: <Languages />,
-    subItems: [
-      { name: 'انگلیسی', slug: 'a' },
-      { name: 'آلمانی', slug: 'b' },
-      { name: 'چینی', slug: 'c' },
-      { name: 'ژاپنی', slug: 'd' },
-      { name: 'فرانسوی', slug: 'e' },
-      { name: 'عربی', slug: 'f' },
-    ],
-  },
-  {
-    id: 'Art',
-    title: 'هنر',
-    icon: <Palette />,
-    subItems: [
-      { name: 'موسیقی', slug: 'iot' },
-      { name: 'طراحی و نقاشی', slug: 'circuits' },
-      { name: 'خیاطی', slug: 'mcu' },
-      { name: 'طراحی لباس', slug: 'dokht' },
+    id: 'arts',
+    title: 'هنر و رسانه',
+    icon: Palette,
+    courses: [
+      { name: 'فتوشاپ', href: '/courses/photoshop' },
+      { name: 'عکاسی', href: '/courses/photo-graphi' },
+      { name: 'طراحی و نقاشی', href: '/courses/naghashi' },
     ],
   },
 ];
 
-// ─── PREMIUM ACADEMIC ICONS (SVG) ────────────────────────────────────────────
-const SearchIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-    />
-  </svg>
-);
-
-const BellIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-    />
-  </svg>
-);
-
-const SunIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12h-1m13.657-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
-    />
-  </svg>
-);
-
-const MoonIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-    />
-  </svg>
-);
-
-const ChevronDownIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-  </svg>
-);
-
-const ChevronLeftIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-  </svg>
-);
-
-const UserIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-    />
-  </svg>
-);
-
-const AcademicHomeIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-    />
-  </svg>
-);
-
-const GraduationCapIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M12 14l9-5-9-5-9 5 9 5z"
-    />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-    />
-  </svg>
-);
-
-const BookmarkIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-    />
-  </svg>
-);
-
-const CategoryIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.8}
-      d="M4 6h16M4 12h16M4 18h7"
-    />
-  </svg>
-);
-
-// ─── DESKTOP MEGA MENU ────────────────────────────────────────────────────────
-function DesktopMegaMenu({ visible }: { visible: boolean }) {
-  const [activeTab, setActiveTab] = useState(ACADEMY_DEPARTMENTS[0].id);
-  const currentDept =
-    ACADEMY_DEPARTMENTS.find((dept) => dept.id === activeTab) || ACADEMY_DEPARTMENTS[0];
-
-  if (!visible) return null;
-
+function CourseMenu({ onNavigate }: { onNavigate: () => void }) {
   return (
     <div
+      id="course-menu"
       role="menu"
-      className="absolute top-full right-0 mt-2 w-[750px] bg-white dark:bg-gray-950 rounded-2xl  border border-gray-100/70 dark:border-gray-800 flex overflow-hidden z-50 text-right animate-in fade-in slide-in-from-top-2 "
+      aria-label="دپارتمان‌های آموزشی"
+      className="nav-dropdown absolute left-1/2 top-[calc(100%+14px)] w-[min(720px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-[0_24px_64px_-16px_rgba(15,23,42,0.18)] dark:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.55)]"
     >
-      <div className="w-[45%] bg-gray-50/40 dark:bg-gray-900/40 p-4 border-l border-gray-100/70 dark:border-gray-800 max-h-[480px] overflow-y-auto">
-        <div className="space-y-1">
-          {ACADEMY_DEPARTMENTS.map((dept) => {
-            const isSelected = activeTab === dept.id;
-            return (
-              <button
-                key={dept.id}
-                onMouseEnter={() => setActiveTab(dept.id)}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all text-right font-semibold text-xs ${
-                  isSelected
-                    ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/10'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900'
-                }`}
-              >
-                <span className="text-xs">{dept.icon}</span>
-                <span className="flex-1 truncate">{dept.title}</span>
-                {dept.badge && (
-                  <span
-                    className={`px-1.5 py-0.5 text-[9px] rounded font-medium ${isSelected ? 'bg-white/20 text-white' : 'bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400'}`}
-                  >
-                    {dept.badge}
-                  </span>
-                )}
-                <ChevronLeftIcon
-                  className={`w-3.5 h-3.5 opacity-60 ${isSelected ? 'translate-x-1' : ''} transition-transform`}
-                />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="w-[55%] bg-white dark:bg-gray-950 p-5 flex flex-col justify-between max-h-[480px] overflow-y-auto">
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--nav-border)] px-5 py-3.5">
         <div>
-          <div className="grid grid-cols-1 gap-1">
-            {currentDept.subItems.map((sub) => (
-              <Link
-                key={sub.slug}
-                href={`/courses/${currentDept.id}/${sub.slug}`}
-                className="flex items-center justify-between px-3 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-900 text-xs font-semibold transition-colors"
-              >
-                <span>{sub.name}</span>
-                <span className="text-[10px] text-gray-400 font-normal">مشاهده سرفصل‌ها</span>
-              </Link>
-            ))}
-          </div>
+          <p className="text-[13px] font-semibold text-[var(--nav-ink)]">
+            دپارتمان‌های آموزشی
+          </p>
+          <p className="mt-0.5 text-[11px] text-[var(--nav-muted-ink)]">
+            مسیر یادگیری‌ات را انتخاب کن
+          </p>
         </div>
-
-        <div className="pt-4 mt-6 border-t border-gray-100/70 dark:border-gray-800/60 text-center">
-          <Link
-            href={`/courses/${currentDept.id}`}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
-          >
-            مشاهده تقویم آموزشی این دپارتمان
-            <ChevronLeftIcon className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── MOBILE BOTTOM CATEGORIES DRAWER ─────────────────────────────────────────
-function MobileCategoriesDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [selectedDept, setSelectedDept] = useState<AcademyDepartment | null>(null);
-
-  if (!isOpen) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-[100] bg-white dark:bg-gray-950 flex flex-col animate-in slide-in-from-bottom  text-right"
-      dir="rtl"
-    >
-      <div className="h-14 border-b border-gray-100/70 dark:border-gray-900 px-4 flex items-center justify-between flex-shrink-0">
-        {selectedDept ? (
-          <button
-            onClick={() => setSelectedDept(null)}
-            className="flex items-center gap-1 text-xs font-bold text-purple-600"
-          >
-            <ChevronLeftIcon className="w-4 h-4 rotate-180" />
-            <span>بازگشت</span>
-          </button>
-        ) : (
-          <span className="text-xs font-black text-gray-900 dark:text-white">دستبه بندی های</span>
-        )}
-        <button
-          onClick={onClose}
-          className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-400 text-xs font-bold"
+        <Link
+          href="/courses"
+          onClick={onNavigate}
+          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[var(--brand)] transition-colors hover:bg-[var(--nav-muted)]"
         >
-          ✕
-        </button>
+          همه دوره‌ها
+          <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.25} />
+        </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 pb-12">
-        {!selectedDept ? (
-          <div className="space-y-2">
-            {ACADEMY_DEPARTMENTS.map((dept) => (
-              <button
-                key={dept.id}
-                onClick={() => setSelectedDept(dept)}
-                className="w-full flex items-center justify-between p-4 bg-gray-50/60 dark:bg-gray-900 rounded-xl text-right transition-colors border border-transparent hover:border-gray-100"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-lg">{dept.icon}</span>
-                  <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
-                    {dept.title}
-                  </span>
-                </div>
-                <ChevronLeftIcon className="w-4 h-4 text-gray-400" />
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-1">
-            <p className="text-[11px] font-bold text-gray-400 mb-3 px-2">{selectedDept.title}</p>
-            {selectedDept.subItems.map((sub) => (
-              <Link
-                key={sub.slug}
-                href={`/courses/${selectedDept.id}/${sub.slug}`}
-                onClick={onClose}
-                className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100/50 dark:border-gray-900 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-transparent"
-              >
-                <span>{sub.name}</span>
-                <ChevronLeftIcon className="w-3.5 h-3.5 text-gray-400" />
-              </Link>
-            ))}
-          </div>
-        )}
+      <div className="grid grid-cols-3 gap-x-2 gap-y-1 p-3">
+        {DEPARTMENTS.map((department) => {
+          const Icon = department.icon;
+          return (
+            <section
+              key={department.id}
+              className="rounded-xl p-3 transition-colors hover:bg-[var(--nav-muted)]"
+            >
+              <div className="mb-2.5 flex items-center gap-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]">
+                  <Icon className="h-4 w-4" strokeWidth={2} />
+                </span>
+                <h2 className="text-[12px] font-semibold tracking-tight text-[var(--nav-ink)]">
+                  {department.title}
+                </h2>
+              </div>
+              <ul className="space-y-0.5 pr-[2.375rem]">
+                {department.courses.map((course) => (
+                  <li key={course.href}>
+                    <Link
+                      href={course.href}
+                      role="menuitem"
+                      onClick={onNavigate}
+                      className="block rounded-md px-1.5 py-1 text-[12px] leading-5 text-[var(--nav-muted-ink)] transition-colors hover:text-[var(--nav-ink)]"
+                    >
+                      {course.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// ─── MAIN HEADER & NAVBAR
-export default function Navbar() {
-  const pathname = usePathname();
-
-  // All Hooks are strictly defined inside the component body now
-  const [scrolled, setScrolled] = useState(false);
-  const [isDark, setIsDark] = useState(false);
-  const [megaOpen, setMegaOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [showMobileSearch, setShowMobileSearch] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  const megaRef = useRef<HTMLDivElement>(null);
-  const megaTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+function MobileMenu({
+  open,
+  onClose,
+  pathname,
+}: {
+  open: boolean;
+  onClose: () => void;
+  pathname: string;
+}) {
+  const [coursesOpen, setCoursesOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
+    if (!open) {
+      setCoursesOpen(false);
+      return;
+    }
+
+    closeBtnRef.current?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] xl:hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="منوی اصلی"
+    >
+      <button
+        type="button"
+        className="absolute inset-0 cursor-default bg-slate-950/40 backdrop-blur-[2px]"
+        onClick={onClose}
+        aria-label="بستن منو"
+      />
+
+      <aside className="nav-drawer absolute inset-y-0 right-0 flex w-[min(100vw-2.5rem,22rem)] flex-col border-l border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-2xl">
+        <div className="flex h-16 items-center justify-between px-4">
+          <Link href="/" onClick={onClose} aria-label="صفحه اصلی نخستین">
+            <BrandMark compact />
+          </Link>
+          <button
+            ref={closeBtnRef}
+            type="button"
+            onClick={onClose}
+            className="nav-icon-btn"
+            aria-label="بستن منو"
+          >
+            <X className="h-[18px] w-[18px]" strokeWidth={2} />
+          </button>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="منوی موبایل">
+          <div className="space-y-0.5">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                className={`block rounded-xl px-3.5 py-2.5 text-[14px] font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]'
+                    : 'text-[var(--nav-muted-ink)] hover:bg-[var(--nav-muted)] hover:text-[var(--nav-ink)]'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="my-3 h-px bg-[var(--nav-border)]" />
+
+          <button
+            type="button"
+            onClick={() => setCoursesOpen((value) => !value)}
+            aria-expanded={coursesOpen}
+            className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-[var(--nav-ink)] transition-colors hover:bg-[var(--nav-muted)]"
+          >
+            دپارتمان‌ها
+            <ChevronDown
+              className={`h-4 w-4 text-[var(--nav-muted-ink)] transition-transform duration-200 ${
+                coursesOpen ? 'rotate-180' : ''
+              }`}
+              strokeWidth={2}
+            />
+          </button>
+
+          {coursesOpen && (
+            <div className="mt-1 space-y-1 px-1 pb-2">
+              {DEPARTMENTS.map((department) => {
+                const Icon = department.icon;
+                return (
+                  <section key={department.id} className="rounded-xl px-2.5 py-2">
+                    <div className="mb-1.5 flex items-center gap-2">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] text-[var(--brand)]">
+                        <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+                      </span>
+                      <p className="text-[12px] font-semibold text-[var(--nav-ink)]">
+                        {department.title}
+                      </p>
+                    </div>
+                    <div className="space-y-0.5 pr-9">
+                      {department.courses.map((course) => (
+                        <Link
+                          key={course.href}
+                          href={course.href}
+                          onClick={onClose}
+                          className="block py-1 text-[12px] leading-5 text-[var(--nav-muted-ink)] transition-colors hover:text-[var(--nav-ink)]"
+                        >
+                          {course.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+              <Link
+                href="/courses"
+                onClick={onClose}
+                className="mx-2 mt-1 flex items-center justify-center gap-1 rounded-xl border border-[var(--nav-border)] px-3 py-2.5 text-[13px] font-semibold text-[var(--brand)] transition-colors hover:bg-[var(--nav-muted)]"
+              >
+                مشاهده همه دوره‌ها
+                <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.25} />
+              </Link>
+            </div>
+          )}
+        </nav>
+
+        <div className="space-y-2 border-t border-[var(--nav-border)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          {user ? (
+            <>
+              <Link
+                href={panelHome(user.role)}
+                onClick={onClose}
+                className="flex w-full flex-col rounded-xl border border-[var(--nav-border)] bg-[var(--nav-muted)] px-4 py-3 transition-colors hover:border-[color-mix(in_srgb,var(--brand)_35%,var(--nav-border))]"
+              >
+                <span className="truncate text-sm font-semibold text-[var(--nav-ink)]">
+                  {user.fullName}
+                </span>
+                <span className="mt-0.5 text-[11px] font-medium text-[var(--brand)]">
+                  ورود به پنل
+                </span>
+              </Link>
+              <button
+                type="button"
+                onClick={async () => {
+                  onClose();
+                  await logout();
+                  router.replace('/');
+                }}
+                className="flex w-full items-center justify-center rounded-xl border border-rose-200/80 px-4 py-2.5 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-400 dark:hover:bg-rose-950/40"
+              >
+                خروج از حساب
+              </button>
+            </>
+          ) : (
+            <Link href="/auth" onClick={onClose} className="nav-cta w-full">
+              <UserRound className="h-4 w-4" strokeWidth={2} />
+              ورود یا ثبت‌نام
+            </Link>
+          )}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+export default function Navbar() {
+  const pathname = usePathname() ?? '/';
+  const [isDark, setIsDark] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [courseMenuOpen, setCourseMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const courseMenuRef = useRef<HTMLDivElement>(null);
+  const courseMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeCourseMenu = useCallback(() => setCourseMenuOpen(false), []);
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const dark = saved === 'dark' || (!saved && prefersDark);
+    const dark = savedTheme === 'dark' || (!savedTheme && prefersDark);
     setIsDark(dark);
     document.documentElement.classList.toggle('dark', dark);
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setIsDark((prev) => {
-      const next = !prev;
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!courseMenuOpen) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (courseMenuRef.current && !courseMenuRef.current.contains(event.target as Node)) {
+        closeCourseMenu();
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeCourseMenu();
+    };
+
+    window.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [courseMenuOpen, closeCourseMenu]);
+
+  useEffect(() => {
+    closeCourseMenu();
+    closeMobileMenu();
+  }, [pathname, closeCourseMenu, closeMobileMenu]);
+
+  useEffect(() => {
+    return () => {
+      if (courseMenuTimerRef.current) clearTimeout(courseMenuTimerRef.current);
+    };
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDark((current) => {
+      const next = !current;
       document.documentElement.classList.toggle('dark', next);
       localStorage.setItem('theme', next ? 'dark' : 'light');
       return next;
     });
-  }, []);
+  };
 
-  // Combined Scroll Listener for clean performance
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href);
 
-      // 1. Core Header Border/Background effect
-      setScrolled(currentScrollY > 15);
+  const openCourseMenu = () => {
+    if (courseMenuTimerRef.current) clearTimeout(courseMenuTimerRef.current);
+    setCourseMenuOpen(true);
+  };
 
-      // 2. Smart Mobile Search Box Auto-Hide logic
-      if (currentScrollY < 10) {
-        setShowMobileSearch(true);
-        return;
-      }
-
-      if (Math.abs(currentScrollY - lastScrollY) > 10) {
-        if (currentScrollY > lastScrollY) {
-          setShowMobileSearch(false); // Scrolling Down
-        } else {
-          setShowMobileSearch(true); // Scrolling Up
-        }
-        setLastScrollY(currentScrollY);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  const scheduleCloseCourseMenu = () => {
+    courseMenuTimerRef.current = setTimeout(() => setCourseMenuOpen(false), 160);
+  };
 
   return (
     <>
-      {/* Desktop & Base Header */}
       <header
-        className={`fixed top-0 inset-x-0 z-40 text-right transition-all duration-300 ${
-          scrolled
-            ? 'bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-b border-gray-100/70 dark:border-gray-800/80 h-14 lg:h-16'
-            : 'bg-transparent border-b border-transparent h-16 lg:h-20' // این خط را تغییر دهید
-        }`}
         dir="rtl"
+        className={`nav-header fixed inset-x-0 top-0 z-50 h-16 ${scrolled ? 'nav-header--scrolled' : ''}`}
       >
-        <div className="max-w-screen-xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-6 lg:gap-8 flex-1">
-              <Link href="/" className="flex items-center gap-3 flex-shrink-0">
-                <div className="relative w-8 h-8 lg:w-9 lg:h-9 flex-shrink-0 rounded-xl overflow-hidden bg-purple-600 flex items-center justify-center shadow-sm">
-                  <img
-                    src="/logo-white.png"
-                    alt="آکادمی نخستین"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span className="hidden sm:block text-base lg:text-lg font-black text-gray-900 dark:text-white tracking-tight">
-                  آکادمی نخستین
-                </span>
-              </Link>
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-8">
+            <Link
+              href="/"
+              className="flex flex-shrink-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--nav-bg)] rounded-lg"
+              aria-label="صفحه اصلی آموزشگاه نخستین"
+            >
+              <span className="sm:hidden">
+                <BrandMark compact />
+              </span>
+              <span className="hidden sm:block">
+                <BrandMark />
+              </span>
+            </Link>
 
-              <nav
-                className="hidden lg:flex items-center gap-1 text-xs font-bold"
-                aria-label="Academic Navigation"
-              >
-                <div
-                  ref={megaRef}
-                  className="relative"
-                  onMouseEnter={() => {
-                    if (megaTimerRef.current) clearTimeout(megaTimerRef.current);
-                    setMegaOpen(true);
-                  }}
-                  onMouseLeave={() => {
-                    megaTimerRef.current = setTimeout(() => setMegaOpen(false), 150);
-                  }}
-                >
-                  <button
-                    onClick={() => setMegaOpen((v) => !v)}
-                    className={`flex items-center gap-1 px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400  ${
-                      megaOpen ? 'text-purple-600 bg-purple-50 dark:bg-purple-950/40' : ''
-                    }`}
-                  >
-                    دپارتمان‌های آموزشی
-                    <ChevronDownIcon
-                      className={`w-4 h-4 transition-transform ${megaOpen ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  <DesktopMegaMenu visible={megaOpen} />
-                </div>
-
-                {NAV_ITEMS.map((item) => (
+            <nav className="hidden items-center gap-0.5 xl:flex" aria-label="منوی اصلی">
+              {NAV_ITEMS.map((item) => {
+                const active = isActive(item.href);
+                return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-950 dark:hover:text-white transition-colors"
+                    aria-current={active ? 'page' : undefined}
+                    className={`nav-link ${active ? 'nav-link--active' : ''}`}
                   >
                     {item.label}
                   </Link>
-                ))}
-              </nav>
+                );
+              })}
 
-              <div className="flex-1 max-w-sm relative hidden lg:block">
-                <div
-                  className={`w-full flex items-center gap-4 px-3.5 py-3 rounded-xl border ${
-                    searchFocused
-                      ? 'border-purple-500 bg-white dark:bg-gray-900 ring-2 ring-purple-500/10'
-                      : 'border-gray-100/80 dark:border-gray-800 bg-gray-50/60 dark:bg-gray-900/40'
+              <div
+                ref={courseMenuRef}
+                className="relative"
+                onMouseEnter={openCourseMenu}
+                onMouseLeave={scheduleCloseCourseMenu}
+              >
+                <button
+                  type="button"
+                  onClick={() => setCourseMenuOpen((value) => !value)}
+                  aria-expanded={courseMenuOpen}
+                  aria-controls="course-menu"
+                  aria-haspopup="menu"
+                  className={`nav-link inline-flex items-center gap-1.5 ${
+                    courseMenuOpen ? 'nav-link--active' : ''
                   }`}
                 >
-                  <SearchIcon className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                  <input
-                    type="search"
-                    placeholder="جستجو در دوره‌ها و مهارت‌ها..."
-                    onFocus={() => setSearchFocused(true)}
-                    onBlur={() => setSearchFocused(false)}
-                    className="flex-1 bg-transparent text-xs font-semibold text-gray-900 dark:text-gray-100 placeholder-gray-400 outline-none"
-                    autoComplete="off"
+                  دپارتمان‌ها
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 opacity-70 transition-transform duration-200 ${
+                      courseMenuOpen ? 'rotate-180' : ''
+                    }`}
+                    strokeWidth={2.25}
                   />
-                </div>
+                </button>
+                {courseMenuOpen && <CourseMenu onNavigate={closeCourseMenu} />}
               </div>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'فعال‌کردن حالت روشن' : 'فعال‌کردن حالت تاریک'}
+              className="nav-icon-btn"
+            >
+              {isDark ? (
+                <Sun className="h-[17px] w-[17px]" strokeWidth={2} />
+              ) : (
+                <Moon className="h-[17px] w-[17px]" strokeWidth={2} />
+              )}
+            </button>
+
+            <div className="hidden sm:block">
+              <UserMenu />
             </div>
 
-            <div aria-label="دکمه تغییر تم" className="flex items-center gap-2">
-              <button
-                onClick={toggleTheme}
-                className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50/50 dark:bg-gray-900 border border-gray-100/70 dark:border-gray-800 text-gray-600 dark:text-gray-400"
-              >
-                {isDark ? (
-                  <SunIcon className="w-4 h-4 text-yellow-500" />
-                ) : (
-                  <MoonIcon className="w-4 h-4 text-purple-600" />
-                )}
-              </button>
-
-              <button className="hidden lg:flex w-9 h-9 items-center justify-center rounded-xl bg-gray-50/50 dark:bg-gray-900 border border-gray-100/70 dark:border-gray-800 text-gray-600 dark:text-gray-400 relative">
-                <BellIcon className="w-4 h-4" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-purple-600 rounded-full" />
-              </button>
-
-              <div className="hidden lg:block w-px h-4 bg-gray-100 dark:bg-gray-800 mx-1" />
-
-              <Link
-                href="/auth"
-                className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-sm transition-colors"
-              >
-                <UserIcon className="w-4 h-4" />
-                <span>ورود | ثبت نام</span>
-              </Link>
-            </div>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-expanded={mobileMenuOpen}
+              aria-label="بازکردن منو"
+              className="nav-icon-btn xl:hidden"
+            >
+              <Menu className="h-[18px] w-[18px]" strokeWidth={2} />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* ── HIGHLY-ACCESSIBLE MOBILE SEARCH BAR (WITH AUTO-HIDE) ──────────────── */}
-      <div
-        className={`fixed top-14 lg:hidden inset-x-0 z-30 px-4 py-2 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-b border-gray-100/40 dark:border-gray-900/60 transition-all duration-300 transform ${
-          showMobileSearch
-            ? 'translate-y-0 opacity-100 pointer-events-auto'
-            : '-translate-y-full opacity-0 pointer-events-none'
-        }`}
-        dir="rtl"
-      >
-        <div className="w-full flex items-center gap-2.5 px-3.5 py-1.5 bg-gray-50/80 dark:bg-gray-900 rounded-xl border border-gray-100/30 dark:border-gray-800/40">
-          <SearchIcon className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-          <input
-            type="search"
-            placeholder="جستجوی سریع دوره یا مهارت فنی..."
-            className="flex-1 bg-transparent text-[11px] font-bold text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 outline-none"
-          />
-        </div>
-      </div>
-
-      {/* ── DYNAMIC PREMIUM MOBILE BOTTOM NAVIGATION ─────────────────────────── */}
-      <nav className="fixed bottom-0 inset-x-0 z-50 lg:hidden bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-t border-gray-100/70 dark:border-gray-900 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.015)]">
-        <div className="flex items-center justify-around h-16 px-2" dir="rtl">
-          {[
-            { href: '/', icon: AcademicHomeIcon, label: 'خانه' },
-            { href: '/courses', icon: GraduationCapIcon, label: 'دوره‌ها' },
-            { isTrigger: true, label: 'دسته‌بندی‌ها' },
-            { href: '/blog', icon: BookmarkIcon, label: 'بلاگ' },
-            { href: '/auth', icon: UserIcon, label: 'پرتال' },
-          ].map((item, index) => {
-            if ('isTrigger' in item) {
-              return (
-                <button
-                  key={index}
-                  onClick={() => setMobileMenuOpen(true)}
-                  className={`flex flex-col items-center justify-center w-14 h-full gap-1 transition-all ${
-                    mobileMenuOpen
-                      ? 'text-purple-600 scale-105 font-black'
-                      : 'text-gray-400 dark:text-gray-500'
-                  }`}
-                >
-                  <CategoryIcon className="w-[19px] h-[19px]" />
-                  <span className="text-[9px] font-black tracking-tight">{item.label}</span>
-                </button>
-              );
-            }
-
-            const isActive =
-              pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex flex-col items-center justify-center w-14 h-full gap-1 transition-all ${
-                  isActive
-                    ? 'text-purple-600 scale-105 font-black'
-                    : 'text-gray-400 dark:text-gray-500'
-                }`}
-              >
-                <item.icon className="w-[19px] h-[19px]" />
-                <span className="text-[9px] font-bold tracking-tight">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-
-      {/* Screen Categories Overlay System */}
-      <MobileCategoriesDrawer isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
-
-      {/* Content Spacers */}
-      <div className="h-[104px] lg:hidden" aria-hidden="true" />
+      <MobileMenu open={mobileMenuOpen} onClose={closeMobileMenu} pathname={pathname} />
+      <div className="h-16" aria-hidden="true" />
     </>
   );
 }

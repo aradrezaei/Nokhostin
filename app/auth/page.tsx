@@ -3,23 +3,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_BASE, ApiError, parseResult } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
+import { panelHome } from '@/lib/roles';
+import type { AuthTokens, AuthUser } from '@/lib/types';
 
 const PHONE_LEN = 11;
 const PHONE_REGEX = /^09\d{9}$/;
 
+type Step = 'phone' | 'code';
+
+function redirectFor(role: AuthUser['role']): string {
+  return panelHome(role);
+}
+
 export default function LoginSection() {
   const router = useRouter();
+  const { setSession } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
+  const [code, setCode] = useState('');
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [cooldown, setCooldown] = useState(0);
 
-  const isValid = PHONE_REGEX.test(phone);
-  const showError = touched && phone.length > 0 && !isValid;
+  const isValidPhone = PHONE_REGEX.test(phone);
+  const showError = touched && phone.length > 0 && !isValidPhone;
 
-  // Focus the field on open + lock background scroll while this
-  // full-screen view is mounted (also visually covers nav/footer).
   useEffect(() => {
     inputRef.current?.focus();
     const original = document.body.style.overflow;
@@ -27,14 +40,17 @@ export default function LoginSection() {
     return () => {
       document.body.style.overflow = original;
     };
-  }, []);
+  }, [step]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   const handleClose = useCallback(() => {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push('/');
-    }
+    if (window.history.length > 1) router.back();
+    else router.push('/');
   }, [router]);
 
   useEffect(() => {
@@ -45,26 +61,78 @@ export default function LoginSection() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [handleClose]);
 
-  const handlePhoneChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value.replace(/\D/g, '').slice(0, PHONE_LEN));
-  }, []);
+  const requestOtp = useCallback(async () => {
+    const res = await fetch(`${API_BASE}/auth/otp/request`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ mobile: phone }),
+    });
+    await parseResult<{ expiresInSeconds: number }>(res);
+  }, [phone]);
 
-  const handleSubmit = useCallback(
+  const handlePhoneSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
       setTouched(true);
-      if (!isValid || submitting) return;
+      setServerError('');
+      if (!isValidPhone || submitting) return;
 
       setSubmitting(true);
       try {
-        // TODO: call your OTP-send API here
-        // await sendOtp(phone);
+        await requestOtp();
+        setStep('code');
+        setCooldown(90);
+      } catch (error) {
+        setServerError(error instanceof ApiError ? error.message : 'خطا در ارسال کد.');
       } finally {
         setSubmitting(false);
       }
     },
-    [isValid, submitting]
+    [isValidPhone, submitting, requestOtp],
   );
+
+  const handleCodeSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setServerError('');
+      if (code.length < 4 || submitting) return;
+
+      setSubmitting(true);
+      try {
+        const res = await fetch(`${API_BASE}/auth/otp/verify`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ mobile: phone, code }),
+        });
+        const data = await parseResult<AuthTokens & { user: AuthUser }>(res);
+        setSession({ accessToken: data.accessToken, refreshToken: data.refreshToken }, data.user);
+        router.replace(redirectFor(data.user.role));
+      } catch (error) {
+        setServerError(error instanceof ApiError ? error.message : 'کد وارد شده نادرست است.');
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [code, phone, submitting, setSession, router],
+  );
+
+  const handleResend = useCallback(async () => {
+    if (cooldown > 0 || submitting) return;
+    setSubmitting(true);
+    setServerError('');
+    try {
+      await requestOtp();
+      setCooldown(90);
+    } catch (error) {
+      setServerError(error instanceof ApiError ? error.message : 'خطا در ارسال مجدد.');
+    } finally {
+      setSubmitting(false);
+    }
+  }, [cooldown, submitting, requestOtp]);
+
+  const handlePhoneChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setPhone(e.target.value.replace(/\D/g, '').slice(0, PHONE_LEN));
+  }, []);
 
   return (
     <section
@@ -82,63 +150,120 @@ export default function LoginSection() {
         className="login-close fixed top-4 end-4 flex h-11 w-11 items-center justify-center rounded-full sm:top-5 sm:end-5"
       >
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path
-            d="M5 5L15 15M15 5L5 15"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
+          <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
 
       <div className="w-full max-w-[380px] py-16">
-        <h1
-          id="login-title"
-          className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]"
-        >
-          ورود به حساب کاربری
-        </h1>
-        <p className="login-desc mt-3 text-[14px] leading-6 sm:text-[15px]">
-          شماره موبایل خود را وارد کنید تا کد تایید برایتان ارسال شود.
-        </p>
-
-        <form className="mt-8 flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="phone" className="login-label text-sm font-bold">
-              شماره موبایل
-            </label>
-            <input
-              ref={inputRef}
-              id="phone"
-              name="phone"
-              type="tel"
-              inputMode="numeric"
-              autoComplete="tel"
-              maxLength={PHONE_LEN}
-              value={phone}
-              onChange={handlePhoneChange}
-              onBlur={() => setTouched(true)}
-              placeholder="09123456789"
-              dir="ltr"
-              aria-invalid={showError}
-              aria-describedby={showError ? 'phone-error' : undefined}
-              className="login-input h-[54px] w-full rounded-2xl px-4 text-[17px] font-bold tracking-wide outline-none sm:h-[56px]"
-            />
-            <p id="phone-error" role="alert" className="login-error min-h-[18px] text-xs font-medium">
-              {showError ? 'شماره موبایل وارد شده معتبر نیست.' : ''}
+        {step === 'phone' ? (
+          <>
+            <h1 id="login-title" className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]">
+              ورود به حساب کاربری
+            </h1>
+            <p className="login-desc mt-3 text-[14px] leading-6 sm:text-[15px]">
+              شماره موبایل خود را وارد کنید تا کد تایید برایتان ارسال شود.
             </p>
-          </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            aria-disabled={submitting}
-            className="login-cta cursor-pointer h-[52px] w-full rounded-2xl text-[16px] font-extrabold tracking-wide"
-          >
-            {submitting ? 'در حال ارسال…' : 'ارسال کد تایید'}
-          </button>
-          
-        </form>
+            <form className="mt-8 flex flex-col gap-5" onSubmit={handlePhoneSubmit} noValidate>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="phone" className="login-label text-sm font-bold">
+                  شماره موبایل
+                </label>
+                <input
+                  ref={inputRef}
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
+                  maxLength={PHONE_LEN}
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  onBlur={() => setTouched(true)}
+                  placeholder="09123456789"
+                  dir="ltr"
+                  aria-invalid={showError}
+                  className="login-input h-[54px] w-full rounded-2xl px-4 text-[17px] font-bold tracking-wide outline-none sm:h-[56px]"
+                />
+                <p className="login-error min-h-[18px] text-xs font-medium" role="alert">
+                  {showError ? 'شماره موبایل وارد شده معتبر نیست.' : serverError}
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="login-cta cursor-pointer h-[52px] w-full rounded-2xl text-[16px] font-extrabold tracking-wide"
+              >
+                {submitting ? 'در حال ارسال…' : 'ارسال کد تایید'}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h1 id="login-title" className="login-title text-[24px] font-extrabold leading-tight sm:text-[28px]">
+              کد تایید را وارد کنید
+            </h1>
+            <p className="login-desc mt-3 text-[14px] leading-6 sm:text-[15px]">
+              کد ارسال‌شده به شماره <span dir="ltr" className="font-bold">{phone}</span> را وارد کنید.
+            </p>
+
+            <form className="mt-8 flex flex-col gap-5" onSubmit={handleCodeSubmit} noValidate>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="code" className="login-label text-sm font-bold">
+                  کد تایید
+                </label>
+                <input
+                  ref={inputRef}
+                  id="code"
+                  name="code"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={8}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  placeholder="- - - - -"
+                  dir="ltr"
+                  className="login-input h-[54px] w-full rounded-2xl px-4 text-center text-[22px] font-bold tracking-[0.5em] outline-none sm:h-[56px]"
+                />
+                <p className="login-error min-h-[18px] text-xs font-medium" role="alert">
+                  {serverError}
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting || code.length < 4}
+                className="login-cta cursor-pointer h-[52px] w-full rounded-2xl text-[16px] font-extrabold tracking-wide"
+              >
+                {submitting ? 'در حال بررسی…' : 'ورود'}
+              </button>
+
+              <div className="flex items-center justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep('phone');
+                    setCode('');
+                    setServerError('');
+                  }}
+                  className="login-link font-bold"
+                >
+                  تغییر شماره
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={cooldown > 0}
+                  className="login-link font-bold disabled:opacity-50"
+                >
+                  {cooldown > 0 ? `ارسال مجدد تا ${cooldown} ثانیه` : 'ارسال مجدد کد'}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
 
       <style jsx>{`
@@ -151,10 +276,7 @@ export default function LoginSection() {
           --input-focus: #7c3aed;
           --brand-1: #a78bfa;
           --brand-2: #8b5cf6;
-          --brand-3: #7c3aed;
           --brand-border: #5b21b6;
-          --brand-glow: rgba(124, 58, 237, 0.38);
-          --brand-hover: #131f24;
           --cta-text: #ffffff;
           --cta-disabled-bg: #e3e9eb;
           --cta-disabled-border: #cdd6d9;
@@ -164,7 +286,6 @@ export default function LoginSection() {
           --close-ink: #10242a;
           background-color: var(--bg);
         }
-
         :global(.dark) .login-page {
           --bg: #131f24;
           --ink: #edf3f5;
@@ -172,13 +293,6 @@ export default function LoginSection() {
           --input-bg: #17242a;
           --input-border: #2c3b42;
           --input-focus: #a78bfa;
-          --brand-1: #b39dfb;
-          --brand-2: #9061f9;
-          --brand-3: #7c3aed;
-          --brand-border: #5b21b6;
-          --brand-glow: rgba(167, 139, 250, 0.35);
-          --brand-hover: #131f24;
-          --cta-text: #ffffff;
           --cta-disabled-bg: #1c2a30;
           --cta-disabled-border: #263640;
           --cta-disabled-text: #4d5c62;
@@ -186,12 +300,15 @@ export default function LoginSection() {
           --close-bg: rgba(255, 255, 255, 0.08);
           --close-ink: #edf3f5;
         }
-
         .login-title {
           color: var(--ink);
         }
-        .login-desc {
+        .login-desc,
+        .login-link {
           color: var(--muted);
+        }
+        .login-link:hover {
+          color: var(--input-focus);
         }
         .login-label {
           color: var(--ink);
@@ -199,28 +316,20 @@ export default function LoginSection() {
         .login-error {
           color: var(--error);
         }
-
         .login-close {
           background-color: var(--close-bg);
           color: var(--close-ink);
           border: none;
           cursor: pointer;
-          transition: background-color 0.15s ease;
         }
         .login-close:hover {
-          background-color: var(--brand-hover);
-          color: #ffffff;
+          background-color: var(--brand-2);
+          color: #fff;
         }
-        .login-close:focus-visible {
-          outline: 2px solid var(--input-focus);
-          outline-offset: 2px;
-        }
-
         .login-input {
           background: var(--input-bg);
           border: 2px solid var(--input-border);
           color: var(--ink);
-          transition: border-color 0.15s ease;
         }
         .login-input::placeholder {
           color: var(--muted);
@@ -232,13 +341,11 @@ export default function LoginSection() {
         .login-input[aria-invalid='true'] {
           border-color: var(--error);
         }
-
         .login-cta {
           color: var(--cta-text);
           background-color: var(--brand-2);
           border: none;
           border-bottom: 4px solid var(--brand-border);
-          transition: filter 0.15s ease, border-bottom-width 0.12s ease, transform 0.12s ease;
         }
         .login-cta:hover:not(:disabled) {
           filter: brightness(0.92);
@@ -246,25 +353,12 @@ export default function LoginSection() {
         .login-cta:active:not(:disabled) {
           transform: translateY(2px);
           border-bottom-width: 2px;
-          filter: brightness(0.85);
         }
         .login-cta:disabled {
           background-color: var(--cta-disabled-bg);
           border-bottom-color: var(--cta-disabled-border);
           color: var(--cta-disabled-text);
           cursor: not-allowed;
-        }
-        .login-cta:focus-visible {
-          outline: 2px solid var(--brand-1);
-          outline-offset: 2px;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .login-cta,
-          .login-close,
-          .login-input {
-            transition: none;
-          }
         }
       `}</style>
     </section>

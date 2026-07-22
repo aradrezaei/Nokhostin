@@ -1,12 +1,9 @@
 import React from 'react';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import dynamic from 'next/dynamic';
+import { AuthProvider } from '@/lib/auth';
+import { NavGate, FooterGate } from '@/components/Chrome';
 import localFont from 'next/font/local';
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script'; // 👈 این خط را اضافه کن
-
-const Footer = dynamic(() => import('@/components/Footer'), { ssr: true });
 
 const shabnam = localFont({
   src: [
@@ -211,7 +208,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="fa" dir="rtl" className={`${shabnam.variable} scroll-smooth`}>
+    <html lang="fa" dir="rtl" className={shabnam.variable} suppressHydrationWarning>
       <head>
         {/* Schema.org — اطلاعات ساختاریافته */}
         <script
@@ -241,11 +238,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
           data-website-id="3f4a413e-35c7-43a7-9e97-98e29b907937"
         ></script>
 
-        <Navbar />
-        <main role="main" className="flex-1 w-full">
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <NavGate />
+          <main role="main" className="flex-1 w-full">
+            {children}
+          </main>
+          <FooterGate />
+        </AuthProvider>
       </body>
     </html>
   );

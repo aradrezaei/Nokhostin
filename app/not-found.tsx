@@ -1,49 +1,63 @@
-'use client';
-
 import Link from 'next/link';
-import { Home, Search, AlertCircle } from 'lucide-react';
+import { ArrowLeft, BookOpen, Home, Phone } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center px-4 sm:px-6 py-8">
-      <div className="max-w-2xl w-full text-center space-y-6 sm:space-y-8">
-        <div className="relative">
-          <div className="absolute inset-0 bg-purple-600/20 dark:bg-purple-500/10 blur-3xl rounded-full w-64 h-64 mx-auto" />
-          <div className="relative">
-            <AlertCircle className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 text-purple-600 dark:text-purple-400 mx-auto animate-pulse" />
-          </div>
-        </div>
+    <section
+      dir="rtl"
+      className="relative flex min-h-[calc(100vh-72px)] items-center overflow-hidden bg-slate-50 px-4 py-16 dark:bg-slate-950 sm:px-6"
+    >
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none text-[180px] font-bold leading-none text-slate-200/50 dark:text-slate-800/40 sm:text-[280px]"
+        aria-hidden="true"
+      >
+        ۴۰۴
+      </div>
 
-        <div className="space-y-3 sm:space-y-4">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white">
+      <div className="relative mx-auto w-full max-w-2xl text-center">
+        <div className="rounded-2xl border border-slate-200 bg-white/95 px-6 py-10 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 sm:px-12 sm:py-14">
+          <span className="inline-flex rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700 dark:border-violet-900 dark:bg-violet-950/50 dark:text-violet-300">
+            خطای ۴۰۴
+          </span>
+          <h1 className="mt-5 text-5xl font-bold leading-none text-slate-900 dark:text-white sm:text-7xl">
             ۴۰۴
           </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 dark:text-gray-300">
-            صفحه مورد نظر یافت نشد
+          <h2 className="mt-5 text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
+            صفحه مورد نظر پیدا نشد
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500 dark:text-slate-400 sm:text-base">
+            ممکن است نشانی صفحه تغییر کرده باشد یا صفحه‌ای که به دنبال آن هستید دیگر در دسترس نباشد.
           </p>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed px-4">
-            متأسفانه آدرس وارد شده صحیح نیست یا صفحه حذف شده است.
-          </p>
-        </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center pt-4">
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-3 px-8 py-4 sm:px-10 sm:py-5 bg-purple-700 hover:bg-purple-800 text-white rounded-2xl font-bold text-base sm:text-lg shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 w-full sm:w-auto justify-center"
-          >
-            <Home className="w-6 h-6 group-hover:scale-110 transition" />
-            بازگشت به خانه
-          </Link>
+          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/courses"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-violet-300 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-violet-700 dark:hover:text-violet-300"
+            >
+              <BookOpen className="h-4 w-4" />
+              مشاهده دوره‌ها
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-violet-700"
+            >
+              <Home className="h-4 w-4" />
+              بازگشت به صفحه اصلی
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </div>
 
-          <Link
-            href="/courses"
-            className="inline-flex items-center gap-3 px-8 py-4 sm:px-10 sm:py-5 bg-white dark:bg-gray-800 border-4 border-purple-700 dark:border-purple-600 text-purple-700 dark:text-purple-400 rounded-2xl font-bold text-base sm:text-lg hover:bg-purple-50 dark:hover:bg-gray-700 transition-all duration-300 w-full sm:w-auto justify-center"
-          >
-            <Search className="w-6 h-6" />
-            مشاهده دوره‌ها
-          </Link>
+          <div className="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800">
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition-colors hover:text-violet-600 dark:text-slate-400 dark:hover:text-violet-400"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              برای راهنمایی با ما تماس بگیرید
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

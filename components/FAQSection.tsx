@@ -48,10 +48,10 @@ export default function FAQSection() {
         {/* هدر بخش - کاملاً بهینه برای SEO */}
         <div className="mb-10 text-right">
           <h2 className="text-2xl md:text-3.5xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
-            <HelpCircle size={22} className="text-gray-400" />
+            <HelpCircle size={22} className="text-blue-600 dark:text-blue-500" aria-hidden="true" />
             سوالات متداول کارآموزان
           </h2>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
             پاسخ‌های کوتاه و شفاف به پرسش‌های رایج شما درباره دوره ICDL.
           </p>
         </div>
@@ -61,16 +61,19 @@ export default function FAQSection() {
           {FAQS.map((item, index) => (
             <details
               key={index}
-              className="group border border-gray-100 dark:border-gray-900 rounded-xl bg-gray-50/30 dark:bg-gray-900/10 [&_summary::-webkit-details-marker]:hidden"
+              className="group border border-gray-200 dark:border-gray-800 rounded-xl bg-gray-50/50 dark:bg-gray-900/50 [&_summary::-webkit-details-marker]:hidden"
             >
-              <summary className="flex items-center justify-between gap-4 p-4 text-sm md:text-base font-bold text-gray-900 dark:text-white cursor-pointer list-none select-none focus:outline-none">
+              <summary className="flex items-center justify-between gap-4 p-4 text-sm md:text-base font-bold text-gray-900 dark:text-white cursor-pointer list-none select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:rounded-xl">
                 <span>{item.question}</span>
-                <span className="text-gray-400 text-lg transition-transform duration-150 group-open:rotate-45">
+                <span 
+                  className="text-blue-600 dark:text-blue-500 text-lg transition-transform duration-150 group-open:rotate-45"
+                  aria-hidden="true"
+                >
                   +
                 </span>
               </summary>
-              <div className="px-4 pb-4 pt-1 border-t border-gray-100/50 dark:border-gray-900/50">
-                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-7 font-medium">
+              <div className="px-4 pb-4 pt-1 border-t border-gray-200/50 dark:border-gray-800/50">
+                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 leading-7 font-medium">
                   {item.answer}
                 </p>
               </div>

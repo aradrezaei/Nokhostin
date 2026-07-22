@@ -16,7 +16,8 @@ import {
   Loader2,
   Navigation,
   Award,
-  Globe
+  Globe,
+  ArrowLeft,
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -109,12 +110,10 @@ function validate(data: FormData): FormErrors {
   const errors: FormErrors = {};
   if (!data.name.trim() || data.name.trim().length < 3)
     errors.name = 'نام باید حداقل ۳ کاراکتر باشد';
-  if (!/^09[0-9]{9}$/.test(data.phone.replace(/\s/g, ''))) 
-    errors.phone = 'شماره موبایل معتبر نیست';
+  if (!/^09[0-9]{9}$/.test(data.phone.replace(/\s/g, ''))) errors.phone = 'شماره موبایل معتبر نیست';
   if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
     errors.email = 'فرمت ایمیل صحیح نیست';
-  if (!data.subject) 
-    errors.subject = 'موضوع پیام را انتخاب کنید';
+  if (!data.subject) errors.subject = 'موضوع پیام را انتخاب کنید';
   if (!data.message.trim() || data.message.trim().length < 20)
     errors.message = 'پیام باید حداقل ۲۰ کاراکتر باشد';
   return errors;
@@ -214,7 +213,10 @@ export default function ContactPage() {
           </h1>
           <p className="text-base md:text-lg text-[#61727a] dark:text-[#93a5ac] max-w-2xl mx-auto leading-8 font-bold">
             تیم پشتیبانی متخصص ما، آماده راهنمایی شما در مسیر{' '}
-            <span className="text-[#10242a] dark:text-[#edf3f5] underline decoration-violet-500 decoration-2">توسعه مهارت‌های حرفه‌ای</span> است.
+            <span className="text-[#10242a] dark:text-[#edf3f5] underline decoration-violet-500 decoration-2">
+              توسعه مهارت‌های حرفه‌ای
+            </span>{' '}
+            است.
           </p>
         </div>
       </section>
@@ -231,7 +233,9 @@ export default function ContactPage() {
                 href={ch.href}
                 className="group rounded-3xl bg-[#f8fafb] border-b-4 border-b-[#d9e4e8] p-7 transition-colors duration-200 hover:bg-[#f2f6f8] dark:bg-[#17242a] dark:border-b-[#2b3b42] dark:hover:bg-[#1d2d33]"
               >
-                <div className={`mb-6 flex h-12 w-12 items-center justify-center rounded-2xl ${ch.bg}`}>
+                <div
+                  className={`mb-6 flex h-12 w-12 items-center justify-center rounded-2xl ${ch.bg}`}
+                >
                   <ch.icon size={22} className={ch.color} strokeWidth={2} />
                 </div>
                 <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.08em] text-[#93a5ac] dark:text-[#61727a]">
@@ -255,7 +259,6 @@ export default function ContactPage() {
       <section className="py-20">
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-12 items-start">
-            
             {/* Form */}
             <div className="flex-1 min-w-0 w-full">
               <div className="mb-8">
@@ -332,7 +335,10 @@ export default function ContactPage() {
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold text-[#23363d] dark:text-[#d8e3e6] mb-1.5">
-                        ایمیل <span className="text-[#93a5ac] dark:text-[#61727a] font-normal">(اختیاری)</span>
+                        ایمیل{' '}
+                        <span className="text-[#93a5ac] dark:text-[#61727a] font-normal">
+                          (اختیاری)
+                        </span>
                       </label>
                       <input
                         type="email"
@@ -388,7 +394,9 @@ export default function ContactPage() {
                       ) : (
                         <span />
                       )}
-                      <span className={`text-[11px] font-bold ${formData.message.length < 20 ? 'text-[#93a5ac]' : 'text-emerald-600'}`}>
+                      <span
+                        className={`text-[11px] font-bold ${formData.message.length < 20 ? 'text-[#93a5ac]' : 'text-emerald-600'}`}
+                      >
                         {formData.message.length} کاراکتر
                       </span>
                     </div>
@@ -412,7 +420,10 @@ export default function ContactPage() {
 
                   <p className="text-center text-xs text-[#61727a] dark:text-[#93a5ac] leading-5 font-bold">
                     با ارسال این فرم، با{' '}
-                    <Link href="/privacy" className="text-violet-600 dark:text-violet-400 hover:underline">
+                    <Link
+                      href="/privacy"
+                      className="text-violet-600 dark:text-violet-400 hover:underline"
+                    >
                       سیاست حریم خصوصی
                     </Link>{' '}
                     آکادمی موافقت می‌کنید.
@@ -423,7 +434,6 @@ export default function ContactPage() {
 
             {/* Sidebar Widgets */}
             <div className="lg:w-[360px] w-full flex-shrink-0 space-y-5">
-              
               {/* Support Hours */}
               <div className="bg-[#f8fafb] dark:bg-[#17242a] border-b-4 border-[#d9e4e8] dark:border-[#2b3b42] rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-5">
@@ -441,8 +451,12 @@ export default function ContactPage() {
                     { day: 'جمعه', time: 'تعطیل', active: false },
                   ].map((row, i) => (
                     <div key={i} className="flex items-center justify-between text-sm">
-                      <span className="text-[#61727a] dark:text-[#93a5ac] font-bold">{row.day}</span>
-                      <span className={`font-black ${row.active ? 'text-[#10242a] dark:text-[#edf3f5]' : 'text-[#93a5ac]'}`}>
+                      <span className="text-[#61727a] dark:text-[#93a5ac] font-bold">
+                        {row.day}
+                      </span>
+                      <span
+                        className={`font-black ${row.active ? 'text-[#10242a] dark:text-[#edf3f5]' : 'text-[#93a5ac]'}`}
+                      >
                         {row.time}
                       </span>
                     </div>
@@ -456,7 +470,9 @@ export default function ContactPage() {
                   <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-500/15 flex items-center justify-center">
                     <Building2 size={14} className="text-violet-600 dark:text-violet-400" />
                   </div>
-                  <h3 className="font-black text-sm text-[#10242a] dark:text-[#edf3f5]">دفتر مرکزی آکادمی</h3>
+                  <h3 className="font-black text-sm text-[#10242a] dark:text-[#edf3f5]">
+                    دفتر مرکزی آکادمی
+                  </h3>
                 </div>
                 <p className="text-sm text-[#61727a] dark:text-[#93a5ac] leading-6 font-bold">
                   تهران، شهرک اندیشه، فاز ۱<br />
@@ -470,13 +486,15 @@ export default function ContactPage() {
                   <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-500/15 flex items-center justify-center">
                     <Globe size={14} className="text-violet-600 dark:text-violet-400" />
                   </div>
-                  <h3 className="font-black text-sm text-[#10242a] dark:text-[#edf3f5]">اعتبار بین‌المللی</h3>
+                  <h3 className="font-black text-sm text-[#10242a] dark:text-[#edf3f5]">
+                    اعتبار بین‌المللی
+                  </h3>
                 </div>
                 <p className="text-xs text-[#61727a] dark:text-[#93a5ac] leading-5 font-bold">
-                  تاییدیه رسمی تحت نظارت وزارت کار و سازمان آموزش فنی و حرفه‌ای کشور با قابلیت ترجمه رسمی بین‌المللی (ILO).
+                  تاییدیه رسمی تحت نظارت وزارت کار و سازمان آموزش فنی و حرفه‌ای کشور با قابلیت ترجمه
+                  رسمی بین‌المللی (ILO).
                 </p>
               </div>
-
             </div>
           </div>
         </div>
@@ -488,7 +506,9 @@ export default function ContactPage() {
       <section className="py-16 border-t border-[#e6ecef] dark:border-[#26363d] bg-white dark:bg-[#0f191d]">
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="mb-10 text-right">
-            <span className="text-xs font-bold text-violet-600 dark:text-violet-400 block mb-2">پاسخ سوالات شما</span>
+            <span className="text-xs font-bold text-violet-600 dark:text-violet-400 block mb-2">
+              پاسخ سوالات شما
+            </span>
             <h2 className="text-2xl md:text-3xl font-black text-[#10242a] dark:text-[#edf3f5]">
               سوالات متداول متقاضیان دوره ها
             </h2>
@@ -504,7 +524,10 @@ export default function ContactPage() {
       {/* ══════════════════════════════════════════════════════
           INTERACTIVE GOOGLE MAP SECTION
       ══════════════════════════════════════════════════════ */}
-      <section id="map" className="relative w-full py-16 border-t border-[#e6ecef] dark:border-[#26363d] bg-[#f8fafb] dark:bg-[#131d22]">
+      <section
+        id="map"
+        className="relative w-full py-16 border-t border-[#e6ecef] dark:border-[#26363d] bg-[#f8fafb] dark:bg-[#131d22]"
+      >
         <div className="max-w-screen-xl mx-auto px-6 mb-8">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
@@ -571,7 +594,6 @@ export default function ContactPage() {
       ══════════════════════════════════════════════════════ */}
       <section className="py-16 max-w-screen-xl mx-auto px-6">
         <div className="w-full bg-[#f8fafb] dark:bg-[#17242a] border-b-4 border-[#d9e4e8] dark:border-[#2b3b42] rounded-3xl p-8 md:p-12 text-center flex flex-col items-center justify-between gap-8 relative overflow-hidden">
-          
           {/* پترن نقطه‌ای ظریف معماری سیستم */}
           <div className="absolute inset-0 bg-[radial-gradient(#d9e4e8_1px,transparent_1px)] dark:bg-[radial-gradient(#2b3b42_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none" />
 
@@ -580,7 +602,8 @@ export default function ContactPage() {
               هنوز مطمئن نیستی؟
             </h2>
             <p className="text-sm md:text-base text-[#61727a] dark:text-[#93a5ac] leading-relaxed font-bold">
-              با کارشناسان ما یک جلسه مشاوره رایگان تنظیم کن تا بهترین مسیر آموزشی را بر اساس اهداف و شرایط تو پیدا کنیم.
+              با کارشناسان ما یک جلسه مشاوره رایگان تنظیم کن تا بهترین مسیر آموزشی را بر اساس اهداف
+              و شرایط تو پیدا کنیم.
             </p>
           </div>
 
