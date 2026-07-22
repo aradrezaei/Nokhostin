@@ -1,90 +1,23 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, ChevronLeft, Flame, Target, Trophy } from 'lucide-react';
+import { BookOpen, ChevronLeft, Flame, Sparkles, Trophy } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { formatScore, toFa } from '@/lib/format';
-import type { ClassProgress } from '@/lib/types';
-import { useMyClasses } from '@/hook/useMyClasses';
+import { useMyOverview } from '@/hook/useMyOverview';
 import Avatar from '@/components/panel/Avatar';
 import { ClassCard } from '@/components/panel/ClassCard';
+import Medal from '@/components/panel/Medal';
 import { Alert, Card } from '@/components/panel/ui';
 import { EmptyState, Spinner, StatTile } from '@/components/panel/widgets';
 
-type Snapshot = {
-  classId: string;
-  title: string;
-  score: number | null;
-  rankLabel: string;
-  attendanceRate: number | null;
-  medals: number;
-  sessionLabel: string;
-};
-
 export default function DashboardHome() {
-  const { user, request } = useAuth();
-  const { items, loading, error } = useMyClasses();
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const [snapLoading, setSnapLoading] = useState(false);
+  const { user } = useAuth();
+  const { classes, snapshots, achievements, loading, error } = useMyOverview();
 
-  const active = useMemo(() => items.filter((i) => i.status === 'active'), [items]);
-  const unpaid = useMemo(() => active.filter((i) => !i.tuitionPaid).length, [active]);
-  const targetIds = useMemo(
-    () =>
-      active
-        .slice(0, 4)
-        .map((e) => e.class.id)
-        .join(','),
-    [active],
-  );
-
-  useEffect(() => {
-    if (!targetIds) {
-      setSnapshots([]);
-      return;
-    }
-
-    const targets = active.slice(0, 4);
-    let cancelled = false;
-    setSnapLoading(true);
-
-    Promise.all(
-      targets.map(async (entry) => {
-        try {
-          const data = await request<ClassProgress>(
-            `/me/classes/${entry.class.id}/progress`,
-          );
-          const attended = data.attendance.present + data.attendance.late;
-          const marked = attended + data.attendance.absent;
-          return {
-            classId: entry.class.id,
-            title: entry.class.title,
-            score: data.score,
-            rankLabel: data.rank.position
-              ? `${toFa(data.rank.position)} / ${toFa(data.rank.totalRanked)}`
-              : '—',
-            attendanceRate: marked > 0 ? Math.round((attended / marked) * 100) : null,
-            medals: data.medals.length,
-            sessionLabel: `${toFa(data.sessions.current)}/${toFa(data.sessions.total)}`,
-          } satisfies Snapshot;
-        } catch {
-          return null;
-        }
-      }),
-    ).then((rows) => {
-      if (!cancelled) {
-        setSnapshots(rows.filter((r): r is Snapshot => r !== null));
-        setSnapLoading(false);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-    // active is derived from items; targetIds is the stable trigger
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetIds, request]);
+  const active = classes.filter((i) => i.status === 'active');
+  const unpaid = active.filter((i) => !i.tuitionPaid).length;
+  const topCount = snapshots.filter((s) => s.isTop).length;
 
   const bestScore = snapshots.reduce<number | null>((best, s) => {
     if (s.score === null) return best;
@@ -110,14 +43,14 @@ export default function DashboardHome() {
             {user?.fullName}
           </h1>
           <p className="mt-1 text-sm font-bold text-slate-400">
-            عملکردت اینجاست — دقیق، سریع، بدون شلوغی.
+            پیشرفت، مدال و حضورت — یک نگاه، بدون شلوغی.
           </p>
         </div>
         <Link
           href="/dashboard/profile"
           className="inline-flex items-center gap-1 rounded-2xl border-2 border-slate-200 border-b-4 px-4 py-2 text-xs font-black text-slate-600 hover:border-[#7c3aed] hover:text-[#7c3aed] dark:border-slate-700 dark:text-slate-300"
         >
-          پروفایل کامل
+          پروفایل و مدال‌ها
           <ChevronLeft className="h-3.5 w-3.5" />
         </Link>
       </Card>
@@ -131,27 +64,23 @@ export default function DashboardHome() {
           value={loading ? '—' : toFa(active.length)}
         />
         <StatTile
-          tone={unpaid > 0 ? 'rose' : 'emerald'}
+          tone="amber"
           icon={<Trophy className="h-5 w-5" />}
-          label="شهریه باز"
-          value={loading ? '—' : toFa(unpaid)}
+          label="مدال مقام اول"
+          value={loading ? '—' : toFa(achievements.filter((a) => a.code === 'top_rank').length)}
         />
         <StatTile
           tone="sky"
-          icon={<Target className="h-5 w-5" />}
+          icon={<Sparkles className="h-5 w-5" />}
           label="بهترین نمره"
-          value={snapLoading && !snapshots.length ? '—' : formatScore(bestScore)}
+          value={loading ? '—' : formatScore(bestScore)}
         />
         <StatTile
-          tone="amber"
+          tone="emerald"
           icon={<Flame className="h-5 w-5" />}
           label="میانگین حضور"
           value={
-            snapLoading && avgAttendance === null
-              ? '—'
-              : avgAttendance === null
-                ? '—'
-                : `${toFa(avgAttendance)}٪`
+            loading || avgAttendance === null ? '—' : `${toFa(avgAttendance)}٪`
           }
         />
       </div>
@@ -167,52 +96,117 @@ export default function DashboardHome() {
         </Card>
       )}
 
-      {snapshots.length > 0 && (
+      {achievements.length > 0 && (
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black text-slate-900 dark:text-white">عملکرد لحظه‌ای</h2>
-            <span className="text-[11px] font-bold text-slate-400">نمره · رتبه · حضور</span>
+            <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌های تو</h2>
+            <Link href="/dashboard/profile" className="text-xs font-black text-[#7c3aed]">
+              همه در پروفایل
+            </Link>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {snapshots.map((s) => (
-              <Link key={s.classId} href={`/dashboard/courses/${s.classId}`} className="block">
-                <Card className="!p-4 hover:border-[#7c3aed]/50">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="truncate text-sm font-black text-slate-900 dark:text-white">
-                      {s.title}
-                    </p>
-                    <ChevronLeft className="h-4 w-4 shrink-0 text-slate-300" />
-                  </div>
-                  <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-xl bg-slate-50 px-2 py-2 dark:bg-slate-900/50">
-                      <p className="text-base font-black text-[#7c3aed]">
-                        {formatScore(s.score)}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-400">نمره</p>
-                    </div>
-                    <div className="rounded-xl bg-slate-50 px-2 py-2 dark:bg-slate-900/50">
-                      <p className="text-base font-black text-slate-900 dark:text-white">
-                        {s.rankLabel}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-400">رتبه</p>
-                    </div>
-                    <div className="rounded-xl bg-slate-50 px-2 py-2 dark:bg-slate-900/50">
-                      <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
-                        {s.attendanceRate === null ? '—' : `${toFa(s.attendanceRate)}٪`}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-400">حضور</p>
-                    </div>
-                  </div>
-                  <p className="mt-2 text-[11px] font-bold text-slate-400">
-                    جلسه {s.sessionLabel}
-                    {s.medals > 0 ? ` · ${toFa(s.medals)} مدال` : ''}
-                  </p>
-                </Card>
+          <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {achievements.map((a) => (
+              <Link
+                key={`${a.code}-${a.classId}`}
+                href={`/dashboard/courses/${a.classId}`}
+                className="flex w-[148px] shrink-0 flex-col items-center rounded-3xl border-2 border-amber-200 border-b-4 bg-amber-50 px-3 py-4 text-center dark:border-amber-900/60 dark:bg-amber-950/30"
+              >
+                <Medal code={a.code} size={72} />
+                <p className="mt-2 text-xs font-black text-slate-900 dark:text-white">مقام اول</p>
+                <p className="mt-0.5 line-clamp-2 text-[10px] font-bold text-slate-400">
+                  {a.classTitle}
+                </p>
               </Link>
             ))}
           </div>
         </section>
       )}
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-black text-slate-900 dark:text-white">عملکرد کلاس‌ها</h2>
+          {topCount > 0 && (
+            <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+              {toFa(topCount)} مقام اول
+            </span>
+          )}
+        </div>
+
+        {loading ? (
+          <Spinner />
+        ) : snapshots.length === 0 ? (
+          <EmptyState
+            icon={<Sparkles className="h-6 w-6" />}
+            title="هنوز داده‌ای برای عملکرد نیست"
+            hint="بعد از اولین حضور و ارزیابی، اینجا پر می‌شود."
+          />
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {snapshots.map((s) => {
+              const pct =
+                s.sessionsTotal > 0
+                  ? Math.min((s.sessionsCurrent / s.sessionsTotal) * 100, 100)
+                  : 0;
+              return (
+                <Link key={s.classId} href={`/dashboard/courses/${s.classId}`} className="block">
+                  <Card className="!p-4 hover:border-[#7c3aed]/50">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black text-slate-900 dark:text-white">
+                          {s.title}
+                        </p>
+                        {s.courseName && (
+                          <p className="mt-0.5 truncate text-[11px] font-bold text-slate-400">
+                            {s.courseName}
+                          </p>
+                        )}
+                      </div>
+                      {s.isTop ? (
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-xl border-2 border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-black text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+                          <Trophy className="h-3 w-3" />
+                          مقام اول
+                        </span>
+                      ) : (
+                        <ChevronLeft className="h-4 w-4 shrink-0 text-slate-300" />
+                      )}
+                    </div>
+
+                    <div className="mt-3 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                        <span>
+                          جلسه {toFa(s.sessionsCurrent)} از {toFa(s.sessionsTotal)}
+                        </span>
+                        <span>{toFa(Math.round(pct))}٪</span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                        <div
+                          className="h-full rounded-full bg-[#7c3aed]"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-extrabold">
+                      <span className="rounded-lg bg-slate-100 px-2 py-1 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                        نمره {formatScore(s.score)}
+                      </span>
+                      <span className="rounded-lg bg-emerald-50 px-2 py-1 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                        حضور{' '}
+                        {s.attendanceRate === null ? '—' : `${toFa(s.attendanceRate)}٪`}
+                      </span>
+                      {s.medals.length > 0 && (
+                        <span className="rounded-lg bg-amber-50 px-2 py-1 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                          {toFa(s.medals.length)} مدال
+                        </span>
+                      )}
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       <section>
         <div className="mb-3 flex items-center justify-between">
@@ -223,7 +217,7 @@ export default function DashboardHome() {
         </div>
         {loading ? (
           <Spinner />
-        ) : items.length === 0 ? (
+        ) : classes.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-6 w-6" />}
             title="هنوز در کلاسی ثبت نشدی"
@@ -231,7 +225,7 @@ export default function DashboardHome() {
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {items.slice(0, 4).map((entry) => (
+            {classes.slice(0, 4).map((entry) => (
               <ClassCard
                 key={entry.enrollmentId}
                 href={`/dashboard/courses/${entry.class.id}`}

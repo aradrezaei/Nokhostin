@@ -22,6 +22,7 @@ import { useAuth } from '@/lib/auth';
 import { panelHome } from '@/lib/roles';
 import { NAV_ITEMS } from '@/lib/site';
 import UserMenu from '@/components/panel/UserMenu';
+import Avatar from '@/components/panel/Avatar';
 import BrandMark from '@/components/BrandMark';
 
 type IconComponent = ComponentType<{ className?: string; strokeWidth?: number }>;
@@ -296,13 +297,16 @@ function MobileMenu({
               <Link
                 href={panelHome(user.role)}
                 onClick={onClose}
-                className="flex w-full flex-col rounded-xl border border-[var(--nav-border)] bg-[var(--nav-muted)] px-4 py-3 transition-colors hover:border-[color-mix(in_srgb,var(--brand)_35%,var(--nav-border))]"
+                className="flex w-full items-center gap-3 rounded-xl border border-[var(--nav-border)] bg-[var(--nav-muted)] px-3 py-3 transition-colors hover:border-[color-mix(in_srgb,var(--brand)_35%,var(--nav-border))]"
               >
-                <span className="truncate text-sm font-semibold text-[var(--nav-ink)]">
-                  {user.fullName}
-                </span>
-                <span className="mt-0.5 text-[11px] cursor-pointer font-medium text-[var(--brand)]">
-                  ورود به پنل
+                <Avatar name={user.fullName} seed={user.id} size={40} className="!rounded-xl" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-[var(--nav-ink)]">
+                    {user.fullName}
+                  </span>
+                  <span className="mt-0.5 block text-[11px] font-medium text-[var(--brand)]">
+                    ورود به پنل
+                  </span>
                 </span>
               </Link>
               <button

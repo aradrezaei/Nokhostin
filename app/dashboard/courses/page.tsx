@@ -1,14 +1,13 @@
 'use client';
 
 import { BookOpen } from 'lucide-react';
-import type { MyClassEntry } from '@/lib/types';
-import { useMyClasses } from '@/hook/useMyClasses';
+import { useMyOverview } from '@/hook/useMyOverview';
 import { ClassCard } from '@/components/panel/ClassCard';
 import { Alert } from '@/components/panel/ui';
 import { EmptyState, Spinner } from '@/components/panel/widgets';
 
 export default function StudentCoursesPage() {
-  const { items, loading, error } = useMyClasses();
+  const { classes, loading, error } = useMyOverview();
 
   return (
     <div className="space-y-5">
@@ -22,11 +21,11 @@ export default function StudentCoursesPage() {
       {error && <Alert>{error}</Alert>}
       {loading ? (
         <Spinner />
-      ) : items.length === 0 ? (
+      ) : classes.length === 0 ? (
         <EmptyState icon={<BookOpen className="h-6 w-6" />} title="کلاسی ثبت نشده" />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {items.map((entry: MyClassEntry) => (
+          {classes.map((entry) => (
             <ClassCard
               key={entry.enrollmentId}
               href={`/dashboard/courses/${entry.class.id}`}

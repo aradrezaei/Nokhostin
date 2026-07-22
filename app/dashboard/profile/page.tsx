@@ -5,14 +5,15 @@ import { BookOpen, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { formatDate, formatSchedule, toFa } from '@/lib/format';
 import { ROLE_LABEL } from '@/lib/roles';
-import { useMyClasses } from '@/hook/useMyClasses';
+import { useMyOverview } from '@/hook/useMyOverview';
 import Avatar from '@/components/panel/Avatar';
+import MedalShowcase from '@/components/panel/MedalShowcase';
 import { Badge, Card } from '@/components/panel/ui';
 import { EmptyState, Spinner, TuitionPill } from '@/components/panel/widgets';
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const { items, loading } = useMyClasses();
+  const { classes, achievements, loading } = useMyOverview();
 
   if (!user) return null;
 
@@ -32,20 +33,17 @@ export default function ProfilePage() {
               : '—',
     },
     { label: 'وضعیت حساب', value: user.status === 'active' ? 'فعال' : 'غیرفعال' },
-    ...(user.createdAt
-      ? [{ label: 'تاریخ عضویت', value: formatDate(user.createdAt) }]
-      : []),
+    ...(user.createdAt ? [{ label: 'تاریخ عضویت', value: formatDate(user.createdAt) }] : []),
   ];
 
-  const activeClasses = items.filter((i) => i.status === 'active');
+  const activeClasses = classes.filter((i) => i.status === 'active');
+  const topMedals = achievements.filter((a) => a.code === 'top_rank');
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <Card className="flex flex-col items-center !py-8 text-center">
         <Avatar name={user.fullName} seed={user.id} size={112} priority />
-        <h1 className="mt-4 text-2xl font-black text-slate-900 dark:text-white">
-          {user.fullName}
-        </h1>
+        <h1 className="mt-4 text-2xl font-black text-slate-900 dark:text-white">{user.fullName}</h1>
         <p dir="ltr" className="mt-1 text-sm font-bold text-slate-400">
           {user.mobile}
         </p>
@@ -55,19 +53,28 @@ export default function ProfilePage() {
             {user.status === 'active' ? 'فعال' : 'غیرفعال'}
           </Badge>
           {user.studentType && (
-            <Badge tone="amber">
-              {user.studentType === 'online' ? 'آنلاین' : 'حضوری'}
-            </Badge>
+            <Badge tone="amber">{user.studentType === 'online' ? 'آنلاین' : 'حضوری'}</Badge>
+          )}
+          {topMedals.length > 0 && (
+            <Badge tone="amber">{toFa(topMedals.length)} مدال مقام اول</Badge>
           )}
         </div>
       </Card>
 
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌ها</h2>
+          <span className="text-[11px] font-bold text-slate-400">
+            {loading ? '…' : toFa(achievements.length)} مدال
+          </span>
+        </div>
+        {loading ? <Spinner /> : <MedalShowcase items={achievements} />}
+      </section>
+
       <Card className="divide-y divide-slate-100 !p-0 dark:divide-slate-800">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-4">
-            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
-              {row.label}
-            </span>
+            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">{row.label}</span>
             <span
               dir={row.ltr ? 'ltr' : undefined}
               className="text-sm font-black text-slate-900 dark:text-white"

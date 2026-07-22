@@ -1,13 +1,30 @@
 import type { Medal as MedalType } from '@/lib/types';
 
-type MedalCode = MedalType['code'];
+export type MedalCode = MedalType['code'];
 
-const THEME: Record<MedalCode, { fill: string; ring: string; ribbon: string }> = {
-  top_rank: { fill: '#F59E0B', ring: '#B45309', ribbon: '#7c3aed' },
-  improved: { fill: '#059669', ring: '#065F46', ribbon: '#0ea5e9' },
+const THEME: Record<
+  MedalCode,
+  { fill: string; highlight: string; ring: string; ribbon: string; glow: string }
+> = {
+  top_rank: {
+    fill: '#FBBF24',
+    highlight: '#FDE68A',
+    ring: '#B45309',
+    ribbon: '#7c3aed',
+    glow: 'bg-amber-100 dark:bg-amber-950/40',
+  },
+  improved: {
+    fill: '#34D399',
+    highlight: '#A7F3D0',
+    ring: '#047857',
+    ribbon: '#0ea5e9',
+    glow: 'bg-emerald-100 dark:bg-emerald-950/40',
+  },
 };
 
-/** Flat SVG medal — no gradients, cheap to paint on weak GPUs. */
+/**
+ * Duolingo-flavored medal — solid fills only (no SVG gradients) for weak GPUs.
+ */
 export default function Medal({
   code,
   size = 72,
@@ -23,25 +40,33 @@ export default function Medal({
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="0 0 100 110"
       className={className}
       role="img"
       aria-hidden="true"
     >
-      <path d="M35 20 L28 60 L42 52 L45 30 Z" fill={t.ribbon} />
-      <path d="M65 20 L72 60 L58 52 L55 30 Z" fill={t.ribbon} opacity="0.85" />
-      <circle cx="50" cy="60" r="30" fill={t.ring} />
-      <circle cx="50" cy="60" r="26" fill={t.fill} />
+      {/* ribbons */}
+      <path d="M38 8 L30 52 L44 44 L46 18 Z" fill={t.ribbon} />
+      <path d="M62 8 L70 52 L56 44 L54 18 Z" fill={t.ribbon} opacity="0.88" />
+      {/* knot */}
+      <rect x="42" y="6" width="16" height="12" rx="3" fill={t.ribbon} />
+
+      {/* body */}
+      <circle cx="50" cy="68" r="32" fill={t.ring} />
+      <circle cx="50" cy="68" r="27" fill={t.fill} />
+      <circle cx="50" cy="68" r="22" fill={t.highlight} opacity="0.35" />
+      <circle cx="50" cy="68" r="27" fill="none" stroke="#fff" strokeOpacity="0.45" strokeWidth="2" />
+
       {code === 'top_rank' ? (
         <path
-          d="M50 45 l4.7 9.5 10.5 1.5 -7.6 7.4 1.8 10.4 -9.4 -4.9 -9.4 4.9 1.8 -10.4 -7.6 -7.4 10.5 -1.5 Z"
-          fill="#ffffff"
+          d="M50 50 l5.2 10.5 11.6 1.7 -8.4 8.2 2 11.5 -10.4 -5.5 -10.4 5.5 2 -11.5 -8.4 -8.2 11.6 -1.7 Z"
+          fill="#fff"
         />
       ) : (
         <path
-          d="M38 68 L48 58 L54 64 L64 52 M64 52 L64 60 M64 52 L56 52"
+          d="M38 76 L48 66 L54 72 L64 58 M64 58 L64 68 M64 58 L54 58"
           fill="none"
-          stroke="#ffffff"
+          stroke="#fff"
           strokeWidth="4.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -49,4 +74,8 @@ export default function Medal({
       )}
     </svg>
   );
+}
+
+export function medalGlow(code: MedalCode): string {
+  return THEME[code].glow;
 }

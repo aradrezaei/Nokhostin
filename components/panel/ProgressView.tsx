@@ -15,7 +15,7 @@ function motivationCopy(data: ClassProgress): string {
   const attended = data.attendance.present + data.attendance.late;
   const marked = attended + data.attendance.absent;
   const rate = marked > 0 ? attended / marked : 0;
-  if (data.rank.isTop) return 'رتبه‌ی اولی! همین مسیر رو نگه دار.';
+  if (data.rank.isTop) return 'مقام اولی! مدالت در پروفایل می‌درخشد.';
   if (data.improvement.improved) return 'نسبت به ترم قبل رشد کردی — عالی پیش می‌ری.';
   if (rate >= 0.9) return 'حضورت فوق‌العاده‌ست. تمرکز روی مهارت‌ها بذار.';
   if (rate >= 0.7) return 'حضور خوبه؛ با تمرین بیشتر امتیازت می‌ره بالا.';
@@ -73,9 +73,7 @@ export default function ProgressView({
             </p>
             <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
               نمره کلی {formatScore(data.score)}
-              {rank.position
-                ? ` · رتبه ${toFa(rank.position)} از ${toFa(rank.totalRanked)}`
-                : ''}
+              {rank.isTop ? ' · مقام اول کلاس' : ''}
               {marked > 0 ? ` · حضور ${toFa(attendanceRate)}٪` : ''}
             </p>
           </div>
@@ -85,9 +83,15 @@ export default function ProgressView({
       {medals.length > 0 && (
         <section className="grid gap-3 sm:grid-cols-2">
           {medals.map((m) => (
-            <Card key={m.code} className="!p-4 flex items-center gap-4">
-              <Medal code={m.code} size={64} />
+            <Card
+              key={m.code}
+              className="!p-4 flex items-center gap-4 border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30"
+            >
+              <Medal code={m.code} size={80} />
               <div>
+                <p className="text-[11px] font-extrabold text-amber-700 dark:text-amber-300">
+                  مدال افتخار
+                </p>
                 <p className="text-sm font-black text-slate-900 dark:text-white">{m.title}</p>
                 <p className="mt-1 text-xs font-bold leading-5 text-slate-500 dark:text-slate-400">
                   {m.description}
@@ -188,12 +192,16 @@ export default function ProgressView({
               </p>
             </div>
             <div className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-900/50">
-              <p className="text-[11px] font-bold text-slate-400">رتبه کلاس</p>
+              <p className="text-[11px] font-bold text-slate-400">جایگاه</p>
               <p className="flex items-center gap-1.5 text-lg font-black text-slate-900 dark:text-white">
-                <Trophy className="h-4 w-4 shrink-0 text-amber-500" />
-                <span className="truncate">
-                  {rank.position ? `${toFa(rank.position)} از ${toFa(rank.totalRanked)}` : '—'}
-                </span>
+                {rank.isTop ? (
+                  <>
+                    <Trophy className="h-4 w-4 shrink-0 text-amber-500" />
+                    <span className="truncate text-amber-600 dark:text-amber-400">مقام اول</span>
+                  </>
+                ) : (
+                  <span className="truncate text-slate-400">در مسیر پیشرفت</span>
+                )}
               </p>
             </div>
           </div>
