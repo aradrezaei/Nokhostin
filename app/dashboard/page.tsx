@@ -24,7 +24,7 @@ export default function DashboardHome() {
   const unpaid = classes.filter((i) => i.status === 'active' && !i.tuitionPaid);
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6 lg:mx-0 lg:max-w-3xl">
+    <div className="mx-auto w-full max-w-5xl space-y-6">
       <ImprovementModal items={improvementHighlights} />
 
       <header className="space-y-1.5">
@@ -67,10 +67,10 @@ export default function DashboardHome() {
       ) : (
         <section className="space-y-4">
           <h2 className="text-sm font-extrabold text-[var(--p-ink)]">کلاس‌های من</h2>
-          <ol className="relative mx-auto flex max-w-sm flex-col items-center gap-5 sm:max-w-md">
+          <ol className="relative mx-auto grid max-w-sm gap-5 sm:max-w-none sm:grid-cols-2 lg:grid-cols-3">
             <span
               aria-hidden
-              className="absolute inset-y-3 start-1/2 w-1 -translate-x-1/2 rounded-full bg-[var(--p-line)]"
+              className="absolute inset-y-3 start-1/2 w-1 -translate-x-1/2 rounded-full bg-[var(--p-line)] sm:hidden"
             />
             {classes.map((entry) => {
               const snap = snapshots.find((s) => s.classId === entry.class.id);

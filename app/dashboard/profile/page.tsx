@@ -51,7 +51,7 @@ export default function ProfilePage() {
         </div>
         <div className="panel-card px-3 py-4 text-center">
           <p className="text-xl font-extrabold text-[var(--p-ink)]">
-            {user.status === 'active' ? 'فعال' : 'غیرفعال'}
+            {user.status === 'active' ? '✓' : '—'}
           </p>
           <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">وضعیت</p>
         </div>

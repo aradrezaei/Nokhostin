@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Check, Lock, Star } from 'lucide-react';
+import { BookOpen, Check, ChevronLeft, Lock, Star } from 'lucide-react';
 import { formatScore, toFa } from '@/lib/format';
 import { useMyOverview } from '@/hooks/useMyOverview';
 import { usePrefetchClassProgress } from '@/hooks/useClassProgress';
@@ -12,7 +12,7 @@ export default function StudentCoursesPage() {
   const prefetch = usePrefetchClassProgress();
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
+    <div className="mx-auto w-full max-w-5xl space-y-6">
       <header>
         <h1 className="text-2xl font-extrabold tracking-tight text-[var(--p-ink)]">کلاس‌ها</h1>
         <p className="mt-1 text-sm font-bold text-[var(--p-muted)]">یکی را انتخاب کن و ادامه بده.</p>
@@ -28,10 +28,10 @@ export default function StudentCoursesPage() {
           <p className="text-sm font-extrabold text-[var(--p-ink)]">کلاسی نیست</p>
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {classes.map((entry) => {
             const snap = snapshots.find((s) => s.classId === entry.class.id);
-                const pct =
+            const pct =
               entry.class.totalSessions > 0
                 ? Math.min((entry.class.sessionsHeld / entry.class.totalSessions) * 100, 100)
                 : 0;
@@ -45,7 +45,7 @@ export default function StudentCoursesPage() {
                   onMouseEnter={() => {
                     prefetch(entry.class.id);
                   }}
-                  className="panel-card flex items-center gap-4 p-4 transition-colors hover:border-[var(--p-green)]"
+                  className="panel-card flex h-full items-center gap-4 p-4 hover:border-[var(--p-accent)]"
                 >
                   <span
                     className={`inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-b-4 ${
@@ -53,7 +53,7 @@ export default function StudentCoursesPage() {
                         ? 'border-[var(--p-gold-deep)] bg-[var(--p-gold)] text-[#3c3c3c]'
                         : done || locked
                           ? 'border-[#bdbdbd] bg-[#e5e5e5] text-[#afafaf] dark:border-[#1a2830] dark:bg-[#2a3a44] dark:text-[#6b7c86]'
-                          : 'border-[var(--p-green-deep)] bg-[var(--p-green)] text-white'
+                          : 'border-[var(--p-accent-deep)] bg-[var(--p-accent)] text-white'
                     }`}
                   >
                     {snap?.isTop ? (
@@ -68,8 +68,15 @@ export default function StudentCoursesPage() {
                   </span>
 
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-extrabold text-[var(--p-ink)]">
-                      {entry.class.title}
+                    <span className="flex items-start justify-between gap-2">
+                      <span className="block truncate text-sm font-extrabold text-[var(--p-ink)]">
+                        {entry.class.title}
+                      </span>
+                      <ChevronLeft
+                        className="mt-0.5 h-4 w-4 shrink-0 text-[var(--p-muted)]"
+                        strokeWidth={2.5}
+                        aria-hidden
+                      />
                     </span>
                     <span className="mt-0.5 block truncate text-[11px] font-bold text-[var(--p-muted)]">
                       {entry.class.course?.name ?? '—'}
@@ -77,7 +84,7 @@ export default function StudentCoursesPage() {
                     </span>
                     <span className="mt-2 block h-2 overflow-hidden rounded-full bg-[var(--p-line)]">
                       <span
-                        className="block h-full rounded-full bg-[var(--p-green)]"
+                        className="block h-full rounded-full bg-[var(--p-accent)]"
                         style={{ width: `${pct}%` }}
                       />
                     </span>

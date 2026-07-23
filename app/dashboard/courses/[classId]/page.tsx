@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ChevronRight } from 'lucide-react';
 import { useClassProgress } from '@/hooks/useClassProgress';
 import ImprovementModal from '@/components/panel/ImprovementModal';
 import { Alert } from '@/components/panel/ui';
@@ -37,13 +38,14 @@ export default function StudentClassProgressPage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg space-y-4">
+    <div className="mx-auto w-full max-w-5xl space-y-5">
       <ImprovementModal items={improvementItems} />
       <Link
         href="/dashboard/courses"
-        className="inline-flex text-xs font-extrabold text-[var(--p-blue)]"
+        className="inline-flex items-center gap-1.5 text-sm font-extrabold text-[var(--p-accent)] hover:text-[var(--p-accent-deep)]"
       >
-        ← کلاس‌ها
+        <ChevronRight className="h-4 w-4" strokeWidth={2.75} aria-hidden />
+        کلاس‌ها
       </Link>
       <ProgressView data={data} />
     </div>

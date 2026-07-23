@@ -613,4 +613,8 @@
   .panel-bottom {
     display: none !important;
   }
+
+  .panel-side {
+    display: flex;
+  }
 }

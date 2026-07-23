@@ -56,16 +56,16 @@ export default function ProgressView({
   })();
 
   return (
-    <div className="w-full max-w-full space-y-5 overflow-x-hidden">
-      <header className="flex flex-wrap items-start justify-between gap-3">
+    <div className="w-full space-y-5 overflow-x-hidden">
+      <header className="panel-card flex flex-wrap items-start justify-between gap-4 !p-5 sm:!p-6">
         <div className="min-w-0 flex-1">
           {studentName ? (
-            <p className="text-xs font-bold text-[var(--p-accent,#7c3aed)]">{studentName}</p>
+            <p className="text-xs font-bold text-[var(--p-accent)]">{studentName}</p>
           ) : null}
-          <h1 className="truncate text-xl font-extrabold text-[var(--p-ink,#0f172a)] sm:text-2xl">
+          <h1 className="truncate text-xl font-extrabold text-[var(--p-ink)] sm:text-2xl">
             {data.class.title}
           </h1>
-          <p className="mt-1 text-sm font-bold leading-6 text-[var(--p-muted,#64748b)]">
+          <p className="mt-1 text-sm font-bold leading-6 text-[var(--p-muted)]">
             {data.class.course?.name}
             {data.class.course?.level ? ` · ${data.class.course.level}` : ''}
             {' · '}ترم {toFa(data.class.termNumber)}
@@ -78,30 +78,30 @@ export default function ProgressView({
         {showTuition ? <TuitionPill paid={data.tuitionPaid} /> : null}
       </header>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="panel-card px-3 py-4 text-center">
-          <p className="text-xl font-extrabold text-[var(--p-accent,#7c3aed)]">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="panel-card px-3 py-4 text-center sm:px-4 sm:py-5">
+          <p className="text-xl font-extrabold text-[var(--p-accent)] sm:text-2xl">
             {formatScore(data.score)}
           </p>
-          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">نمره</p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">نمره</p>
         </div>
-        <div className="panel-card px-3 py-4 text-center">
-          <p className="text-xl font-extrabold text-[var(--p-ink,#0f172a)]">
+        <div className="panel-card px-3 py-4 text-center sm:px-4 sm:py-5">
+          <p className="text-xl font-extrabold text-[var(--p-ink)] sm:text-2xl">
             {marked > 0 ? `${toFa(attendanceRate)}٪` : '—'}
           </p>
-          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">حضور</p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">حضور</p>
         </div>
-        <div className="panel-card px-3 py-4 text-center">
-          <p className="text-xl font-extrabold text-[var(--p-ink,#0f172a)]">
+        <div className="panel-card px-3 py-4 text-center sm:px-4 sm:py-5">
+          <p className="text-xl font-extrabold text-[var(--p-ink)] sm:text-2xl">
             {rank.isTop ? '۱' : '—'}
           </p>
-          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">رتبه</p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">رتبه</p>
         </div>
-        <div className="panel-card px-3 py-4 text-center">
-          <p className="text-xl font-extrabold text-[var(--p-ink,#0f172a)]">
+        <div className="panel-card px-3 py-4 text-center sm:px-4 sm:py-5">
+          <p className="text-xl font-extrabold text-[var(--p-ink)] sm:text-2xl">
             {toFa(sessions.current)}/{toFa(sessions.total)}
           </p>
-          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">جلسات</p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">جلسات</p>
         </div>
       </div>
 
@@ -118,18 +118,16 @@ export default function ProgressView({
             >
               <Medal code={m.code} size={72} />
               <div>
-                <p className="text-sm font-extrabold text-[var(--p-ink,#0f172a)]">{m.title}</p>
-                <p className="mt-1 text-xs font-bold text-[var(--p-muted,#64748b)]">
-                  {m.description}
-                </p>
+                <p className="text-sm font-extrabold text-[var(--p-ink)]">{m.title}</p>
+                <p className="mt-1 text-xs font-bold text-[var(--p-muted)]">{m.description}</p>
               </div>
             </div>
           ))}
         </section>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
-        <Card className="flex flex-col items-center justify-center !p-5">
+      <div className="grid gap-4 lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr]">
+        <Card className="flex flex-col items-center justify-center !p-5 sm:!p-6">
           <SectionTitle title="پیشرفت ترم" hint={`${toFa(sessions.remaining)} جلسه مانده`} />
           <ProgressRing
             value={sessions.current}
@@ -139,7 +137,7 @@ export default function ProgressView({
           />
         </Card>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
           <StatTile
             tone="emerald"
             icon={<UserCheck className="h-5 w-5" />}
