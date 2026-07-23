@@ -6,18 +6,20 @@ import { confirmAction } from '@/lib/confirm';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Download, Plus, Trash2, UserPlus } from 'lucide-react';
+import { ClipboardCheck, Download, Plus, Settings2, Trash2, UserPlus } from 'lucide-react';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { downloadAuthed } from '@/lib/download';
 import {
   CLASS_STATUS_LABEL,
   SESSION_STATUS_LABEL,
+  WEEKDAY_LABEL,
+  WEEKDAYS_ORDER,
   formatDate,
   formatSchedule,
   toFa,
 } from '@/lib/format';
-import type { ClassDetail, ManagedUser, Paginated } from '@/lib/types';
+import type { ClassDetail, ManagedUser, Paginated, WeekDay } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Badge, Button, Card, Field, Modal, TextInput } from '@/components/panel/ui';
 import { Spinner, TuitionPill } from '@/components/panel/widgets';
@@ -29,11 +31,17 @@ export default function AdminClassDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [enrollOpen, setEnrollOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [students, setStudents] = useState<ManagedUser[]>([]);
   const [studentSearch, setStudentSearch] = useState('');
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [exporting, setExporting] = useState(false);
+  const [editForm, setEditForm] = useState({
+    totalSessions: '12',
+    time: '17:30',
+    days: ['saturday'] as WeekDay[],
+  });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -70,6 +78,17 @@ export default function AdminClassDetailPage() {
     void fetchStudents();
   };
 
+  const openEdit = () => {
+    if (!klass) return;
+    setEditForm({
+      totalSessions: String(klass.totalSessions),
+      time: klass.schedule.time,
+      days: [...klass.schedule.days],
+    });
+    setFormError('');
+    setEditOpen(true);
+  };
+
   useEffect(() => {
     if (!enrollOpen) return;
     const t = setTimeout(() => {
@@ -97,6 +116,35 @@ export default function AdminClassDetailPage() {
       await load();
     } catch (e) {
       setFormError(e instanceof ApiError ? e.message : 'ثبت‌نام ناموفق بود.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveClassEdit = async () => {
+    if (editForm.days.length === 0) {
+      setFormError('حداقل یک روز هفته را انتخاب کنید.');
+      return;
+    }
+    const total = Number(editForm.totalSessions);
+    if (!Number.isFinite(total) || total < 1 || total > 120) {
+      setFormError('تعداد جلسات باید بین ۱ تا ۱۲۰ باشد.');
+      return;
+    }
+    setSaving(true);
+    setFormError('');
+    try {
+      await request(`/classes/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          totalSessions: total,
+          schedule: { days: editForm.days, time: editForm.time },
+        }),
+      });
+      setEditOpen(false);
+      await load();
+    } catch (e) {
+      setFormError(e instanceof ApiError ? e.message : 'ذخیره تغییرات ناموفق بود.');
     } finally {
       setSaving(false);
     }
@@ -135,6 +183,13 @@ export default function AdminClassDetailPage() {
     }
   };
 
+  const toggleDay = (day: WeekDay) => {
+    setEditForm((f) => ({
+      ...f,
+      days: f.days.includes(day) ? f.days.filter((d) => d !== day) : [...f.days, day],
+    }));
+  };
+
   if (loading) return <Spinner />;
   if (error && !klass) return <Alert>{error}</Alert>;
   if (!klass) return null;
@@ -162,6 +217,9 @@ export default function AdminClassDetailPage() {
           <Badge tone={klass.status === 'active' ? 'green' : 'gray'}>
             {CLASS_STATUS_LABEL[klass.status]}
           </Badge>
+          <Button variant="ghost" onClick={openEdit}>
+            <Settings2 className="h-4 w-4" /> ویرایش ترم
+          </Button>
           <Button variant="ghost" onClick={exportExcel} disabled={exporting}>
             <Download className="h-4 w-4" />
             {exporting ? 'در حال آماده‌سازی…' : 'خروجی اکسل'}
@@ -254,7 +312,7 @@ export default function AdminClassDetailPage() {
                       <div className="inline-flex gap-2">
                         <Link href={`/admin/classes/${id}/students/${row.student.id}`}>
                           <Button variant="subtle" className="!px-3 !py-1.5">
-                            روند پیشرفت
+                            وضعیت کامل
                           </Button>
                         </Link>
                         <Button
@@ -280,7 +338,7 @@ export default function AdminClassDetailPage() {
           {klass.sessions.map((s) => (
             <div
               key={s.id}
-              className="flex items-center justify-between rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-4 py-3 dark:border-slate-800 dark:bg-[#131f24]"
+              className="flex items-center justify-between gap-2 rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-4 py-3 dark:border-slate-800 dark:bg-[#131f24]"
             >
               <div>
                 <p className="text-sm font-black text-slate-900 dark:text-white">
@@ -288,11 +346,20 @@ export default function AdminClassDetailPage() {
                 </p>
                 <p className="text-xs font-bold text-slate-400">{formatDate(s.scheduledDate)}</p>
               </div>
-              <Badge
-                tone={s.status === 'held' ? 'green' : s.status === 'canceled' ? 'amber' : 'violet'}
-              >
-                {SESSION_STATUS_LABEL[s.status] ?? s.status}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge
+                  tone={s.status === 'held' ? 'green' : s.status === 'canceled' ? 'amber' : 'violet'}
+                >
+                  {SESSION_STATUS_LABEL[s.status] ?? s.status}
+                </Badge>
+                {s.status !== 'canceled' ? (
+                  <Link href={`/admin/classes/${id}/sessions/${s.id}/attendance`}>
+                    <Button variant="ghost" className="!px-2.5 !py-1.5">
+                      <ClipboardCheck className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                ) : null}
+              </div>
             </div>
           ))}
         </div>
@@ -345,6 +412,71 @@ export default function AdminClassDetailPage() {
               </p>
             )}
           </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={editOpen}
+        title="ویرایش ترم / برنامه کلاس"
+        onClose={() => {
+          setEditOpen(false);
+        }}
+      >
+        <div className="space-y-4">
+          {formError && <Alert>{formError}</Alert>}
+          <Field label="تعداد جلسات ترم">
+            <TextInput
+              type="number"
+              min={1}
+              max={120}
+              dir="ltr"
+              value={editForm.totalSessions}
+              onChange={(e) => {
+                setEditForm((f) => ({ ...f, totalSessions: e.target.value }));
+              }}
+            />
+          </Field>
+          <Field label="ساعت کلاس">
+            <TextInput
+              dir="ltr"
+              value={editForm.time}
+              onChange={(e) => {
+                setEditForm((f) => ({ ...f, time: e.target.value }));
+              }}
+              placeholder="17:30"
+            />
+          </Field>
+          <div>
+            <p className="mb-2 text-xs font-bold text-slate-500">روزهای هفته</p>
+            <div className="flex flex-wrap gap-2">
+              {WEEKDAYS_ORDER.map((day) => {
+                const on = editForm.days.includes(day);
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => {
+                      toggleDay(day);
+                    }}
+                    className={`rounded-xl border-2 px-3 py-2 text-xs font-black ${
+                      on
+                        ? 'border-[#7c3aed] bg-[#7c3aed]/10 text-[#7c3aed]'
+                        : 'border-slate-200 text-slate-500 dark:border-slate-700'
+                    }`}
+                  >
+                    {WEEKDAY_LABEL[day]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-[11px] font-bold text-slate-400">
+            افزایش جلسات، تاریخ‌های جدید می‌سازد. تغییر روزها فقط جلساتِ برنامه‌ریزی‌شدهٔ آینده را
+            جابه‌جا می‌کند؛ جلسات برگزار/لغو‌شده دست نمی‌خورند.
+          </p>
+          <Button className="w-full" disabled={saving} onClick={saveClassEdit}>
+            {saving ? 'در حال ذخیره…' : 'ذخیره تغییرات'}
+          </Button>
         </div>
       </Modal>
     </div>

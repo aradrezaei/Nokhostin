@@ -276,7 +276,7 @@ export default function AdminSupportPage() {
                   rows={3}
                   value={draft}
                   onChange={(e) => {
-                    setDraft(e.target.value.slice(0, 2000));
+                    setDraft(e.target.value.slice(0, 1000));
                   }}
                   placeholder="پاسخ پشتیبانی…"
                 />

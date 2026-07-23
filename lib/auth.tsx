@@ -6,6 +6,7 @@ import { scheduleEffect } from '@/lib/scheduleEffect';
 import { API_BASE, ApiError, parseResult } from './api';
 import {
   readAccessToken,
+  readCachedUser,
   readRefreshToken,
   useAuthStore,
 } from '@/stores/auth-store';
@@ -94,13 +95,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
           return;
         }
+        // Instant paint from cache; revalidate in background.
+        const cached = readCachedUser();
+        if (cached) {
+          setUser(cached);
+          setLoading(false);
+        }
         try {
           await refreshUser();
         } finally {
           setLoading(false);
         }
       }),
-    [refreshUser, setLoading],
+    [refreshUser, setLoading, setUser],
   );
 
   return children;

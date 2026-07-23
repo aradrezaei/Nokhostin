@@ -24,6 +24,8 @@ interface AttendanceLogItem {
   lateMinutes: number;
   smsSent: boolean;
   smsKind: string | null;
+  bulkSameDay?: boolean;
+  wholeTermSameDay?: boolean;
   recordedAtJalali: string;
 }
 
@@ -119,6 +121,11 @@ export default function AdminAttendanceLogsPage() {
                   </Badge>
                   {item.smsSent ? (
                     <Badge tone="violet">پیامک {item.smsKind === 'late' ? 'تأخیر' : 'غیبت'}</Badge>
+                  ) : null}
+                  {item.wholeTermSameDay ? (
+                    <Badge tone="amber">کل ترم در یک روز</Badge>
+                  ) : item.bulkSameDay ? (
+                    <Badge tone="amber">ثبت دسته‌ای چند جلسه</Badge>
                   ) : null}
                 </div>
               </div>

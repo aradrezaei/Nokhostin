@@ -55,11 +55,17 @@ function useThemeToggle() {
 
 function isNavActive(pathname: string, href: string, home: string): boolean {
   if (pathname === href) return true;
-  if (href === home) return pathname === href;
+  if (href === home) return false;
   return pathname.startsWith(`${href}/`);
 }
 
-/** Authenticated shell — brand-matched, edge-to-edge on desktop, zero transitions. */
+function profileHref(role: UserRole): string {
+  if (role === 'student') return '/dashboard/profile';
+  if (role === 'mentor') return '/mentor';
+  return '/admin';
+}
+
+/** Authenticated shell — brand-matched, edge-to-edge, no transitions. */
 export default function PanelLayout({
   brand = 'نخستین',
   navItems,
@@ -102,20 +108,48 @@ export default function PanelLayout({
             className="flex shrink-0 items-center gap-2 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--p-accent)]"
             aria-label={brand}
           >
-            <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-[var(--p-accent)]">
+            <span
+              className={`flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl ${
+                dark ? 'bg-[var(--p-accent)]' : 'border border-slate-200 bg-white'
+              }`}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/brand/logo-white.png"
+                src={dark ? '/brand/logo-white.png' : '/brand/logo.png'}
                 alt=""
                 className="h-full w-full scale-[1.12] object-contain"
               />
             </span>
-            <span className="hidden text-[15px] font-extrabold tracking-tight text-[var(--p-ink)] sm:block">
+            <span className="hidden text-[15px] font-extrabold tracking-tight text-[var(--p-ink)] sm:inline">
               {brand}
             </span>
           </Link>
 
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
+          {/* Desktop nav in header — always visible, fixes missing profile/side bugs */}
+          <nav
+            className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex"
+            aria-label="منوی پنل"
+          >
+            {navItems.map((item) => {
+              const active = ready && isNavActive(pathname, item.href, home);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold ${
+                    active
+                      ? 'bg-[color-mix(in_srgb,var(--p-accent)_12%,transparent)] text-[var(--p-accent)]'
+                      : 'text-[var(--p-muted)] hover:bg-[var(--p-bg)] hover:text-[var(--p-ink)]'
+                  }`}
+                >
+                  <span className="[&_svg]:h-4 [&_svg]:w-4">{item.icon}</span>
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
             {chips}
             <button
               type="button"
@@ -131,15 +165,9 @@ export default function PanelLayout({
             </button>
             {user ? (
               <Link
-                href={
-                  user.role === 'student'
-                    ? '/dashboard/profile'
-                    : user.role === 'mentor'
-                      ? '/mentor'
-                      : '/admin'
-                }
+                href={profileHref(user.role)}
                 className="flex items-center gap-2 rounded-xl pe-1 ps-1 hover:bg-[var(--p-bg)]"
-                aria-label={user.fullName}
+                aria-label="پروفایل"
               >
                 <Avatar
                   name={user.fullName}
@@ -167,33 +195,9 @@ export default function PanelLayout({
         </div>
       </header>
 
-      <div className="flex w-full gap-0 lg:gap-0">
-        <aside className="panel-side sticky top-[var(--p-top)] hidden h-[calc(100dvh-var(--p-top))] w-56 shrink-0 flex-col border-e-2 border-[var(--p-line)] bg-[var(--p-surface)] py-5 pe-3 ps-4 lg:flex xl:w-60 xl:ps-6">
-          <nav className="flex flex-col gap-0.5" aria-label="منوی پنل">
-            {navItems.map((item) => {
-              const active = ready && isNavActive(pathname, item.href, home);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-extrabold ${
-                    active
-                      ? 'bg-[color-mix(in_srgb,var(--p-accent)_12%,transparent)] text-[var(--p-accent)]'
-                      : 'text-[var(--p-muted)] hover:bg-[var(--p-bg)] hover:text-[var(--p-ink)]'
-                  }`}
-                >
-                  <span className="[&_svg]:h-5 [&_svg]:w-5">{item.icon}</span>
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-
-        <main className="min-h-[calc(100dvh-var(--p-top)-var(--p-bottom))] min-w-0 flex-1 px-4 pb-[calc(var(--p-bottom)+1rem)] pt-5 sm:px-6 lg:px-8 lg:pb-8 xl:px-10">
-          {ready ? children : <div className="h-32" aria-hidden />}
-        </main>
-      </div>
+      <main className="min-h-[calc(100dvh-var(--p-top)-var(--p-bottom))] w-full px-4 pb-[calc(var(--p-bottom)+1rem)] pt-5 sm:px-6 lg:px-8 lg:pb-8 xl:px-10">
+        {ready ? children : <div className="h-32" aria-hidden />}
+      </main>
 
       <nav className="panel-bottom lg:hidden" aria-label="ناوبری پایین">
         <div className="flex h-[4rem] w-full items-stretch">

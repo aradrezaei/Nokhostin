@@ -14,12 +14,14 @@ export default function ProfilePage() {
   const router = useRouter();
   const { classes, achievements } = useMyOverview();
 
-  if (!user) return null;
+  if (!user) {
+    return <div className="h-40" aria-hidden />;
+  }
 
   const activeCount = classes.filter((i) => i.status === 'active').length;
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
+    <div className="mx-auto w-full max-w-2xl space-y-6 lg:mx-0 lg:max-w-3xl">
       <header className="panel-card flex flex-col items-center px-6 py-8 text-center">
         <Avatar name={user.fullName} seed={user.id} size={96} priority className="!rounded-full" />
         <h1 className="mt-4 text-xl font-extrabold text-[var(--p-ink)]">{user.fullName}</h1>
@@ -27,7 +29,7 @@ export default function ProfilePage() {
           {user.mobile}
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
-          <span className="rounded-full bg-[color-mix(in_srgb,var(--p-green)_14%,transparent)] px-3 py-1 text-[11px] font-extrabold text-[var(--p-green)]">
+          <span className="rounded-full bg-[color-mix(in_srgb,var(--p-accent)_14%,transparent)] px-3 py-1 text-[11px] font-extrabold text-[var(--p-accent)]">
             {ROLE_LABEL[user.role]}
           </span>
           {user.studentType ? (
@@ -49,7 +51,7 @@ export default function ProfilePage() {
         </div>
         <div className="panel-card px-3 py-4 text-center">
           <p className="text-xl font-extrabold text-[var(--p-ink)]">
-            {user.status === 'active' ? '✓' : '—'}
+            {user.status === 'active' ? 'فعال' : 'غیرفعال'}
           </p>
           <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">وضعیت</p>
         </div>

@@ -1,15 +1,20 @@
 const GUEST_KEY = 'nokhostin.support.guest';
 
+function isValidGuestId(value: string): boolean {
+  return /^[a-zA-Z0-9_-]{16,64}$/.test(value);
+}
+
 export function getOrCreateGuestId(): string {
   if (typeof window === 'undefined') return '';
   try {
     const existing = window.localStorage.getItem(GUEST_KEY);
-    if (existing && /^[a-zA-Z0-9_-]{8,64}$/.test(existing)) return existing;
+    if (existing && isValidGuestId(existing)) return existing;
     const id = `g_${crypto.randomUUID().replaceAll('-', '')}`;
     window.localStorage.setItem(GUEST_KEY, id);
     return id;
   } catch {
-    return `g_${Date.now().toString(36)}`;
+    const fallback = `g_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 14)}`;
+    return fallback.length >= 16 ? fallback : `${fallback}xxxxxxxxxx`.slice(0, 20);
   }
 }
 
@@ -27,7 +32,7 @@ export function writeDraft(conversationId: string, text: string) {
   try {
     const key = `nokhostin.support.draft.${conversationId}`;
     if (!text) window.sessionStorage.removeItem(key);
-    else window.sessionStorage.setItem(key, text);
+    else window.sessionStorage.setItem(key, text.slice(0, 1000));
   } catch {
     /* ignore */
   }

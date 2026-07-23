@@ -12,8 +12,8 @@ import type { SupportConversation, SupportMessage } from '@/lib/chat/types';
 
 export type ChatView = 'closed' | 'faq' | 'live';
 
-const ACTIVE_MS = 2000;
-const HIDDEN_MS = 10_000;
+const ACTIVE_MS = 3500;
+const HIDDEN_MS = 12_000;
 
 export function useSupportChat() {
   const [view, setView] = useState<ChatView>('closed');

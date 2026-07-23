@@ -611,10 +611,6 @@
   }
 
   .panel-bottom {
-    display: none;
-  }
-
-  .panel-side {
-    display: flex;
+    display: none !important;
   }
 }

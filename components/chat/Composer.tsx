@@ -23,7 +23,7 @@ export default function Composer({
       <textarea
         value={value}
         onChange={(e) => {
-          onChange(e.target.value.slice(0, 2000));
+          onChange(e.target.value.slice(0, 1000));
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
