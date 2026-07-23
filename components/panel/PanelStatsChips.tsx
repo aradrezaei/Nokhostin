@@ -1,24 +1,24 @@
 'use client';
 
 import { Flame, Trophy } from 'lucide-react';
-import { toFa } from '@/lib/format';
+import { formatScore, toFa } from '@/lib/format';
 import { useMyOverview } from '@/hooks/useMyOverview';
 
-/** Duo-style top chips: attendance + medals. Instant from query cache. */
+/** Top chips: average score + medal count. */
 export default function PanelStatsChips() {
   const { snapshots, achievements } = useMyOverview();
 
-  const avgAttendance = (() => {
-    const rates = snapshots.map((s) => s.attendanceRate).filter((n): n is number => n !== null);
-    if (!rates.length) return null;
-    return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
+  const avgScore = (() => {
+    const scores = snapshots.map((s) => s.score).filter((n): n is number => n !== null);
+    if (!scores.length) return null;
+    return scores.reduce((a, b) => a + b, 0) / scores.length;
   })();
 
   return (
     <>
-      <span className="panel-chip text-[#ff9600]" title="میانگین حضور">
+      <span className="panel-chip text-[#ff9600]" title="میانگین نمرات">
         <Flame className="h-4 w-4" strokeWidth={2.75} fill="currentColor" />
-        {avgAttendance === null ? '—' : toFa(avgAttendance)}
+        {avgScore === null ? '—' : formatScore(avgScore)}
       </span>
       <span className="panel-chip text-[var(--p-gold)]" title="مدال‌ها">
         <Trophy className="h-4 w-4" strokeWidth={2.5} fill="currentColor" />

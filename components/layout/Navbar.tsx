@@ -23,6 +23,7 @@ import {
 import { useAuth } from '@/lib/auth';
 import { panelHome } from '@/lib/roles';
 import { NAV_ITEMS } from '@/lib/site';
+import { applyTheme, readIsDark } from '@/lib/theme';
 import UserMenu from '@/components/panel/UserMenu';
 import Avatar from '@/components/panel/Avatar';
 import BrandMark from '@/components/layout/BrandMark';
@@ -346,7 +347,7 @@ function MobileMenu({
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(readIsDark);
   const [scrolled, setScrolled] = useState(false);
   const [courseMenuOpen, setCourseMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -359,17 +360,17 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, []);
 
-  useEffect(
-    () =>
-      scheduleEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const dark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-        setIsDark(dark);
-        document.documentElement.classList.toggle('dark', dark);
-      }),
-    [],
-  );
+  useEffect(() => {
+    const sync = () => {
+      setIsDark(readIsDark());
+    };
+    window.addEventListener('storage', sync);
+    window.addEventListener('nokhostin-theme', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('nokhostin-theme', sync);
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -418,8 +419,7 @@ export default function Navbar() {
   const toggleTheme = () => {
     setIsDark((current) => {
       const next = !current;
-      document.documentElement.classList.toggle('dark', next);
-      localStorage.setItem('theme', next ? 'dark' : 'light');
+      applyTheme(next);
       return next;
     });
   };

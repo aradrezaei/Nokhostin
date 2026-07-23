@@ -40,7 +40,6 @@ function markSeen(classId: string) {
   }
 }
 
-/** One-shot progress unlock — short copy, no fluff. */
 export default function ImprovementModal({ items }: { items: ImprovementHighlight[] }) {
   const [item, setItem] = useState<ImprovementHighlight | null>(null);
 
@@ -75,7 +74,7 @@ export default function ImprovementModal({ items }: { items: ImprovementHighligh
       aria-modal="true"
       aria-label="پیشرفت"
     >
-      <button type="button" className="absolute inset-0 bg-black/45" aria-label="بستن" onClick={close} />
+      <button type="button" className="absolute inset-0 bg-black/40" aria-label="بستن" onClick={close} />
 
       <div className="relative w-full max-w-md overflow-hidden rounded-2xl border-2 border-[var(--p-line)] border-b-4 bg-[var(--p-surface)]">
         <button
@@ -88,7 +87,7 @@ export default function ImprovementModal({ items }: { items: ImprovementHighligh
         </button>
 
         <div className="px-6 pb-6 pt-8 text-center">
-          <Medal code="improved" size={96} className="mx-auto" />
+          <Medal code="improved" size={88} className="mx-auto" />
           <h2 className="mt-4 text-xl font-extrabold text-[var(--p-ink)]">پیشرفت ترم</h2>
           <p className="mt-2 text-sm font-bold text-[var(--p-muted)]">{item.classTitle}</p>
 
@@ -97,9 +96,9 @@ export default function ImprovementModal({ items }: { items: ImprovementHighligh
               <p className="text-[10px] font-bold text-[var(--p-muted)]">قبل</p>
               <p className="mt-1 text-lg font-extrabold">{formatScore(item.previousScore)}</p>
             </div>
-            <div className="rounded-2xl border-2 border-[var(--p-green)] bg-[color-mix(in_srgb,var(--p-green)_12%,transparent)] px-2 py-3">
-              <p className="text-[10px] font-bold text-[var(--p-green)]">تغییر</p>
-              <p className="mt-1 flex items-center justify-center gap-1 text-lg font-extrabold text-[var(--p-green)]">
+            <div className="rounded-2xl border-2 border-[var(--p-accent)] bg-[color-mix(in_srgb,var(--p-accent)_10%,transparent)] px-2 py-3">
+              <p className="text-[10px] font-bold text-[var(--p-accent)]">تغییر</p>
+              <p className="mt-1 flex items-center justify-center gap-1 text-lg font-extrabold text-[var(--p-accent)]">
                 <TrendingUp className="h-4 w-4" />
                 {deltaLabel ?? '—'}
               </p>
@@ -111,7 +110,7 @@ export default function ImprovementModal({ items }: { items: ImprovementHighligh
           </div>
 
           {delta !== null && delta > 0 ? (
-            <p className="mt-4 text-xs font-extrabold text-[var(--p-green)]">
+            <p className="mt-4 text-xs font-extrabold text-[var(--p-accent)]">
               +{toFa(Math.round(delta * 10) / 10)} نسبت به ترم قبل
             </p>
           ) : null}

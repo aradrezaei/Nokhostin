@@ -1,9 +1,7 @@
 'use client';
 
-import { scheduleEffect } from '@/lib/scheduleEffect';
-
-import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import {
   BookMarked,
   Building2,
@@ -16,8 +14,6 @@ import {
 import { useAuth } from '@/lib/auth';
 import type { Paginated } from '@/lib/types';
 import { toFa } from '@/lib/format';
-import { Card } from '@/components/panel/ui';
-import { StatTile } from '@/components/panel/widgets';
 
 interface Stats {
   users: number;
@@ -28,14 +24,24 @@ interface Stats {
   published: number;
 }
 
+const SHORTCUTS = [
+  { href: '/admin/attendance-logs', title: 'لاگ حضور', icon: ClipboardList },
+  { href: '/admin/classes', title: 'کلاس‌ها', icon: GraduationCap },
+  { href: '/admin/courses', title: 'دوره‌ها', icon: BookMarked },
+  { href: '/admin/users', title: 'کاربران', icon: Users },
+  { href: '/admin/blog', title: 'وبلاگ', icon: Newspaper },
+  { href: '/admin/institutes', title: 'آموزشگاه', icon: Building2 },
+] as const;
+
 export default function AdminDashboard() {
   const { request } = useAuth();
-  const [stats, setStats] = useState<Stats | null>(null);
 
-  const load = useCallback(async () => {
-    const total = (path: string) =>
-      request<Paginated<unknown>>(path).then((r) => r.pagination.total);
-    try {
+  const { data: stats } = useQuery({
+    queryKey: ['admin', 'stats'],
+    staleTime: 60_000,
+    queryFn: async (): Promise<Stats> => {
+      const total = (path: string) =>
+        request<Paginated<unknown>>(path).then((r) => r.pagination.total);
       const [users, students, mentors, classes, courses, published] = await Promise.all([
         total('/users?pageSize=1'),
         total('/users?role=student&pageSize=1'),
@@ -44,110 +50,53 @@ export default function AdminDashboard() {
         total('/admin/courses?pageSize=1'),
         total('/admin/blog/posts?status=published&pageSize=1'),
       ]);
-      setStats({ users, students, mentors, classes, courses, published });
-    } catch {
-      setStats({
-        users: 0,
-        students: 0,
-        mentors: 0,
-        classes: 0,
-        courses: 0,
-        published: 0,
-      });
-    }
-  }, [request]);
+      return { users, students, mentors, classes, courses, published };
+    },
+  });
 
-  useEffect(() => scheduleEffect(() => load()), [load]);
-
-  const shortcuts = [
-    {
-      href: '/admin/attendance-logs',
-      title: 'لاگ حضور',
-      desc: 'تاریخچه ثبت حضور و پیامک‌ها',
-      icon: <ClipboardList className="h-6 w-6" />,
-    },
-    {
-      href: '/admin/classes',
-      title: 'کلاس‌ها',
-      desc: 'کلاس، هنرجو، شهریه و خروجی اکسل',
-      icon: <GraduationCap className="h-6 w-6" />,
-    },
-    {
-      href: '/admin/courses',
-      title: 'دوره‌ها',
-      desc: 'کاتالوگ کتاب و سطح آموزشی',
-      icon: <BookMarked className="h-6 w-6" />,
-    },
-    {
-      href: '/admin/users',
-      title: 'کاربران',
-      desc: 'ثبت استاد و هنرجو',
-      icon: <Users className="h-6 w-6" />,
-    },
-    {
-      href: '/admin/blog',
-      title: 'وبلاگ',
-      desc: 'نوشتن و انتشار مقالات',
-      icon: <Newspaper className="h-6 w-6" />,
-    },
+  const tiles = [
+    { label: 'کاربران', value: stats?.users, icon: Users },
+    { label: 'هنرجو', value: stats?.students, icon: GraduationCap },
+    { label: 'استاد', value: stats?.mentors, icon: UserCog },
+    { label: 'کلاس', value: stats?.classes, icon: Building2 },
+    { label: 'دوره', value: stats?.courses, icon: BookMarked },
+    { label: 'پست', value: stats?.published, icon: Newspaper },
   ];
 
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white">داشبورد مدیریت</h1>
-        <p className="mt-1 text-sm font-bold text-slate-400">نمای کلی آموزشگاه</p>
+        <h1 className="text-2xl font-extrabold text-[var(--p-ink)]">مدیریت</h1>
+        <p className="mt-1 text-sm font-bold text-[var(--p-muted)]">آمار و میان‌برها</p>
       </header>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
-        <StatTile
-          icon={<Users className="h-5 w-5" />}
-          label="کل کاربران"
-          value={stats ? toFa(stats.users) : '—'}
-        />
-        <StatTile
-          tone="emerald"
-          icon={<GraduationCap className="h-5 w-5" />}
-          label="هنرجویان"
-          value={stats ? toFa(stats.students) : '—'}
-        />
-        <StatTile
-          tone="amber"
-          icon={<UserCog className="h-5 w-5" />}
-          label="اساتید"
-          value={stats ? toFa(stats.mentors) : '—'}
-        />
-        <StatTile
-          tone="sky"
-          icon={<Building2 className="h-5 w-5" />}
-          label="کلاس‌ها"
-          value={stats ? toFa(stats.classes) : '—'}
-        />
-        <StatTile
-          icon={<BookMarked className="h-5 w-5" />}
-          label="دوره‌ها"
-          value={stats ? toFa(stats.courses) : '—'}
-        />
-        <StatTile
-          tone="rose"
-          icon={<Newspaper className="h-5 w-5" />}
-          label="پست منتشر"
-          value={stats ? toFa(stats.published) : '—'}
-        />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+        {tiles.map((t) => {
+          const Icon = t.icon;
+          return (
+            <div key={t.label} className="panel-card px-3 py-4">
+              <Icon className="h-5 w-5 text-[var(--p-accent)]" strokeWidth={2.25} />
+              <p className="mt-3 text-2xl font-extrabold text-[var(--p-ink)]">
+                {t.value == null ? '—' : toFa(t.value)}
+              </p>
+              <p className="mt-0.5 text-[11px] font-extrabold text-[var(--p-muted)]">{t.label}</p>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {shortcuts.map((s) => (
-          <Link key={s.href} href={s.href}>
-            <Card className="!p-5 hover:border-[#7c3aed]/50">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7c3aed] text-white">
-                {s.icon}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {SHORTCUTS.map((s) => {
+          const Icon = s.icon;
+          return (
+            <Link key={s.href} href={s.href} className="panel-card flex items-center gap-3 !p-4 hover:border-[var(--p-accent)]">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--p-accent)] text-white">
+                <Icon className="h-5 w-5" strokeWidth={2.25} />
               </span>
-              <p className="mt-4 font-black text-slate-900 dark:text-white">{s.title}</p>
-              <p className="mt-1 text-sm font-bold text-slate-400">{s.desc}</p>
-            </Card>
-          </Link>
-        ))}
+              <span className="text-sm font-extrabold text-[var(--p-ink)]">{s.title}</span>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

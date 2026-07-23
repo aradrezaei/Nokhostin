@@ -189,7 +189,7 @@
 /* View Transitions API — برای مرورگرهای پشتیبانی‌کننده */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.3s;
+  animation: none;
 }
 
 /* Fade-in animation for overall page elements */
@@ -426,23 +426,24 @@
   display: none;
 }
 
-/* ─── Panel app (post-login world) — Duolingo-grade shell ─── */
+/* ─── Panel app — same brand language as marketing site ─── */
 .panel-app {
-  --p-bg: #f7f7f7;
+  --p-bg: #f8f7fb;
   --p-surface: #ffffff;
-  --p-ink: #3c3c3c;
-  --p-muted: #777777;
-  --p-line: #e5e5e5;
-  --p-line-strong: #e5e5e5;
-  --p-green: #58cc02;
-  --p-green-deep: #58a700;
-  --p-blue: #1cb0f6;
-  --p-blue-deep: #1899d6;
-  --p-gold: #ffc800;
-  --p-gold-deep: #e5a500;
-  --p-rose: #ff4b4b;
-  --p-rose-deep: #ea2b2b;
-  --p-violet: #ce82ff;
+  --p-ink: #1a1430;
+  --p-muted: #6b6480;
+  --p-line: #e8e4f0;
+  --p-line-strong: #ddd6eb;
+  --p-accent: #7c3aed;
+  --p-accent-deep: #5b21b6;
+  --p-green: var(--p-accent);
+  --p-green-deep: var(--p-accent-deep);
+  --p-blue: #7c3aed;
+  --p-blue-deep: #5b21b6;
+  --p-gold: #d97706;
+  --p-gold-deep: #b45309;
+  --p-rose: #e11d48;
+  --p-rose-deep: #be123c;
   --p-top: 3.5rem;
   --p-bottom: calc(4rem + env(safe-area-inset-bottom));
   background: var(--p-bg);
@@ -452,17 +453,19 @@
 
 .dark .panel-app {
   --p-bg: #131f24;
-  --p-surface: #1a2830;
-  --p-ink: #f0f4f5;
-  --p-muted: #8b9aa3;
-  --p-line: #2a3a44;
+  --p-surface: #17242a;
+  --p-ink: #edf3f5;
+  --p-muted: #93a5ac;
+  --p-line: #2c3b42;
   --p-line-strong: #334854;
-  --p-green: #7ac70c;
-  --p-green-deep: #58a700;
-  --p-blue: #49c0f8;
-  --p-blue-deep: #1cb0f6;
-  --p-gold: #ffc800;
-  --p-gold-deep: #e5a500;
+  --p-accent: #a78bfa;
+  --p-accent-deep: #8b5cf6;
+  --p-green: var(--p-accent);
+  --p-green-deep: var(--p-accent-deep);
+  --p-blue: #a78bfa;
+  --p-blue-deep: #8b5cf6;
+  --p-gold: #fbbf24;
+  --p-gold-deep: #d97706;
 }
 
 .panel-top {

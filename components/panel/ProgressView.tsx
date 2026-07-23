@@ -3,7 +3,6 @@
 import {
   CalendarClock,
   Clock3,
-  Sparkles,
   TrendingUp,
   Trophy,
   UserCheck,
@@ -19,21 +18,8 @@ import ProgressRing from '@/components/panel/viz/ProgressRing';
 import SkillBars from '@/components/panel/viz/SkillBars';
 import { SectionTitle, StatTile, TuitionPill } from '@/components/panel/widgets';
 
-function motivationCopy(data: ClassProgress): string {
-  const attended = data.attendance.present + data.attendance.late;
-  const marked = attended + data.attendance.absent;
-  const rate = marked > 0 ? attended / marked : 0;
-  if (data.rank.isTop) return 'مقام اول این کلاس.';
-  if (data.improvement.improved) return 'نسبت به ترم قبل پیشرفت داشته‌اید.';
-  if (rate >= 0.9) return 'میزان حضور بالاست.';
-  if (rate >= 0.7) return 'حضور قابل قبول است.';
-  if (marked === 0) return 'پس از ثبت اولین جلسه، آمار اینجا نمایش داده می‌شود.';
-  return 'با ادامه جلسات، وضعیت دقیق‌تر می‌شود.';
-}
-
 /**
- * Shared, mobile-first progress surface for student / mentor / admin.
- * Charts stay CSS/SVG-light — no chart libs, no heavy gradients for weak GPUs.
+ * Class progress surface — factual, light DOM, no motivational fluff.
  */
 export default function ProgressView({
   data,
@@ -55,31 +41,31 @@ export default function ProgressView({
     if (rank.isTop && data.score !== null && !has('top_rank')) {
       list.push({
         code: 'top_rank',
-        title: 'مقام اول کلاس',
-        description: 'بالاترین نمره در این کلاس',
+        title: 'مقام اول',
+        description: 'بالاترین نمره این کلاس',
       });
     }
     if (improvement.improved && !has('improved')) {
       list.push({
         code: 'improved',
-        title: 'مدال پیشرفت',
-        description: 'نسبت به ترم قبل پیشرفت داشته‌اید',
+        title: 'پیشرفت',
+        description: 'نمره بالاتر از ترم قبل',
       });
     }
     return list;
   })();
 
   return (
-    <div className="w-full max-w-full space-y-5 overflow-x-hidden [content-visibility:auto]">
+    <div className="w-full max-w-full space-y-5 overflow-x-hidden">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          {studentName && (
-            <p className="text-xs font-bold text-[#7c3aed] dark:text-[#a78bfa]">{studentName}</p>
-          )}
-          <h1 className="truncate text-xl font-black text-slate-900 dark:text-white sm:text-2xl">
+          {studentName ? (
+            <p className="text-xs font-bold text-[var(--p-accent,#7c3aed)]">{studentName}</p>
+          ) : null}
+          <h1 className="truncate text-xl font-extrabold text-[var(--p-ink,#0f172a)] sm:text-2xl">
             {data.class.title}
           </h1>
-          <p className="mt-1 text-sm font-bold leading-6 text-slate-400">
+          <p className="mt-1 text-sm font-bold leading-6 text-[var(--p-muted,#64748b)]">
             {data.class.course?.name}
             {data.class.course?.level ? ` · ${data.class.course.level}` : ''}
             {' · '}ترم {toFa(data.class.termNumber)}
@@ -92,55 +78,64 @@ export default function ProgressView({
         {showTuition ? <TuitionPill paid={data.tuitionPaid} /> : null}
       </header>
 
-      <Card className="!p-4 border-[#7c3aed]/30 bg-[#7c3aed]/5 dark:border-[#7c3aed]/40 dark:bg-[#7c3aed]/10">
-        <div className="flex items-start gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#7c3aed] text-white">
-            <Sparkles className="h-5 w-5" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-black text-slate-900 dark:text-white">
-              {motivationCopy(data)}
-            </p>
-            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
-              نمره کلی {formatScore(data.score)}
-              {rank.isTop ? ' · مقام اول کلاس' : ''}
-              {marked > 0 ? ` · حضور ${toFa(attendanceRate)}٪` : ''}
-            </p>
-          </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-accent,#7c3aed)]">
+            {formatScore(data.score)}
+          </p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">نمره</p>
         </div>
-      </Card>
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-ink,#0f172a)]">
+            {marked > 0 ? `${toFa(attendanceRate)}٪` : '—'}
+          </p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">حضور</p>
+        </div>
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-ink,#0f172a)]">
+            {rank.isTop ? '۱' : '—'}
+          </p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">رتبه</p>
+        </div>
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-ink,#0f172a)]">
+            {toFa(sessions.current)}/{toFa(sessions.total)}
+          </p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted,#64748b)]">جلسات</p>
+        </div>
+      </div>
 
-      {displayMedals.length > 0 && (
+      {displayMedals.length > 0 ? (
         <section className="grid gap-3 sm:grid-cols-2">
           {displayMedals.map((m) => (
-            <Card
+            <div
               key={m.code}
-              className={`!p-4 flex items-center gap-4 ${
+              className={`panel-card flex items-center gap-4 !p-4 ${
                 m.code === 'improved'
-                  ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-900/50 dark:bg-emerald-950/30'
-                  : 'border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30'
+                  ? 'border-emerald-200 dark:border-emerald-900/50'
+                  : 'border-amber-200 dark:border-amber-900/50'
               }`}
             >
-              <Medal code={m.code} size={80} />
+              <Medal code={m.code} size={72} />
               <div>
-                <p className="text-sm font-black text-slate-900 dark:text-white">{m.title}</p>
-                <p className="mt-1 text-xs font-bold leading-5 text-slate-500 dark:text-slate-400">
+                <p className="text-sm font-extrabold text-[var(--p-ink,#0f172a)]">{m.title}</p>
+                <p className="mt-1 text-xs font-bold text-[var(--p-muted,#64748b)]">
                   {m.description}
                 </p>
               </div>
-            </Card>
+            </div>
           ))}
         </section>
-      )}
+      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
         <Card className="flex flex-col items-center justify-center !p-5">
-          <SectionTitle title="جلسه فعلی" hint="از کل ترم" />
+          <SectionTitle title="پیشرفت ترم" hint={`${toFa(sessions.remaining)} جلسه مانده`} />
           <ProgressRing
             value={sessions.current}
             max={sessions.total}
             label={`${sessions.current}/${sessions.total}`}
-            sublabel={`${toFa(sessions.remaining)} جلسه مانده`}
+            sublabel="جلسه برگزارشده"
           />
         </Card>
 
@@ -173,13 +168,13 @@ export default function ProgressView({
       </div>
 
       <Card>
-        <SectionTitle title="خلاصه حضور و غیاب" />
+        <SectionTitle title="حضور و غیاب" />
         <AttendanceBar
           present={attendance.present}
           late={attendance.late}
           absent={attendance.absent}
         />
-        {attendance.lateSessions.length > 0 && (
+        {attendance.lateSessions.length > 0 ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {attendance.lateSessions.map((l) => (
               <span
@@ -190,7 +185,7 @@ export default function ProgressView({
               </span>
             ))}
           </div>
-        )}
+        ) : null}
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -218,13 +213,13 @@ export default function ProgressView({
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-900/50">
               <p className="text-[11px] font-bold text-slate-400">نمره کلی</p>
-              <p className="text-lg font-black text-slate-900 dark:text-white">
+              <p className="text-lg font-extrabold text-slate-900 dark:text-white">
                 {formatScore(data.score)}
               </p>
             </div>
             <div className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-3 py-2 dark:border-slate-800 dark:bg-slate-900/50">
               <p className="text-[11px] font-bold text-slate-400">جایگاه</p>
-              <p className="flex items-center gap-1.5 text-lg font-black text-slate-900 dark:text-white">
+              <p className="flex items-center gap-1.5 text-lg font-extrabold text-slate-900 dark:text-white">
                 {rank.isTop ? (
                   <>
                     <Trophy className="h-4 w-4 shrink-0 text-amber-500" />
@@ -236,7 +231,7 @@ export default function ProgressView({
               </p>
             </div>
           </div>
-          {improvement.previousScore !== null && (
+          {improvement.previousScore !== null ? (
             <div
               className={`mt-3 flex items-start gap-3 rounded-2xl border-2 px-3 py-3 ${
                 improvement.improved
@@ -251,27 +246,27 @@ export default function ProgressView({
               )}
               <div className="min-w-0">
                 <p
-                  className={`text-xs font-black ${
+                  className={`text-xs font-extrabold ${
                     improvement.improved
                       ? 'text-emerald-800 dark:text-emerald-300'
                       : 'text-slate-700 dark:text-slate-200'
                   }`}
                 >
-                  {improvement.improved ? 'مدال پیشرفت · نسبت به ترم قبل' : 'مقایسه با ترم قبل'}
+                  {improvement.improved ? 'پیشرفت نسبت به ترم قبل' : 'مقایسه با ترم قبل'}
                 </p>
-                <p className="mt-1 text-xs font-extrabold leading-5 text-slate-600 dark:text-slate-300">
+                <p className="mt-1 text-xs font-bold leading-5 text-slate-600 dark:text-slate-300">
                   ترم قبل: {formatScore(improvement.previousScore)}
-                  {improvement.delta !== null && (
+                  {improvement.delta !== null ? (
                     <>
                       {' '}
                       · تغییر: {improvement.delta > 0 ? '+' : ''}
                       {formatScore(improvement.delta)}
                     </>
-                  )}
+                  ) : null}
                 </p>
               </div>
             </div>
-          )}
+          ) : null}
         </Card>
       </div>
 
@@ -288,7 +283,7 @@ export default function ProgressView({
               key={g.label}
               className="rounded-2xl border-2 border-slate-200 border-b-4 px-3 py-4 text-center dark:border-slate-800"
             >
-              <p className="text-2xl font-black text-[#7c3aed] dark:text-[#a78bfa]">
+              <p className="text-2xl font-extrabold text-[#7c3aed] dark:text-[#a78bfa]">
                 {formatScore(g.value ?? null)}
               </p>
               <p className="mt-1 text-[11px] font-bold text-slate-400">{g.label}</p>
