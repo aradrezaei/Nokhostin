@@ -13,7 +13,7 @@ export function panelHome(role: UserRole): string {
       return '/admin';
     case 'mentor':
       return '/mentor';
-    default:
+    case 'student':
       return '/dashboard';
   }
 }

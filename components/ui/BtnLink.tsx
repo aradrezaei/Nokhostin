@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { AnchorHTMLAttributes } from 'react';
+import { type AnchorHTMLAttributes } from 'react';
 
 type BtnLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;

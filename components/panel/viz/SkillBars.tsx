@@ -13,16 +13,13 @@ export default function SkillBars({ axes, max = 5 }: { axes: SkillAxis[]; max?: 
   return (
     <div className="space-y-3">
       {axes.map((axis) => {
-        const ratio =
-          axis.value === null || axis.value === undefined
-            ? 0
-            : Math.min(Math.max(axis.value / max, 0), 1);
+        const ratio = axis.value === null ? 0 : Math.min(Math.max(axis.value / max, 0), 1);
         return (
           <div key={axis.label}>
             <div className="mb-1 flex items-center justify-between text-xs font-extrabold">
               <span className="text-slate-600 dark:text-slate-300">{axis.label}</span>
               <span className="tabular-nums text-slate-400">
-                {axis.value === null || axis.value === undefined ? '—' : toFa(axis.value)}
+                {axis.value === null ? '—' : toFa(axis.value)}
               </span>
             </div>
             <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">

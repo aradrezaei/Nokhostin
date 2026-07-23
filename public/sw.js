@@ -263,9 +263,12 @@ self.addEventListener('message', (event) => {
 
   if (data.action === 'clearCache') {
     event.waitUntil(
-      caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).then(() => {
-        event.ports?.[0]?.postMessage({ success: true });
-      }),
+      caches
+        .keys()
+        .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+        .then(() => {
+          event.ports?.[0]?.postMessage({ success: true });
+        }),
     );
   }
 

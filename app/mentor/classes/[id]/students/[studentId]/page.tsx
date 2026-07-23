@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -34,9 +36,7 @@ export default function MentorStudentProgressPage() {
     }
   }, [request, id, studentId]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   if (loading) return <Spinner />;
   if (error) return <Alert>{error}</Alert>;

@@ -1,7 +1,15 @@
 'use client';
 
-import { CalendarClock, Clock3, Sparkles, TrendingUp, Trophy, UserCheck, UserX } from 'lucide-react';
-import type { ClassProgress } from '@/lib/types';
+import {
+  CalendarClock,
+  Clock3,
+  Sparkles,
+  TrendingUp,
+  Trophy,
+  UserCheck,
+  UserX,
+} from 'lucide-react';
+import type { ClassProgress, Medal as MedalType } from '@/lib/types';
 import { formatScore, formatSchedule, toFa } from '@/lib/format';
 import Medal from '@/components/panel/Medal';
 import { Card } from '@/components/panel/ui';
@@ -41,18 +49,25 @@ export default function ProgressView({
   const marked = attended + attendance.absent;
   const attendanceRate = marked > 0 ? Math.round((attended / marked) * 100) : 0;
 
-  const displayMedals =
-    medals.length > 0
-      ? medals
-      : rank.isTop && data.score !== null
-        ? [
-            {
-              code: 'top_rank' as const,
-              title: 'مقام اول کلاس',
-              description: 'بالاترین نمره در این کلاس',
-            },
-          ]
-        : [];
+  const displayMedals = (() => {
+    const list = [...medals];
+    const has = (code: MedalType['code']) => list.some((m) => m.code === code);
+    if (rank.isTop && data.score !== null && !has('top_rank')) {
+      list.push({
+        code: 'top_rank',
+        title: 'مقام اول کلاس',
+        description: 'بالاترین نمره در این کلاس',
+      });
+    }
+    if (improvement.improved && !has('improved')) {
+      list.push({
+        code: 'improved',
+        title: 'مدال پیشرفت',
+        description: 'نسبت به ترم قبل پیشرفت داشته‌اید',
+      });
+    }
+    return list;
+  })();
 
   return (
     <div className="w-full max-w-full space-y-5 overflow-x-hidden [content-visibility:auto]">
@@ -100,7 +115,11 @@ export default function ProgressView({
           {displayMedals.map((m) => (
             <Card
               key={m.code}
-              className="!p-4 flex items-center gap-4 border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30"
+              className={`!p-4 flex items-center gap-4 ${
+                m.code === 'improved'
+                  ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-900/50 dark:bg-emerald-950/30'
+                  : 'border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30'
+              }`}
             >
               <Medal code={m.code} size={80} />
               <div>
@@ -218,18 +237,39 @@ export default function ProgressView({
             </div>
           </div>
           {improvement.previousScore !== null && (
-            <div className="mt-3 flex items-start gap-2 rounded-2xl border-2 border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-extrabold leading-5 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
-              <TrendingUp className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>
-                ترم قبل: {formatScore(improvement.previousScore)}
-                {improvement.delta !== null && (
-                  <>
-                    {' '}
-                    · تغییر: {improvement.delta > 0 ? '+' : ''}
-                    {formatScore(improvement.delta)}
-                  </>
-                )}
-              </span>
+            <div
+              className={`mt-3 flex items-start gap-3 rounded-2xl border-2 px-3 py-3 ${
+                improvement.improved
+                  ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/40'
+                  : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/40'
+              }`}
+            >
+              {improvement.improved ? (
+                <Medal code="improved" size={48} className="shrink-0" />
+              ) : (
+                <TrendingUp className="mt-1 h-5 w-5 shrink-0 text-slate-400" />
+              )}
+              <div className="min-w-0">
+                <p
+                  className={`text-xs font-black ${
+                    improvement.improved
+                      ? 'text-emerald-800 dark:text-emerald-300'
+                      : 'text-slate-700 dark:text-slate-200'
+                  }`}
+                >
+                  {improvement.improved ? 'مدال پیشرفت · نسبت به ترم قبل' : 'مقایسه با ترم قبل'}
+                </p>
+                <p className="mt-1 text-xs font-extrabold leading-5 text-slate-600 dark:text-slate-300">
+                  ترم قبل: {formatScore(improvement.previousScore)}
+                  {improvement.delta !== null && (
+                    <>
+                      {' '}
+                      · تغییر: {improvement.delta > 0 ? '+' : ''}
+                      {formatScore(improvement.delta)}
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
           )}
         </Card>

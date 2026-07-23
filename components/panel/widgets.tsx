@@ -1,3 +1,4 @@
+import { scheduleEffect } from '@/lib/scheduleEffect';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
@@ -106,11 +107,10 @@ export function DeferredSpinner({
 
   useEffect(() => {
     if (!active) {
-      setShow(false);
-      return;
+      return scheduleEffect(() => { setShow(false); });
     }
-    const id = window.setTimeout(() => setShow(true), delayMs);
-    return () => window.clearTimeout(id);
+    const id = window.setTimeout(() => { setShow(true); }, delayMs);
+    return () => { window.clearTimeout(id); };
   }, [active, delayMs]);
 
   if (!active || !show) return null;

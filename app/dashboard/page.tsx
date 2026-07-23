@@ -1,40 +1,42 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, ChevronLeft, Flame, Sparkles, Trophy } from 'lucide-react';
+import { BookOpen, ChevronLeft, Flame, Sparkles, TrendingUp, Trophy } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { formatScore, toFa } from '@/lib/format';
-import { useMyOverview } from '@/hook/useMyOverview';
+import { useMyOverview } from '@/hooks/useMyOverview';
+import { prefetchClassProgress } from '@/hooks/useClassProgress';
 import Avatar from '@/components/panel/Avatar';
+import ImprovementModal from '@/components/panel/ImprovementModal';
 import { ClassCard } from '@/components/panel/ClassCard';
 import Medal from '@/components/panel/Medal';
 import { Alert, Card } from '@/components/panel/ui';
 import { DeferredSpinner, EmptyState, StatTile } from '@/components/panel/widgets';
 
 export default function DashboardHome() {
-  const { user } = useAuth();
-  const { classes, snapshots, achievements, loading, error } = useMyOverview();
+  const { user, request } = useAuth();
+  const { classes, snapshots, achievements, improvementHighlights, loading, error } =
+    useMyOverview();
 
   const active = classes.filter((i) => i.status === 'active');
   const unpaid = active.filter((i) => !i.tuitionPaid).length;
   const topCount = snapshots.filter((s) => s.isTop).length;
-
-  const bestScore = snapshots.reduce<number | null>((best, s) => {
-    if (s.score === null) return best;
-    if (best === null) return s.score;
-    return Math.max(best, s.score);
-  }, null);
+  const improvedCount = achievements.length;
 
   const avgAttendance = (() => {
-    const rates = snapshots
-      .map((s) => s.attendanceRate)
-      .filter((n): n is number => n !== null);
+    const rates = snapshots.map((s) => s.attendanceRate).filter((n): n is number => n !== null);
     if (!rates.length) return null;
     return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
   })();
 
+  const warmClass = (classId: string) => {
+    prefetchClassProgress(request, classId);
+  };
+
   return (
     <div className="space-y-6">
+      <ImprovementModal items={improvementHighlights} />
+
       <Card className="!p-5 flex flex-wrap items-center gap-4">
         {user && <Avatar name={user.fullName} seed={user.id} size={64} priority />}
         <div className="min-w-0 flex-1">
@@ -42,9 +44,7 @@ export default function DashboardHome() {
           <h1 className="truncate text-2xl font-black text-slate-900 dark:text-white">
             {user?.fullName}
           </h1>
-          <p className="mt-1 text-sm font-bold text-slate-400">
-            خلاصه کلاس‌ها، نمره و حضور
-          </p>
+          <p className="mt-1 text-sm font-bold text-slate-400">خلاصه کلاس‌ها، نمره و حضور</p>
         </div>
         <Link
           href="/dashboard/profile"
@@ -61,26 +61,34 @@ export default function DashboardHome() {
         <StatTile
           icon={<BookOpen className="h-5 w-5" />}
           label="کلاس فعال"
-          value={loading ? '—' : toFa(active.length)}
+          value={loading && !classes.length ? '—' : toFa(active.length)}
+        />
+        <StatTile
+          tone="emerald"
+          icon={<TrendingUp className="h-5 w-5" />}
+          label="مدال پیشرفت"
+          value={loading && !achievements.length ? '—' : toFa(improvedCount)}
         />
         <StatTile
           tone="amber"
           icon={<Trophy className="h-5 w-5" />}
           label="مدال مقام اول"
-          value={loading ? '—' : toFa(achievements.filter((a) => a.code === 'top_rank').length)}
+          value={
+            loading && !achievements.length
+              ? '—'
+              : toFa(achievements.filter((a) => a.code === 'top_rank').length)
+          }
         />
         <StatTile
           tone="sky"
-          icon={<Sparkles className="h-5 w-5" />}
-          label="بهترین نمره"
-          value={loading ? '—' : formatScore(bestScore)}
-        />
-        <StatTile
-          tone="emerald"
           icon={<Flame className="h-5 w-5" />}
           label="میانگین حضور"
           value={
-            loading || avgAttendance === null ? '—' : `${toFa(avgAttendance)}٪`
+            loading && !snapshots.length
+              ? '—'
+              : avgAttendance === null
+                ? '—'
+                : `${toFa(avgAttendance)}٪`
           }
         />
       </div>
@@ -111,27 +119,40 @@ export default function DashboardHome() {
               <Link
                 key={`${a.code}-${a.classId}`}
                 href={`/dashboard/courses/${a.classId}`}
-                className="flex w-[148px] shrink-0 flex-col items-center rounded-3xl border-2 border-amber-200 border-b-4 bg-amber-50 px-3 py-4 text-center dark:border-amber-900/60 dark:bg-amber-950/30"
+                onMouseEnter={() => { warmClass(a.classId); }}
+                onFocus={() => { warmClass(a.classId); }}
+                className={`flex w-[148px] shrink-0 flex-col items-center rounded-3xl border-2 border-b-4 px-3 py-4 text-center ${
+                  a.code === 'improved'
+                    ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-900/60 dark:bg-emerald-950/30'
+                    : 'border-amber-200 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/30'
+                }`}
               >
                 <Medal code={a.code} size={72} />
                 <p className="mt-2 text-xs font-black text-slate-900 dark:text-white">
-                  {a.code === 'top_rank' ? 'مقام اول' : a.title}
+                  {a.code === 'top_rank'
+                    ? 'مقام اول'
+                    : 'پیشرفت ترم'}
                 </p>
                 <p className="mt-0.5 line-clamp-2 text-[10px] font-bold text-slate-400">
                   {a.classTitle}
                 </p>
+                {a.code === 'improved' && a.delta != null && a.delta > 0 && (
+                  <p className="mt-1 text-[10px] font-black text-emerald-700 dark:text-emerald-300">
+                    +{formatScore(a.delta)}
+                  </p>
+                )}
               </Link>
             ))}
           </div>
         ) : (
           <Card className="!p-5 flex items-center gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
-              <Trophy className="h-6 w-6 text-amber-400" />
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30">
+              <TrendingUp className="h-6 w-6 text-emerald-400" />
             </span>
             <div>
               <p className="text-sm font-black text-slate-900 dark:text-white">مدالی ثبت نشده</p>
               <p className="mt-1 text-xs font-bold leading-5 text-slate-400">
-                با بالاترین نمره کلاس، مدال مقام اول اینجا نمایش داده می‌شود.
+                با پیشرفت نسبت به ترم قبل یا مقام اول کلاس، مدال اینجا می‌آید.
               </p>
             </div>
           </Card>
@@ -141,11 +162,16 @@ export default function DashboardHome() {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-black text-slate-900 dark:text-white">عملکرد کلاس‌ها</h2>
-          {topCount > 0 && (
-            <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
-              {toFa(topCount)} مقام اول
-            </span>
-          )}
+          <span className="flex items-center gap-2 text-[11px] font-bold">
+            {improvedCount > 0 && (
+              <span className="text-emerald-600 dark:text-emerald-400">
+                {toFa(improvedCount)} پیشرفت
+              </span>
+            )}
+            {topCount > 0 && (
+              <span className="text-amber-600 dark:text-amber-400">{toFa(topCount)} مقام اول</span>
+            )}
+          </span>
         </div>
 
         {loading && snapshots.length === 0 ? (
@@ -163,8 +189,15 @@ export default function DashboardHome() {
                 s.sessionsTotal > 0
                   ? Math.min((s.sessionsCurrent / s.sessionsTotal) * 100, 100)
                   : 0;
+              const improved = s.improvement?.improved ?? s.medals.some((m) => m.code === 'improved');
               return (
-                <Link key={s.classId} href={`/dashboard/courses/${s.classId}`} className="block">
+                <Link
+                  key={s.classId}
+                  href={`/dashboard/courses/${s.classId}`}
+                  onMouseEnter={() => { warmClass(s.classId); }}
+                  onFocus={() => { warmClass(s.classId); }}
+                  className="block"
+                >
                   <Card className="!p-4 hover:border-[#7c3aed]/50">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
@@ -177,14 +210,22 @@ export default function DashboardHome() {
                           </p>
                         )}
                       </div>
-                      {s.isTop ? (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-xl border-2 border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-black text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
-                          <Trophy className="h-3 w-3" />
-                          مقام اول
-                        </span>
-                      ) : (
-                        <ChevronLeft className="h-4 w-4 shrink-0 text-slate-300" />
-                      )}
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        {s.isTop ? (
+                          <span className="inline-flex items-center gap-1 rounded-xl border-2 border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-black text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
+                            <Trophy className="h-3 w-3" />
+                            مقام اول
+                          </span>
+                        ) : null}
+                        {improved ? (
+                          <span className="inline-flex items-center gap-1 rounded-xl border-2 border-emerald-300 bg-emerald-100 px-2 py-1 text-[10px] font-black text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">
+                            <TrendingUp className="h-3 w-3" />
+                            پیشرفت
+                          </span>
+                        ) : !s.isTop ? (
+                          <ChevronLeft className="h-4 w-4 text-slate-300" />
+                        ) : null}
+                      </div>
                     </div>
 
                     <div className="mt-3 space-y-1.5">
@@ -207,9 +248,20 @@ export default function DashboardHome() {
                         نمره {formatScore(s.score)}
                       </span>
                       <span className="rounded-lg bg-emerald-50 px-2 py-1 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-                        حضور{' '}
-                        {s.attendanceRate === null ? '—' : `${toFa(s.attendanceRate)}٪`}
+                        حضور {s.attendanceRate === null ? '—' : `${toFa(s.attendanceRate)}٪`}
                       </span>
+                      {s.improvement?.delta != null && s.improvement.delta !== 0 && (
+                        <span
+                          className={`rounded-lg px-2 py-1 ${
+                            s.improvement.delta > 0
+                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
+                              : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'
+                          }`}
+                        >
+                          ترم قبل {s.improvement.delta > 0 ? '+' : ''}
+                          {formatScore(s.improvement.delta)}
+                        </span>
+                      )}
                       {s.medals.length > 0 && (
                         <span className="rounded-lg bg-amber-50 px-2 py-1 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
                           {toFa(s.medals.length)} مدال
@@ -242,22 +294,27 @@ export default function DashboardHome() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {classes.slice(0, 4).map((entry) => (
-              <ClassCard
+              <div
                 key={entry.enrollmentId}
-                href={`/dashboard/courses/${entry.class.id}`}
-                tuitionPaid={entry.tuitionPaid}
-                item={{
-                  id: entry.class.id,
-                  title: entry.class.title,
-                  termNumber: entry.class.termNumber,
-                  totalSessions: entry.class.totalSessions,
-                  schedule: entry.class.schedule,
-                  status: entry.class.status,
-                  course: entry.class.course,
-                  teacher: entry.class.teacher,
-                  sessionsHeld: entry.class.sessionsHeld,
-                }}
-              />
+                onMouseEnter={() => { warmClass(entry.class.id); }}
+                onFocus={() => { warmClass(entry.class.id); }}
+              >
+                <ClassCard
+                  href={`/dashboard/courses/${entry.class.id}`}
+                  tuitionPaid={entry.tuitionPaid}
+                  item={{
+                    id: entry.class.id,
+                    title: entry.class.title,
+                    termNumber: entry.class.termNumber,
+                    totalSessions: entry.class.totalSessions,
+                    schedule: entry.class.schedule,
+                    status: entry.class.status,
+                    course: entry.class.course,
+                    teacher: entry.class.teacher,
+                    sessionsHeld: entry.class.sessionsHeld,
+                  }}
+                />
+              </div>
             ))}
           </div>
         )}

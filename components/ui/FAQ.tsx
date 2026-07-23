@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Search, MessageCircle, HelpCircle, Sparkles } from 'lucide-react';
+import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
 
 // تعریف ساختار داده‌ها برای انعطاف‌پذیری کامل
 interface FAQItem {
@@ -25,7 +25,7 @@ export default function SmartFAQ({
   accentColor = 'purple',
 }: SmartFAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
 
   // فیلتر کردن سوالات بر اساس جستجو (باعث بالا رفتن شدید تجربه کاربری می‌شود)
   const filteredItems = useMemo(() => {
@@ -73,7 +73,7 @@ export default function SmartFAQ({
               }`}
             >
               <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                onClick={() => { setOpenIndex(openIndex === i ? null : i); }}
                 className="w-full flex items-center justify-between p-4 md:p-8 text-right outline-none"
               >
                 <div className="flex items-center gap-2">

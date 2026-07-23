@@ -1,5 +1,8 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+import { confirmAction } from '@/lib/confirm';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -7,7 +10,13 @@ import { Download, Plus, Trash2, UserPlus } from 'lucide-react';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { downloadAuthed } from '@/lib/download';
-import { CLASS_STATUS_LABEL, SESSION_STATUS_LABEL, formatDate, formatSchedule, toFa } from '@/lib/format';
+import {
+  CLASS_STATUS_LABEL,
+  SESSION_STATUS_LABEL,
+  formatDate,
+  formatSchedule,
+  toFa,
+} from '@/lib/format';
 import type { ClassDetail, ManagedUser, Paginated } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Badge, Button, Card, Field, Modal, TextInput } from '@/components/panel/ui';
@@ -38,9 +47,7 @@ export default function AdminClassDetailPage() {
     }
   }, [request, id]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const fetchStudents = useCallback(async () => {
     setFormError('');
@@ -58,17 +65,17 @@ export default function AdminClassDetailPage() {
     }
   }, [request, studentSearch]);
 
-  const openEnroll = async () => {
+  const openEnroll = () => {
     setEnrollOpen(true);
-    await fetchStudents();
+    void fetchStudents();
   };
 
   useEffect(() => {
     if (!enrollOpen) return;
     const t = setTimeout(() => {
-      fetchStudents();
+      void fetchStudents();
     }, 250);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); };
   }, [enrollOpen, studentSearch, fetchStudents]);
 
   const enrolledIds = useMemo(
@@ -106,7 +113,7 @@ export default function AdminClassDetailPage() {
   };
 
   const removeStudent = async (enrollmentId: string) => {
-    if (!confirm('این هنرجو از کلاس حذف شود؟')) return;
+    if (!confirmAction('این هنرجو از کلاس حذف شود؟')) return;
     try {
       await request(`/classes/${id}/enrollments/${enrollmentId}`, { method: 'DELETE' });
       await load();
@@ -289,13 +296,13 @@ export default function AdminClassDetailPage() {
         </div>
       </section>
 
-      <Modal open={enrollOpen} title="افزودن هنرجو به کلاس" onClose={() => setEnrollOpen(false)}>
+      <Modal open={enrollOpen} title="افزودن هنرجو به کلاس" onClose={() => { setEnrollOpen(false); }}>
         <div className="space-y-4">
           {formError && <Alert>{formError}</Alert>}
           <Field label="جستجو">
             <TextInput
               value={studentSearch}
-              onChange={(e) => setStudentSearch(e.target.value)}
+              onChange={(e) => { setStudentSearch(e.target.value); }}
               placeholder="نام یا موبایل"
             />
           </Field>

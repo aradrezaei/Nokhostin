@@ -39,7 +39,7 @@ async function fetchEdgeCountry(signal: AbortSignal): Promise<string | null> {
   });
   if (!res.ok) return null;
   const text = await res.text();
-  const match = text.match(/(?:^|\n)loc=([A-Z]{2})(?:\n|$)/);
+  const match = /(?:^|\n)loc=([A-Z]{2})(?:\n|$)/.exec(text);
   return match?.[1] ?? null;
 }
 
@@ -59,9 +59,9 @@ export async function detectLikelyVpn(signal?: AbortSignal): Promise<boolean> {
   if (!isIranTimezone()) return false;
 
   const controller = new AbortController();
-  const onAbort = () => controller.abort();
+  const onAbort = () => { controller.abort(); };
   signal?.addEventListener('abort', onAbort, { once: true });
-  const timer = window.setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timer = window.setTimeout(() => { controller.abort(); }, TIMEOUT_MS);
 
   try {
     const loc = await fetchEdgeCountry(controller.signal);

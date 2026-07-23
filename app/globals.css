@@ -143,7 +143,6 @@
   animation: none;
 }
 
-
 @font-face {
   font-family: 'Shabnam';
   src: url('/fonts/Shabnam.woff2') format('woff2');
@@ -160,11 +159,15 @@
 
 * {
   font-family: Shabnam, sans-serif;
-  cursor: url('/ui/cursor-default.svg') 4 1, auto;
+  cursor:
+    url('/ui/cursor-default.svg') 4 1,
+    auto;
 }
 
 [class*='cursor-pointer'] {
-  cursor: url('/ui/cursor-pointer.svg') 8 2, pointer !important;
+  cursor:
+    url('/ui/cursor-pointer.svg') 8 2,
+    pointer !important;
   image-rendering: pixelated;
 }
 

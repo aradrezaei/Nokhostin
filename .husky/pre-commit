@@ -1,6 +1,4 @@
 #!/bin/sh
-# این خط بسیار مهم است
 . "$(dirname "$0")/_/husky.sh"
 
-
-npm run format
+npx lint-staged

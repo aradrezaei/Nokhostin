@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -52,9 +54,7 @@ export default function MentorTermGradePage() {
     }
   }, [request, id, studentId]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const parse = (v: string) => (v === '' ? null : Number(v));
 
@@ -117,13 +117,13 @@ export default function MentorTermGradePage() {
                 max={100}
                 dir="ltr"
                 value={form[key]}
-                onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); }}
                 placeholder="مثلاً ۸۵"
               />
             </Field>
           ))}
           <div className="flex gap-2 pt-2">
-            <Button variant="ghost" className="flex-1" onClick={() => router.back()}>
+            <Button variant="ghost" className="flex-1" onClick={() => { router.back(); }}>
               انصراف
             </Button>
             <Button className="flex-1" onClick={save} disabled={saving}>

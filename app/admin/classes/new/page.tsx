@@ -1,12 +1,20 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { WEEKDAY_LABEL, WEEKDAYS_ORDER } from '@/lib/format';
+import { WEEKDAY_LABEL, WEEKDAYS_ORDER, jalaliToGregorianIso, todayJalali } from '@/lib/format';
 import type { Course, Institute, ManagedUser, Paginated, WeekDay } from '@/lib/types';
+import JalaliDateInput from '@/components/panel/JalaliDateInput';
 import { Alert, Button, Card, Field, Select, TextInput } from '@/components/panel/ui';
+
+function todayIso() {
+  const t = todayJalali();
+  return jalaliToGregorianIso(t.y, t.m, t.d);
+}
 
 export default function AdminNewClassPage() {
   const { request } = useAuth();
@@ -23,7 +31,7 @@ export default function AdminNewClassPage() {
     title: '',
     termNumber: '1',
     totalSessions: '12',
-    startDate: '',
+    startDate: todayIso(),
     time: '17:30',
     days: ['saturday', 'monday'] as WeekDay[],
   });
@@ -37,16 +45,14 @@ export default function AdminNewClassPage() {
       setInstitutes(inst);
       setMentors(mentorsRes.items);
       if (inst[0]) {
-        setForm((f) => ({ ...f, instituteId: f.instituteId || inst[0]!.id }));
+        setForm((f) => ({ ...f, instituteId: f.instituteId || inst[0].id }));
       }
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'خطا در بارگذاری فرم.');
     }
   }, [request]);
 
-  useEffect(() => {
-    boot();
-  }, [boot]);
+  useEffect(() => scheduleEffect(() => boot()), [boot]);
 
   useEffect(() => {
     if (!form.instituteId) return;
@@ -60,7 +66,7 @@ export default function AdminNewClassPage() {
             : (res.items[0]?.id ?? ''),
         }));
       })
-      .catch(() => setCourses([]));
+      .catch(() => { setCourses([]); });
   }, [form.instituteId, request]);
 
   const toggleDay = (day: WeekDay) => {
@@ -70,7 +76,7 @@ export default function AdminNewClassPage() {
     }));
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     setError('');
@@ -113,7 +119,7 @@ export default function AdminNewClassPage() {
             <Select
               required
               value={form.instituteId}
-              onChange={(e) => setForm((f) => ({ ...f, instituteId: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, instituteId: e.target.value })); }}
             >
               {institutes.map((i) => (
                 <option key={i.id} value={i.id}>
@@ -127,7 +133,7 @@ export default function AdminNewClassPage() {
             <Select
               required
               value={form.courseId}
-              onChange={(e) => setForm((f) => ({ ...f, courseId: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, courseId: e.target.value })); }}
             >
               {courses.length === 0 && <option value="">دوره‌ای نیست — اول بساز</option>}
               {courses.map((c) => (
@@ -143,7 +149,7 @@ export default function AdminNewClassPage() {
             <Select
               required
               value={form.teacherId}
-              onChange={(e) => setForm((f) => ({ ...f, teacherId: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, teacherId: e.target.value })); }}
             >
               <option value="">انتخاب استاد</option>
               {mentors.map((m) => (
@@ -158,7 +164,7 @@ export default function AdminNewClassPage() {
             <TextInput
               required
               value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, title: e.target.value })); }}
               placeholder="آلمانی ترم ۳ عصر"
             />
           </Field>
@@ -170,7 +176,7 @@ export default function AdminNewClassPage() {
                 min={1}
                 required
                 value={form.termNumber}
-                onChange={(e) => setForm((f) => ({ ...f, termNumber: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, termNumber: e.target.value })); }}
               />
             </Field>
             <Field label="تعداد جلسات">
@@ -180,7 +186,7 @@ export default function AdminNewClassPage() {
                 max={120}
                 required
                 value={form.totalSessions}
-                onChange={(e) => setForm((f) => ({ ...f, totalSessions: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, totalSessions: e.target.value })); }}
               />
             </Field>
             <Field label="ساعت شروع">
@@ -189,18 +195,16 @@ export default function AdminNewClassPage() {
                 required
                 dir="ltr"
                 value={form.time}
-                onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, time: e.target.value })); }}
               />
             </Field>
           </div>
 
-          <Field label="تاریخ شروع اولین جلسه">
-            <TextInput
-              type="date"
+          <Field label="تاریخ شروع اولین جلسه (شمسی)" hint="روز، ماه و سال را به شمسی انتخاب کنید">
+            <JalaliDateInput
               required
-              dir="ltr"
               value={form.startDate}
-              onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
+              onChange={(startDate) => { setForm((f) => ({ ...f, startDate })); }}
             />
           </Field>
 
@@ -212,7 +216,7 @@ export default function AdminNewClassPage() {
                   <button
                     key={day}
                     type="button"
-                    onClick={() => toggleDay(day)}
+                    onClick={() => { toggleDay(day); }}
                     className={`rounded-xl border-2 px-3 py-2 text-xs font-black ${
                       active
                         ? 'border-[#5b21b6] border-b-4 bg-[#7c3aed] text-white'
@@ -227,7 +231,7 @@ export default function AdminNewClassPage() {
           </Field>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => router.back()}>
+            <Button type="button" variant="ghost" onClick={() => { router.back(); }}>
               انصراف
             </Button>
             <Button

@@ -57,7 +57,7 @@ export default function UserMenu() {
     <div ref={ref} className="relative">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { setOpen((v) => !v); }}
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={`حساب ${user.fullName}`}
@@ -79,7 +79,9 @@ export default function UserMenu() {
           <div className="flex items-center gap-3 border-b border-[var(--nav-border)] px-3.5 py-3">
             <Avatar name={user.fullName} seed={user.id} size={40} className="!rounded-xl" />
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-[var(--nav-ink)]">{user.fullName}</p>
+              <p className="truncate text-sm font-semibold text-[var(--nav-ink)]">
+                {user.fullName}
+              </p>
               <p className="mt-0.5 text-[11px] font-medium text-[var(--brand)]">
                 {ROLE_LABEL[user.role]}
               </p>
@@ -88,7 +90,7 @@ export default function UserMenu() {
           <Link
             href={home}
             role="menuitem"
-            onClick={() => setOpen(false)}
+            onClick={() => { setOpen(false); }}
             className="flex items-center gap-2.5 px-3.5 py-2.5 text-[13px] font-medium text-[var(--nav-muted-ink)] hover:bg-[var(--nav-muted)] hover:text-[var(--nav-ink)]"
           >
             <LayoutDashboard className="h-4 w-4" strokeWidth={2} />

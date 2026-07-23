@@ -1,7 +1,4 @@
 'use client';
-import { useState } from 'react';
-import { Check, X, Users, Video, Zap, Shield, Sparkles } from 'lucide-react';
-
 const comparisons = [
   { f: 'شهریه پرداختی', online: 'اقتصادی (۳۰٪ کمتر)', حضوری: 'استاندارد' },
   { f: 'هزینه رفت‌وآمد', online: 'صفر', حضوری: 'بسته به مسافت' },

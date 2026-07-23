@@ -1,8 +1,18 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { BookMarked, Building2, ClipboardList, GraduationCap, Newspaper, UserCog, Users } from 'lucide-react';
+import {
+  BookMarked,
+  Building2,
+  ClipboardList,
+  GraduationCap,
+  Newspaper,
+  UserCog,
+  Users,
+} from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import type { Paginated } from '@/lib/types';
 import { toFa } from '@/lib/format';
@@ -47,9 +57,7 @@ export default function AdminDashboard() {
     }
   }, [request]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const shortcuts = [
     {

@@ -2,7 +2,6 @@
 
 import {
   Shield,
-  FileCheck,
   Scale,
   Globe,
   Video,

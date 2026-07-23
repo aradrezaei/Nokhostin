@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
+import { warmOverviewCache } from '@/hooks/useMyOverview';
 import { panelHome } from '@/lib/roles';
 import type { UserRole } from '@/lib/types';
 
@@ -25,14 +26,16 @@ interface PanelLayoutProps {
 function DeferredAuthSplash() {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const id = window.setTimeout(() => setShow(true), 350);
-    return () => window.clearTimeout(id);
+    const id = window.setTimeout(() => { setShow(true); }, 350);
+    return () => { window.clearTimeout(id); };
   }, []);
   if (!show) return null;
   return (
     <div className="flex items-center gap-3 rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-6 py-4 dark:border-slate-800 dark:bg-[#131f24]">
       <span className="h-6 w-6 animate-spin rounded-full border-3 border-[#7c3aed] border-t-transparent" />
-      <span className="text-sm font-black text-slate-700 dark:text-slate-200">در حال بارگذاری…</span>
+      <span className="text-sm font-black text-slate-700 dark:text-slate-200">
+        در حال بارگذاری…
+      </span>
     </div>
   );
 }
@@ -48,7 +51,7 @@ export default function PanelLayout({
   allowedRoles,
   children,
 }: PanelLayoutProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, request } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -63,13 +66,19 @@ export default function PanelLayout({
     }
   }, [user, loading, allowedRoles, router]);
 
+  // Warm overview as soon as a student lands in the panel — next screens paint from cache.
+  useEffect(() => {
+    if (loading || user?.role !== 'student') {
+      return;
+    }
+    warmOverviewCache(request);
+  }, [loading, user, request]);
+
   if (loading || !user || !allowedRoles.includes(user.role)) {
     return (
       <div dir="rtl" className="flex min-h-[30vh] items-center justify-center">
         {/* Intentionally empty for the first ~350ms so fast auth feels instant */}
-        {loading ? (
-          <DeferredAuthSplash />
-        ) : null}
+        {loading ? <DeferredAuthSplash /> : null}
       </div>
     );
   }

@@ -23,7 +23,7 @@ export default function MentorHomePage() {
       .then((res) => {
         if (!cancelled) setData(res);
       })
-      .catch((e) => {
+      .catch((e: unknown) => {
         if (!cancelled) setError(e instanceof ApiError ? e.message : 'خطا در دریافت کلاس‌ها.');
       })
       .finally(() => {

@@ -5,11 +5,11 @@ import { BookOpen, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { formatDate, formatSchedule, toFa } from '@/lib/format';
 import { ROLE_LABEL } from '@/lib/roles';
-import { useMyOverview } from '@/hook/useMyOverview';
+import { useMyOverview } from '@/hooks/useMyOverview';
 import Avatar from '@/components/panel/Avatar';
 import MedalShowcase from '@/components/panel/MedalShowcase';
 import { Badge, Card } from '@/components/panel/ui';
-import { EmptyState, Spinner, TuitionPill } from '@/components/panel/widgets';
+import { EmptyState, DeferredSpinner, TuitionPill } from '@/components/panel/widgets';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -38,6 +38,7 @@ export default function ProfilePage() {
 
   const activeClasses = classes.filter((i) => i.status === 'active');
   const topMedals = achievements.filter((a) => a.code === 'top_rank');
+  const improvedMedals = achievements.filter((a) => a.code === 'improved');
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -55,6 +56,9 @@ export default function ProfilePage() {
           {user.studentType && (
             <Badge tone="amber">{user.studentType === 'online' ? 'آنلاین' : 'حضوری'}</Badge>
           )}
+          {improvedMedals.length > 0 && (
+            <Badge tone="green">{toFa(improvedMedals.length)} مدال پیشرفت</Badge>
+          )}
           {topMedals.length > 0 && (
             <Badge tone="amber">{toFa(topMedals.length)} مدال مقام اول</Badge>
           )}
@@ -68,13 +72,19 @@ export default function ProfilePage() {
             {loading ? '…' : toFa(achievements.length)} مدال
           </span>
         </div>
-        {loading ? <Spinner /> : <MedalShowcase items={achievements} />}
+        {loading && achievements.length === 0 ? (
+          <DeferredSpinner active />
+        ) : (
+          <MedalShowcase items={achievements} />
+        )}
       </section>
 
       <Card className="divide-y divide-slate-100 !p-0 dark:divide-slate-800">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-4">
-            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">{row.label}</span>
+            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
+              {row.label}
+            </span>
             <span
               dir={row.ltr ? 'ltr' : undefined}
               className="text-sm font-black text-slate-900 dark:text-white"
@@ -93,8 +103,8 @@ export default function ProfilePage() {
           </Link>
         </div>
 
-        {loading ? (
-          <Spinner />
+        {loading && activeClasses.length === 0 ? (
+          <DeferredSpinner active />
         ) : activeClasses.length === 0 ? (
           <EmptyState
             icon={<BookOpen className="h-6 w-6" />}

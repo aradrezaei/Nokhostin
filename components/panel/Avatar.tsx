@@ -16,7 +16,8 @@ export default function Avatar({
   /** Prefer eager load for above-the-fold / profile hero. */
   priority?: boolean;
 }) {
-  const label = name?.trim() || 'کاربر';
+  const trimmed = name?.trim();
+  const label = trimmed && trimmed.length > 0 ? trimmed : 'کاربر';
   const src = size >= 72 ? '/avatar-lg.webp' : '/avatar.webp';
 
   return (

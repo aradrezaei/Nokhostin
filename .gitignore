@@ -9,7 +9,7 @@ out/
 build/
 dist/
 
-# Local env files (دیتای حساس و کلیدها)
+# Local env files
 .env
 .env.local
 .env.development.local
@@ -22,7 +22,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# System files (مخصوص مک‌بوک و ویندوز)
+# System files
 .DS_Store
 Thumbs.db
 *.suo
@@ -31,5 +31,12 @@ Thumbs.db
 *.sln
 *.swp
 
-# Docker files debug
+# IDE / tooling
+.idea/
+.vscode/
+graphify-out/
+*.report.html
+tsconfig.tsbuildinfo
+
+# Docker debug
 .docker/

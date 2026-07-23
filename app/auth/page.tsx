@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import type { ChangeEvent, SyntheticEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_BASE, ApiError, parseResult } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -44,8 +44,8 @@ export default function LoginSection() {
 
   useEffect(() => {
     if (cooldown <= 0) return;
-    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(timer);
+    const timer = setTimeout(() => { setCooldown((c) => c - 1); }, 1000);
+    return () => { clearTimeout(timer); };
   }, [cooldown]);
 
   const handleClose = useCallback(() => {
@@ -58,7 +58,7 @@ export default function LoginSection() {
       if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => { window.removeEventListener('keydown', onKeyDown); };
   }, [handleClose]);
 
   const requestOtp = useCallback(async () => {
@@ -71,7 +71,7 @@ export default function LoginSection() {
   }, [phone]);
 
   const handlePhoneSubmit = useCallback(
-    async (e: FormEvent) => {
+    async (e: SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       setTouched(true);
       setServerError('');
@@ -92,7 +92,7 @@ export default function LoginSection() {
   );
 
   const handleCodeSubmit = useCallback(
-    async (e: FormEvent) => {
+    async (e: SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       setServerError('');
       if (code.length < 4 || submitting) return;
@@ -187,7 +187,7 @@ export default function LoginSection() {
                   maxLength={PHONE_LEN}
                   value={phone}
                   onChange={handlePhoneChange}
-                  onBlur={() => setTouched(true)}
+                  onBlur={() => { setTouched(true); }}
                   placeholder="09123456789"
                   dir="ltr"
                   aria-invalid={showError}
@@ -237,7 +237,7 @@ export default function LoginSection() {
                   autoComplete="one-time-code"
                   maxLength={8}
                   value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  onChange={(e) => { setCode(e.target.value.replace(/\D/g, '').slice(0, 8)); }}
                   placeholder="- - - - -"
                   dir="ltr"
                   className="login-input h-[54px] w-full rounded-2xl px-4 text-center text-[22px] font-bold tracking-[0.5em] outline-none sm:h-[56px]"

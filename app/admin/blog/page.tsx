@@ -1,5 +1,8 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+import { confirmAction } from '@/lib/confirm';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Eye, Pencil, Plus, Tags, Trash2 } from 'lucide-react';
@@ -28,9 +31,7 @@ export default function AdminBlogPage() {
     }
   }, [request]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const togglePublish = async (post: PostSummary) => {
     const action = post.status === 'published' ? 'unpublish' : 'publish';
@@ -43,7 +44,7 @@ export default function AdminBlogPage() {
   };
 
   const remove = async (post: PostSummary) => {
-    if (!confirm(`حذف پست «${post.title}»؟`)) return;
+    if (!confirmAction(`حذف پست «${post.title}»؟`)) return;
     try {
       await request(`/admin/blog/posts/${post.id}`, { method: 'DELETE' });
       await load();
@@ -62,7 +63,7 @@ export default function AdminBlogPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => setTaxOpen(true)}>
+          <Button variant="ghost" onClick={() => { setTaxOpen(true); }}>
             <Tags className="h-4 w-4" /> دسته و تگ
           </Button>
           <Link href="/admin/blog/new">
@@ -155,7 +156,7 @@ export default function AdminBlogPage() {
         )}
       </div>
 
-      <TaxonomyModal open={taxOpen} onClose={() => setTaxOpen(false)} />
+      <TaxonomyModal open={taxOpen} onClose={() => { setTaxOpen(false); }} />
     </div>
   );
 }
@@ -178,7 +179,7 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
   }, [request]);
 
   useEffect(() => {
-    if (open) load().catch(() => undefined);
+    if (open) scheduleEffect(() => load());
   }, [open, load]);
 
   const addCategory = async () => {
@@ -227,7 +228,7 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
             <div className="flex gap-2">
               <TextInput
                 value={catName}
-                onChange={(e) => setCatName(e.target.value)}
+                onChange={(e) => { setCatName(e.target.value); }}
                 placeholder="نام دسته"
               />
               <Button onClick={addCategory}>افزودن</Button>
@@ -252,7 +253,7 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
             <div className="flex gap-2">
               <TextInput
                 value={tagName}
-                onChange={(e) => setTagName(e.target.value)}
+                onChange={(e) => { setTagName(e.target.value); }}
                 placeholder="نام تگ"
               />
               <Button onClick={addTag}>افزودن</Button>

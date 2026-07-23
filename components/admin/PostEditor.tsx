@@ -122,7 +122,7 @@ export default function PostEditor({ initial }: Props) {
     }
 
     for (let i = 0; i < blocks.length; i += 1) {
-      const b = blocks[i]!;
+      const b = blocks[i];
       const n = i + 1;
       switch (b.type) {
         case 'heading':
@@ -154,6 +154,8 @@ export default function PostEditor({ initial }: Props) {
         case 'embed':
           if (!b.url.trim()) return `آدرس ویدیو بلاک ${n} خالی است.`;
           if (!isValidUrl(b.url.trim())) return `آدرس ویدیو بلاک ${n} معتبر نیست.`;
+          break;
+        case 'divider':
           break;
         default:
           break;
@@ -194,7 +196,7 @@ export default function PostEditor({ initial }: Props) {
   };
 
   const toggleTag = (id: string) =>
-    setTagIds((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]));
+    { setTagIds((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id])); };
 
   return (
     <div className="space-y-6">
@@ -222,7 +224,7 @@ export default function PostEditor({ initial }: Props) {
             <Field label="عنوان پست">
               <TextInput
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => { setTitle(e.target.value); }}
                 placeholder="عنوان جذاب و سئو‌محور"
               />
             </Field>
@@ -230,7 +232,7 @@ export default function PostEditor({ initial }: Props) {
               <Textarea
                 rows={2}
                 value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
+                onChange={(e) => { setExcerpt(e.target.value); }}
                 placeholder="خلاصه کوتاه برای فهرست و نتایج گوگل"
               />
             </Field>
@@ -281,7 +283,7 @@ export default function PostEditor({ initial }: Props) {
           {/* کارت دسته‌بندی و تگ‌ها */}
           <Card className="space-y-4">
             <Field label="دسته‌بندی">
-              <Select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+              <Select value={categoryId} onChange={(e) => { setCategoryId(e.target.value); }}>
                 <option value="">بدون دسته</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -307,7 +309,7 @@ export default function PostEditor({ initial }: Props) {
                       <button
                         key={t.id}
                         type="button"
-                        onClick={() => toggleTag(t.id)}
+                        onClick={() => { toggleTag(t.id); }}
                         className={`rounded-xl px-3 py-1.5 text-xs font-black transition-all duration-75 select-none active:translate-y-[1px] ${
                           isSelected
                             ? 'bg-[#7c3aed] text-white border-2 border-[#5b21b6] border-b-3 dark:bg-[#8b5cf6] dark:border-[#6d28d9]'
@@ -330,14 +332,14 @@ export default function PostEditor({ initial }: Props) {
               <TextInput
                 dir="ltr"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => { setSlug(e.target.value); }}
                 placeholder="python-course"
               />
             </Field>
             <Field label="عنوان متا">
               <TextInput
                 value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
+                onChange={(e) => { setMetaTitle(e.target.value); }}
                 placeholder="خالی = عنوان پست"
               />
             </Field>
@@ -345,14 +347,14 @@ export default function PostEditor({ initial }: Props) {
               <Textarea
                 rows={2}
                 value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
+                onChange={(e) => { setMetaDescription(e.target.value); }}
                 placeholder="خالی = خلاصه پست"
               />
             </Field>
             <Field label="کلیدواژه‌ها" hint="با ویرگول جدا کنید.">
               <TextInput
                 value={keywords}
-                onChange={(e) => setKeywords(e.target.value)}
+                onChange={(e) => { setKeywords(e.target.value); }}
                 placeholder="آموزش پایتون، اندیشه"
               />
             </Field>

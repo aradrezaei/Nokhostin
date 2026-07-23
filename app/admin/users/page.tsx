@@ -1,5 +1,8 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+import { confirmAction } from '@/lib/confirm';
+
 import { useCallback, useEffect, useState } from 'react';
 import { Plus, Search, Trash2 } from 'lucide-react';
 import { ApiError } from '@/lib/api';
@@ -44,9 +47,7 @@ export default function AdminUsersPage() {
     }
   }, [request, roleFilter, search]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const openModal = (mode: CreateMode) => {
     setForm({ fullName: '', mobile: '', studentType: 'in_person' });
@@ -97,7 +98,7 @@ export default function AdminUsersPage() {
 
   const removeUser = async (u: ManagedUser) => {
     const roleWord = u.role === 'mentor' ? 'استاد' : 'هنرجو';
-    if (!confirm(`«${u.fullName}» (${roleWord}) برای همیشه حذف شود؟\nاین کار برگشت‌پذیر نیست.`)) {
+    if (!confirmAction(`«${u.fullName}» (${roleWord}) برای همیشه حذف شود؟\nاین کار برگشت‌پذیر نیست.`)) {
       return;
     }
     try {
@@ -118,10 +119,10 @@ export default function AdminUsersPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => openModal('mentor')}>
+          <Button variant="ghost" onClick={() => { openModal('mentor'); }}>
             <Plus className="h-4 w-4" /> منتور
           </Button>
-          <Button onClick={() => openModal('student')}>
+          <Button onClick={() => { openModal('student'); }}>
             <Plus className="h-4 w-4" /> دانش‌آموز
           </Button>
         </div>
@@ -132,12 +133,12 @@ export default function AdminUsersPage() {
           <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <TextInput
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); }}
             placeholder="جستجوی نام یا موبایل"
             className="pr-9"
           />
         </div>
-        <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="w-40">
+        <Select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); }} className="w-40">
           <option value="">همه نقش‌ها</option>
           <option value="student">دانش‌آموز</option>
           <option value="mentor">منتور</option>
@@ -237,14 +238,14 @@ export default function AdminUsersPage() {
       <Modal
         open={modal !== null}
         title={modal === 'mentor' ? 'ثبت منتور جدید' : 'ثبت دانش‌آموز جدید'}
-        onClose={() => setModal(null)}
+        onClose={() => { setModal(null); }}
       >
         <div className="space-y-4">
           {formError && <Alert>{formError}</Alert>}
           <Field label="نام و نام خانوادگی">
             <TextInput
               value={form.fullName}
-              onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, fullName: e.target.value })); }}
               placeholder="مثلاً علی رضایی"
             />
           </Field>
@@ -253,7 +254,7 @@ export default function AdminUsersPage() {
               dir="ltr"
               value={form.mobile}
               onChange={(e) =>
-                setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, '').slice(0, 11) }))
+                { setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, '').slice(0, 11) })); }
               }
               placeholder="09123456789"
             />
@@ -262,7 +263,7 @@ export default function AdminUsersPage() {
             <Field label="نوع دانش‌آموز">
               <Select
                 value={form.studentType}
-                onChange={(e) => setForm((f) => ({ ...f, studentType: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, studentType: e.target.value })); }}
               >
                 <option value="in_person">حضوری</option>
                 <option value="online">آنلاین</option>
@@ -270,7 +271,7 @@ export default function AdminUsersPage() {
             </Field>
           )}
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setModal(null)}>
+            <Button variant="ghost" onClick={() => { setModal(null); }}>
               انصراف
             </Button>
             <Button

@@ -29,8 +29,8 @@ export function registerServiceWorker(config?: ServiceWorkerConfig) {
         config?.onSuccess?.(registration);
 
         const watch = () => {
-          const worker = registration.installing || registration.waiting;
-          if (!worker) return;
+      const worker = registration.installing ?? registration.waiting;
+      if (!worker) return;
           worker.addEventListener('statechange', () => {
             if (worker.state === 'installed' && navigator.serviceWorker.controller) {
               config?.onUpdate?.(registration);
@@ -42,9 +42,11 @@ export function registerServiceWorker(config?: ServiceWorkerConfig) {
         registration.addEventListener('updatefound', watch);
 
         // چک دوره‌ای آپدیت
-        setInterval(() => registration.update().catch(() => undefined), 60 * 60 * 1000);
+        setInterval(() => {
+          void registration.update().catch(() => undefined);
+        }, 60 * 60 * 1000);
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         config?.onError?.(error instanceof Error ? error : new Error(String(error)));
       });
   };
@@ -65,7 +67,7 @@ export function unregisterServiceWorker(): Promise<void> {
 }
 
 export function applyWaitingServiceWorker(registration?: ServiceWorkerRegistration) {
-  const waiting = registration?.waiting || null;
+  const waiting = registration?.waiting ?? null;
   if (waiting) {
     waiting.postMessage({ action: 'skipWaiting' });
   }
@@ -82,7 +84,7 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   if (!('Notification' in window)) return 'denied';
   if (Notification.permission === 'granted') return 'granted';
   if (Notification.permission === 'denied') return 'denied';
-  return Notification.requestPermission();
+  return await Notification.requestPermission();
 }
 
 export function isStandaloneDisplay(): boolean {
@@ -90,6 +92,7 @@ export function isStandaloneDisplay(): boolean {
   return (
     window.matchMedia('(display-mode: standalone)').matches ||
     // iOS Safari
-    ('standalone' in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
+    ('standalone' in navigator &&
+      Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
   );
 }

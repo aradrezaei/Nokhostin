@@ -1,6 +1,6 @@
 'use client'; // این خط برای Client Component بودن ضروری است، مشابه صفحه اصلی شما.
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import {
   Award,
@@ -10,14 +10,11 @@ import {
   Code,
   Globe,
   GraduationCap,
-  Hammer,
-  Lightbulb,
   Phone,
   Rocket,
   Shield,
   Sparkles,
   Star,
-  Target,
   Trophy,
   Users,
   TrendingUp,
@@ -26,17 +23,7 @@ import {
 } from 'lucide-react';
 
 export default function WhyVocationalCertificatePage() {
-  const [isDark, setIsDark] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Dark mode detection, consistent with your HomePage
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldDark = saved === 'dark' || (!saved && prefersDark);
-    setIsDark(shouldDark);
-    if (shouldDark) document.documentElement.classList.add('dark');
-  }, []);
 
   useEffect(() => {
     // Fade-up animations for various elements
@@ -57,41 +44,8 @@ export default function WhyVocationalCertificatePage() {
     });
 
     // Clean up observer on component unmount
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); };
   }, []);
-
-  // Function to determine text color for icons based on dark mode
-  const getIconTextColor = (baseColor: string) => {
-    if (isDark) {
-      // In dark mode, lighten the text colors for better contrast
-      switch (baseColor) {
-        case 'blue':
-          return 'text-blue-300';
-        case 'purple':
-          return 'text-purple-300';
-        case 'emerald':
-          return 'text-emerald-300';
-        case 'rose':
-          return 'text-rose-300';
-        default:
-          return 'text-gray-300';
-      }
-    } else {
-      // In light mode, use slightly darker shades
-      switch (baseColor) {
-        case 'blue':
-          return 'text-blue-700';
-        case 'purple':
-          return 'text-purple-700';
-        case 'emerald':
-          return 'text-emerald-700';
-        case 'rose':
-          return 'text-rose-700';
-        default:
-          return 'text-gray-700';
-      }
-    }
-  };
 
   return (
     <>
@@ -206,8 +160,6 @@ export default function WhyVocationalCertificatePage() {
               const Icon = item.icon;
               const bgColorClass = `bg-gradient-to-br from-${item.color}-500 to-${item.color}-700`;
               const ringColorClass = `ring-${item.color}-300/50 dark:ring-${item.color}-700/50`;
-              const textColorClass = getIconTextColor(item.color);
-
               return (
                 <div
                   key={i}
@@ -375,7 +327,7 @@ export default function WhyVocationalCertificatePage() {
                 </div>
 
                 <div className="flex gap-1 mb-3 sm:mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
                     <Star
                       key={i}
                       className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400"
@@ -384,7 +336,7 @@ export default function WhyVocationalCertificatePage() {
                 </div>
 
                 <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
-                  "{testimonial.text}"
+                  &quot;{testimonial.text}&quot;
                 </p>
               </div>
             ))}

@@ -1,5 +1,8 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+import { confirmAction } from '@/lib/confirm';
+
 import { useCallback, useEffect, useState } from 'react';
 import { BookMarked, Plus, Trash2 } from 'lucide-react';
 import { ApiError } from '@/lib/api';
@@ -47,7 +50,7 @@ export default function AdminCoursesPage() {
       setInstitutes(inst);
       setData(courses);
       if (!form.instituteId && inst[0]) {
-        setForm((f) => ({ ...f, instituteId: inst[0]!.id }));
+        setForm((f) => ({ ...f, instituteId: inst[0].id }));
       }
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'خطا در دریافت دوره‌ها.');
@@ -56,10 +59,7 @@ export default function AdminCoursesPage() {
     }
   }, [request, instituteFilter, form.instituteId]);
 
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [request, instituteFilter]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const submit = async () => {
     setSaving(true);
@@ -85,7 +85,7 @@ export default function AdminCoursesPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm('این دوره حذف شود؟')) return;
+    if (!confirmAction('این دوره حذف شود؟')) return;
     try {
       await request(`/admin/courses/${id}`, { method: 'DELETE' });
       await load();
@@ -118,7 +118,7 @@ export default function AdminCoursesPage() {
 
       <Select
         value={instituteFilter}
-        onChange={(e) => setInstituteFilter(e.target.value)}
+        onChange={(e) => { setInstituteFilter(e.target.value); }}
         className="max-w-xs"
       >
         <option value="">همه آموزشگاه‌ها</option>
@@ -175,13 +175,13 @@ export default function AdminCoursesPage() {
         </div>
       )}
 
-      <Modal open={open} title="ثبت دوره جدید" onClose={() => setOpen(false)}>
+      <Modal open={open} title="ثبت دوره جدید" onClose={() => { setOpen(false); }}>
         <div className="space-y-4">
           {formError && <Alert>{formError}</Alert>}
           <Field label="آموزشگاه">
             <Select
               value={form.instituteId}
-              onChange={(e) => setForm((f) => ({ ...f, instituteId: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, instituteId: e.target.value })); }}
             >
               {institutes.map((i) => (
                 <option key={i.id} value={i.id}>
@@ -193,14 +193,14 @@ export default function AdminCoursesPage() {
           <Field label="نام دوره / کتاب">
             <TextInput
               value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, name: e.target.value })); }}
               placeholder="Family Friends 2"
             />
           </Field>
           <Field label="سطح" hint="اختیاری — مثلاً A2 یا Term A">
             <TextInput
               value={form.level}
-              onChange={(e) => setForm((f) => ({ ...f, level: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, level: e.target.value })); }}
               placeholder="A2"
             />
           </Field>
@@ -208,12 +208,12 @@ export default function AdminCoursesPage() {
             <Textarea
               rows={3}
               value={form.description}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) => { setForm((f) => ({ ...f, description: e.target.value })); }}
               placeholder="توضیح کوتاه درباره دوره"
             />
           </Field>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => setOpen(false)}>
+            <Button variant="ghost" onClick={() => { setOpen(false); }}>
               انصراف
             </Button>
             <Button onClick={submit} disabled={saving || form.name.length < 2 || !form.instituteId}>

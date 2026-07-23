@@ -1,49 +1,50 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ApiError } from '@/lib/api';
-import { useAuth } from '@/lib/auth';
-import type { ClassProgress } from '@/lib/types';
-import ProgressView from '@/components/panel/ProgressView';
+import { useClassProgress } from '@/hooks/useClassProgress';
+import ImprovementModal from '@/components/panel/ImprovementModal';
 import { Alert } from '@/components/panel/ui';
-import { Spinner } from '@/components/panel/widgets';
+import { DeferredSpinner } from '@/components/panel/widgets';
+
+const ProgressView = dynamic(() => import('@/components/panel/ProgressView'), {
+  loading: () => <DeferredSpinner active label="در حال آماده‌سازی گزارش…" />,
+});
 
 export default function StudentClassProgressPage() {
   const { classId } = useParams<{ classId: string }>();
-  const { request } = useAuth();
-  const [data, setData] = useState<ClassProgress | null>(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const { data, loading, error } = useClassProgress(classId);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setData(await request<ClassProgress>(`/me/classes/${classId}/progress`));
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'خطا در دریافت روند رشد.');
-    } finally {
-      setLoading(false);
-    }
-  }, [request, classId]);
+  const improvementItems = useMemo(() => {
+    if (!data?.improvement.improved) return [];
+    return [
+      {
+        classId: data.class.id,
+        classTitle: data.class.title,
+        courseName: data.class.course?.name ?? null,
+        previousScore: data.improvement.previousScore,
+        currentScore: data.improvement.currentScore ?? data.score,
+        delta: data.improvement.delta,
+      },
+    ];
+  }, [data]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  if (loading) return <Spinner />;
-  if (error) return <Alert>{error}</Alert>;
+  if (error && !data) return <Alert>{error}</Alert>;
+  if (loading && !data) return <DeferredSpinner active />;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
+      <ImprovementModal items={improvementItems} />
       <p className="text-xs font-bold text-slate-400">
         <Link href="/dashboard/courses" className="hover:text-[#7c3aed]">
           کلاس‌های من
         </Link>
         {' / '}روند رشد
       </p>
+      {error ? <Alert>{error}</Alert> : null}
       <ProgressView data={data} />
     </div>
   );

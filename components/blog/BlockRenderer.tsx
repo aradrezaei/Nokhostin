@@ -2,7 +2,7 @@ import type { ContentBlock, MediaAsset } from '@/lib/types';
 import type { CSSProperties } from 'react';
 
 type TextSpanMarkLocal = 'bold' | 'italic' | 'lead';
-type Span = { text: string; marks?: TextSpanMarkLocal[]; href?: string };
+interface Span { text: string; marks?: TextSpanMarkLocal[]; href?: string }
 
 function renderSpan(span: Span, index: number) {
   const marks = span.marks ?? [];
@@ -42,10 +42,10 @@ function EmbedFrame({
 }) {
   let src = url;
   if (provider === 'youtube') {
-    const id = url.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1];
+    const id = (/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/.exec(url))?.[1];
     if (id) src = `https://www.youtube.com/embed/${id}`;
-  } else if (provider === 'aparat') {
-    const hash = url.match(/aparat\.com\/(?:v|video\/video\/embed\/videohash)\/([\w-]+)/)?.[1];
+  } else {
+    const hash = (/aparat\.com\/(?:v|video\/video\/embed\/videohash)\/([\w-]+)/.exec(url))?.[1];
     if (hash) src = `https://www.aparat.com/video/video/embed/videohash/${hash}/vt/frame`;
   }
   return (

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AboutView from '@/components/about/AboutView';
+import AboutView from '@/components/marketing/about/AboutView';
 import { SITE, SOCIAL_LINKS } from '@/lib/site';
 
 const PAGE_URL = 'https://nokhostin.org/about';

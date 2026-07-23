@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { scheduleEffect } from '@/lib/scheduleEffect';
 import { API_BASE, ApiError, parseResult } from './api';
 import type { AuthTokens, AuthUser } from './types';
 
@@ -60,11 +61,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const request = useCallback(
     async <T,>(path: string, init: RequestInit = {}): Promise<T> => {
       const isForm = init.body instanceof FormData;
-      const buildHeaders = (token: string | null): HeadersInit => ({
-        ...(isForm ? {} : { 'content-type': 'application/json' }),
-        ...(token ? { authorization: `Bearer ${token}` } : {}),
-        ...(init.headers ?? {}),
-      });
+      const buildHeaders = (token: string | null): Headers => {
+        const headers = new Headers();
+        if (!isForm) {
+          headers.set('content-type', 'application/json');
+        }
+        if (token) {
+          headers.set('authorization', `Bearer ${token}`);
+        }
+        if (init.headers) {
+          new Headers(init.headers).forEach((value, key) => {
+            headers.set(key, value);
+          });
+        }
+        return headers;
+      };
 
       let token = readToken(ACCESS_KEY);
       let res = await fetch(`${API_BASE}${path}`, { ...init, headers: buildHeaders(token) });
@@ -75,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           res = await fetch(`${API_BASE}${path}`, { ...init, headers: buildHeaders(token) });
         }
       }
-      return parseResult<T>(res);
+      return await parseResult<T>(res);
     },
     [tryRefresh],
   );
@@ -105,13 +116,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, [clearTokens]);
 
-  useEffect(() => {
-    if (!readToken(ACCESS_KEY)) {
-      setLoading(false);
-      return;
-    }
-    refreshUser().finally(() => setLoading(false));
-  }, [refreshUser]);
+  useEffect(
+    () =>
+      scheduleEffect(async () => {
+        if (!readToken(ACCESS_KEY)) {
+          setLoading(false);
+          return;
+        }
+        try {
+          await refreshUser();
+        } finally {
+          setLoading(false);
+        }
+      }),
+    [refreshUser],
+  );
 
   const value = useMemo(
     () => ({ user, loading, setSession, logout, refreshUser, request }),

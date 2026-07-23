@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -28,7 +30,7 @@ export default function MentorClassDetailPage() {
   const [tab, setTab] = useState<'sessions' | 'students'>('sessions');
 
   const load = useCallback(async () => {
-    if (!klass) setLoading(true);
+    setLoading(true);
     setError('');
     try {
       setKlass(await request<ClassDetail>(`/classes/${id}`));
@@ -37,12 +39,9 @@ export default function MentorClassDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [request, id, klass]);
+  }, [request, id]);
 
-  useEffect(() => {
-    void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- initial load only
-  }, [id, request]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const setSessionStatus = async (session: ClassSession, status: 'canceled' | 'scheduled') => {
     setBusyId(session.id);
@@ -96,7 +95,7 @@ export default function MentorClassDetailPage() {
           </Badge>
         </div>
         <p className="mt-2 text-xs font-bold text-slate-400">
-          شروع ترم: {klass.startDateJalali || formatDate(klass.startDate)}
+          شروع ترم: {klass.startDateJalali ?? formatDate(klass.startDate)}
           {' · '}
           جلسه {toFa(klass.sessionsHeld)} از {toFa(klass.totalSessions)} برگزار شده
         </p>
@@ -114,7 +113,7 @@ export default function MentorClassDetailPage() {
           <button
             key={t.key}
             type="button"
-            onClick={() => setTab(t.key)}
+            onClick={() => { setTab(t.key); }}
             className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-black ${
               tab === t.key
                 ? 'bg-[#7c3aed] text-white border-2 border-[#5b21b6] border-b-4'
@@ -138,22 +137,22 @@ export default function MentorClassDetailPage() {
                     جلسه {toFa(s.sessionNumber)}
                   </p>
                   <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                    {s.scheduledDateJalali || formatDate(s.scheduledDate)}
+                    {s.scheduledDateJalali ?? formatDate(s.scheduledDate)}
                     {s.isToday ? ' · امروز' : ''}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge
-                    tone={
-                      held ? 'green' : canceled ? 'amber' : s.isToday ? 'violet' : 'gray'
-                    }
-                  >
+                  <Badge tone={held ? 'green' : canceled ? 'amber' : s.isToday ? 'violet' : 'gray'}>
                     {SESSION_STATUS_LABEL[s.status] ?? s.status}
                   </Badge>
                   {!canceled && (
                     <>
                       <Link href={`/mentor/classes/${id}/sessions/${s.id}/attendance`}>
-                        <Button variant="ghost" className="!px-3 !py-2" disabled={held && !s.isToday}>
+                        <Button
+                          variant="ghost"
+                          className="!px-3 !py-2"
+                          disabled={held && !s.isToday}
+                        >
                           <ClipboardCheck className="h-4 w-4" /> حضور و غیاب
                         </Button>
                       </Link>
@@ -169,9 +168,7 @@ export default function MentorClassDetailPage() {
                       variant="subtle"
                       className="!px-3 !py-2"
                       disabled={busyId === s.id}
-                      onClick={() =>
-                        setSessionStatus(s, canceled ? 'scheduled' : 'canceled')
-                      }
+                      onClick={() => setSessionStatus(s, canceled ? 'scheduled' : 'canceled')}
                     >
                       {canceled ? 'بازگردانی' : 'لغو جلسه'}
                     </Button>

@@ -1,4 +1,4 @@
-  import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { publicGet } from '@/lib/api';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://nokhostin.org';

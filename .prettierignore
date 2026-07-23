@@ -1,0 +1,11 @@
+.next
+out
+build
+coverage
+node_modules
+graphify-out
+package-lock.json
+*.report.html
+public/sw.js
+next-env.d.ts
+tsconfig.tsbuildinfo

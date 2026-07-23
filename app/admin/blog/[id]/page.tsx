@@ -16,7 +16,7 @@ export default function EditPostPage() {
   useEffect(() => {
     request<PostDetail>(`/admin/blog/posts/${params.id}`)
       .then(setPost)
-      .catch(() => setError('پست یافت نشد یا دسترسی ندارید.'));
+      .catch(() => { setError('پست یافت نشد یا دسترسی ندارید.'); });
   }, [request, params.id]);
 
   if (error) return <Alert>{error}</Alert>;

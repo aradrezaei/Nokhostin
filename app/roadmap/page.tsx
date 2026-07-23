@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { scheduleEffect } from '@/lib/scheduleEffect';
 import { motion } from 'framer-motion';
 import {
   CheckCircle2,
@@ -285,7 +286,16 @@ export default function FrontendRoadmap() {
   useEffect(() => {
     const saved = localStorage.getItem('completedStages');
     if (saved) {
-      setCompletedStages(JSON.parse(saved));
+      scheduleEffect(() => {
+        try {
+          const parsed: unknown = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.every((stage) => typeof stage === 'number')) {
+            setCompletedStages(parsed);
+          }
+        } catch {
+          // Ignore an invalid persisted roadmap state.
+        }
+      });
     }
   }, []);
 
@@ -387,7 +397,7 @@ export default function FrontendRoadmap() {
                   {/* Stage Header */}
                   <div
                     className="p-6 cursor-pointer"
-                    onClick={() => setExpandedStage(isExpanded ? null : stage.id)}
+                    onClick={() => { setExpandedStage(isExpanded ? null : stage.id); }}
                   >
                     <div className="flex items-start gap-4">
                       {/* Stage Number */}

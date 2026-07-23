@@ -7,6 +7,7 @@ import {
   ClipboardList,
   GraduationCap,
   LayoutDashboard,
+  MessagesSquare,
   Newspaper,
   Users,
 } from 'lucide-react';
@@ -14,6 +15,7 @@ import PanelLayout from '@/components/panel/PanelLayout';
 
 const NAV = [
   { href: '/admin', label: 'خانه', icon: <LayoutDashboard className="h-4 w-4" /> },
+  { href: '/admin/support', label: 'پشتیبانی', icon: <MessagesSquare className="h-4 w-4" /> },
   { href: '/admin/classes', label: 'کلاس‌ها', icon: <GraduationCap className="h-4 w-4" /> },
   {
     href: '/admin/attendance-logs',

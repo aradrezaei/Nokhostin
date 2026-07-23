@@ -59,5 +59,5 @@ export async function publicGet<T>(path: string, revalidate = 60): Promise<T> {
     next: { revalidate },
     headers: { accept: 'application/json' },
   });
-  return parseResult<T>(res);
+  return await parseResult<T>(res);
 }

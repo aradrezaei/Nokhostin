@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ClipboardList } from 'lucide-react';
@@ -41,9 +43,7 @@ export default function AdminAttendanceLogsPage() {
     setLoading(true);
     setError('');
     try {
-      setData(
-        await request<LogsResponse>(`/classes/attendance-logs?page=${page}&pageSize=40`),
-      );
+      setData(await request<LogsResponse>(`/classes/attendance-logs?page=${page}&pageSize=40`));
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'خطا در دریافت لاگ‌ها.');
     } finally {
@@ -51,9 +51,7 @@ export default function AdminAttendanceLogsPage() {
     }
   }, [request, page]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const items = data?.items ?? [];
   const total = data?.pagination.total ?? 0;
@@ -120,9 +118,7 @@ export default function AdminAttendanceLogsPage() {
                     {item.newStatus === 'late' ? ` (${toFa(item.lateMinutes)}د)` : ''}
                   </Badge>
                   {item.smsSent ? (
-                    <Badge tone="violet">
-                      پیامک {item.smsKind === 'late' ? 'تأخیر' : 'غیبت'}
-                    </Badge>
+                    <Badge tone="violet">پیامک {item.smsKind === 'late' ? 'تأخیر' : 'غیبت'}</Badge>
                   ) : null}
                 </div>
               </div>
@@ -136,7 +132,7 @@ export default function AdminAttendanceLogsPage() {
           <button
             type="button"
             disabled={page <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => { setPage((p) => Math.max(1, p - 1)); }}
             className="rounded-xl border-2 border-slate-200 px-3 py-2 text-xs font-black disabled:opacity-40 dark:border-slate-700"
           >
             قبلی
@@ -147,7 +143,7 @@ export default function AdminAttendanceLogsPage() {
           <button
             type="button"
             disabled={page >= pages}
-            onClick={() => setPage((p) => Math.min(pages, p + 1))}
+            onClick={() => { setPage((p) => Math.min(pages, p + 1)); }}
             className="rounded-xl border-2 border-slate-200 px-3 py-2 text-xs font-black disabled:opacity-40 dark:border-slate-700"
           >
             بعدی

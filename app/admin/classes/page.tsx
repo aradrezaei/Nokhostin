@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { GraduationCap, Plus } from 'lucide-react';
@@ -33,9 +35,7 @@ export default function AdminClassesPage() {
     }
   }, [request, status, search]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   return (
     <div className="space-y-5">
@@ -56,11 +56,11 @@ export default function AdminClassesPage() {
       <div className="flex flex-wrap gap-3">
         <TextInput
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); }}
           placeholder="جستجوی عنوان کلاس"
           className="min-w-[200px] flex-1"
         />
-        <Select value={status} onChange={(e) => setStatus(e.target.value)} className="w-44">
+        <Select value={status} onChange={(e) => { setStatus(e.target.value); }} className="w-44">
           <option value="">همه وضعیت‌ها</option>
           <option value="active">در حال برگزاری</option>
           <option value="finished">پایان‌یافته</option>

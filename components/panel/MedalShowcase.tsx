@@ -15,7 +15,7 @@ export type Achievement = MedalType & {
 /** Compact medal cards for profile / dashboard. */
 export default function MedalShowcase({
   items,
-  emptyHint = 'وقتی بالاترین نمرهٔ کلاس را داشته باشید، مدال مقام اول اینجا نمایش داده می‌شود.',
+  emptyHint = 'با پیشرفت نسبت به ترم قبل یا مقام اول کلاس، مدال اینجا نمایش داده می‌شود.',
 }: {
   items: Achievement[];
   emptyHint?: string;

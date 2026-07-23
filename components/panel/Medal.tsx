@@ -55,7 +55,15 @@ export default function Medal({
       <circle cx="50" cy="68" r="32" fill={t.ring} />
       <circle cx="50" cy="68" r="27" fill={t.fill} />
       <circle cx="50" cy="68" r="22" fill={t.highlight} opacity="0.35" />
-      <circle cx="50" cy="68" r="27" fill="none" stroke="#fff" strokeOpacity="0.45" strokeWidth="2" />
+      <circle
+        cx="50"
+        cy="68"
+        r="27"
+        fill="none"
+        stroke="#fff"
+        strokeOpacity="0.45"
+        strokeWidth="2"
+      />
 
       {code === 'top_rank' ? (
         <path

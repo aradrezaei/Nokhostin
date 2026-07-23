@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import FaqAccordion from '@/components/faq/FaqAccordion';
+import FaqAccordion from '@/components/marketing/faq/FaqAccordion';
 
 const PAGE_URL = 'https://nokhostin.org/faq';
 const PAGE_TITLE = 'سوالات متداول | آموزشگاه نخستین';

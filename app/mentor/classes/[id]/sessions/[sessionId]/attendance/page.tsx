@@ -1,5 +1,7 @@
 'use client';
 
+import { scheduleEffect } from '@/lib/scheduleEffect';
+
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -11,10 +13,10 @@ import Avatar from '@/components/panel/Avatar';
 import { Alert, Button, Card, TextInput } from '@/components/panel/ui';
 import { DeferredSpinner } from '@/components/panel/widgets';
 
-type Draft = {
+interface Draft {
   status: AttendanceStatus;
   lateMinutes: number;
-};
+}
 
 const STATUS_OPTS: { value: AttendanceStatus; label: string; tone: string }[] = [
   {
@@ -57,7 +59,7 @@ export default function MentorAttendancePage() {
       for (const row of data.records) {
         next[row.studentId] = {
           status: row.status ?? 'present',
-          lateMinutes: row.lateMinutes || 5,
+          lateMinutes: row.lateMinutes,
         };
       }
       setDraft(next);
@@ -68,9 +70,7 @@ export default function MentorAttendancePage() {
     }
   }, [request, id, sessionId]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => scheduleEffect(() => load()), [load]);
 
   const rows = payload?.records ?? [];
   const session = payload?.session;
@@ -83,7 +83,7 @@ export default function MentorAttendancePage() {
       for (const row of rows) {
         next[row.studentId] = {
           status,
-          lateMinutes: prev[row.studentId]?.lateMinutes || 5,
+          lateMinutes: prev[row.studentId].lateMinutes || 5,
         };
       }
       return next;
@@ -100,7 +100,7 @@ export default function MentorAttendancePage() {
     setOk('');
     try {
       const records = rows.map((row) => {
-        const d = draft[row.studentId]!;
+        const d = draft[row.studentId];
         return {
           studentId: row.studentId,
           status: d.status,
@@ -150,10 +150,10 @@ export default function MentorAttendancePage() {
         </div>
         {canMark && (
           <div className="flex flex-wrap gap-2">
-            <Button variant="ghost" onClick={() => markAll('present')}>
+            <Button variant="ghost" onClick={() => { markAll('present'); }}>
               همه حاضر
             </Button>
-            <Button variant="subtle" onClick={() => markAll('absent')}>
+            <Button variant="subtle" onClick={() => { markAll('absent'); }}>
               همه غایب
             </Button>
           </div>
@@ -195,10 +195,10 @@ export default function MentorAttendancePage() {
                         type="button"
                         disabled={!canMark}
                         onClick={() =>
-                          setDraft((prev) => ({
+                          { setDraft((prev) => ({
                             ...prev,
                             [row.studentId]: { ...d, status: opt.value },
-                          }))
+                          })); }
                         }
                         className={`rounded-xl border-2 px-2 py-2.5 text-xs font-black disabled:opacity-50 ${
                           active
@@ -223,13 +223,13 @@ export default function MentorAttendancePage() {
                       className="!w-24 !py-2"
                       value={d.lateMinutes}
                       onChange={(e) =>
-                        setDraft((prev) => ({
+                        { setDraft((prev) => ({
                           ...prev,
                           [row.studentId]: {
                             ...d,
                             lateMinutes: Number(e.target.value) || 1,
                           },
-                        }))
+                        })); }
                       }
                     />
                     <span className="text-xs font-bold text-slate-400">
@@ -244,7 +244,7 @@ export default function MentorAttendancePage() {
       )}
 
       <div className="sticky bottom-3 flex gap-2 rounded-2xl border-2 border-slate-200 border-b-4 bg-white p-3 dark:border-slate-800 dark:bg-[#131f24]">
-        <Button variant="ghost" className="flex-1" onClick={() => router.back()}>
+        <Button variant="ghost" className="flex-1" onClick={() => { router.back(); }}>
           بازگشت
         </Button>
         <Button
