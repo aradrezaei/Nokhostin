@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const activeCount = classes.filter((i) => i.status === 'active').length;
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6 lg:mx-0 lg:max-w-3xl">
+    <div className="mx-auto w-full max-w-lg space-y-6 lg:max-w-xl">
       <header className="panel-card flex flex-col items-center px-6 py-8 text-center">
         <Avatar name={user.fullName} seed={user.id} size={96} priority className="!rounded-full" />
         <h1 className="mt-4 text-xl font-extrabold text-[var(--p-ink)]">{user.fullName}</h1>

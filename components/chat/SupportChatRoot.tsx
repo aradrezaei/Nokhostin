@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { scheduleEffect } from '@/lib/scheduleEffect';
+import { isAppRoute } from '@/lib/routes';
 
 const ChatPanel = dynamic(() => import('./ChatPanel'), {
   ssr: false,
@@ -13,13 +14,9 @@ const ChatPanel = dynamic(() => import('./ChatPanel'), {
 /** Short defer so chat doesn't compete with first paint — not a long wait. */
 const BOOT_DELAY_MS = 800;
 
+/** Chat only on marketing site — never inside auth/panel shells. */
 function isHidden(pathname: string | null): boolean {
-  if (!pathname) return true;
-  // Marketing + student panel get chat. Auth / admin / mentor stay clean.
-  if (pathname === '/auth' || pathname.startsWith('/auth/')) return true;
-  if (pathname === '/admin' || pathname.startsWith('/admin/')) return true;
-  if (pathname === '/mentor' || pathname.startsWith('/mentor/')) return true;
-  return false;
+  return !pathname || isAppRoute(pathname);
 }
 
 /**

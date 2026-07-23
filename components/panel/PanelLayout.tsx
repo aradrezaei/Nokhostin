@@ -111,7 +111,7 @@ export default function PanelLayout({
             <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-[var(--p-accent)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={dark ? '/brand/logo-white.png' : '/brand/logo.png'}
+                src="/brand/logo-white.png"
                 alt=""
                 className="h-full w-full scale-[1.12] object-contain"
               />
