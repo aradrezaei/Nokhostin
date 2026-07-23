@@ -125,7 +125,9 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <div className="bg-[#f8fafb] dark:bg-[#17242a] border border-[#e6ecef] dark:border-[#2b3b42] rounded-2xl overflow-hidden transition-all duration-200">
       <button
         type="button"
-        onClick={() => { setOpen(!open); }}
+        onClick={() => {
+          setOpen(!open);
+        }}
         className="w-full text-right px-6 py-5 flex items-center justify-between gap-4 group"
         aria-expanded={open}
       >
@@ -304,8 +306,12 @@ export default function ContactPage() {
                         type="text"
                         placeholder="مثلاً: علی محمدی"
                         value={formData.name}
-                        onChange={(e) => { handleChange('name', e.target.value); }}
-                        onBlur={() => { handleBlur('name'); }}
+                        onChange={(e) => {
+                          handleChange('name', e.target.value);
+                        }}
+                        onBlur={() => {
+                          handleBlur('name');
+                        }}
                         className={inputClass('name')}
                       />
                       {errors.name && touched.name && (
@@ -320,8 +326,12 @@ export default function ContactPage() {
                         type="tel"
                         placeholder="۰۹۱۲XXXXXXX"
                         value={formData.phone}
-                        onChange={(e) => { handleChange('phone', e.target.value); }}
-                        onBlur={() => { handleBlur('phone'); }}
+                        onChange={(e) => {
+                          handleChange('phone', e.target.value);
+                        }}
+                        onBlur={() => {
+                          handleBlur('phone');
+                        }}
                         className={inputClass('phone')}
                         dir="ltr"
                       />
@@ -343,8 +353,12 @@ export default function ContactPage() {
                         type="email"
                         placeholder="example@email.com"
                         value={formData.email}
-                        onChange={(e) => { handleChange('email', e.target.value); }}
-                        onBlur={() => { handleBlur('email'); }}
+                        onChange={(e) => {
+                          handleChange('email', e.target.value);
+                        }}
+                        onBlur={() => {
+                          handleBlur('email');
+                        }}
                         className={inputClass('email')}
                         dir="ltr"
                       />
@@ -359,8 +373,12 @@ export default function ContactPage() {
                       <div className="relative">
                         <select
                           value={formData.subject}
-                          onChange={(e) => { handleChange('subject', e.target.value); }}
-                          onBlur={() => { handleBlur('subject'); }}
+                          onChange={(e) => {
+                            handleChange('subject', e.target.value);
+                          }}
+                          onBlur={() => {
+                            handleBlur('subject');
+                          }}
                           className={
                             inputClass('subject').replace('px-4', 'ps-4') +
                             ' nk-select cursor-pointer appearance-none pe-11'
@@ -393,8 +411,12 @@ export default function ContactPage() {
                       rows={5}
                       placeholder="سوال یا پیشنهاد خود را اینجا بنویسید..."
                       value={formData.message}
-                      onChange={(e) => { handleChange('message', e.target.value); }}
-                      onBlur={() => { handleBlur('message'); }}
+                      onChange={(e) => {
+                        handleChange('message', e.target.value);
+                      }}
+                      onBlur={() => {
+                        handleBlur('message');
+                      }}
                       className={inputClass('message') + ' resize-none'}
                     />
                     <div className="flex items-center justify-between mt-1.5">

@@ -23,7 +23,6 @@ export default function ClearStaleCaches() {
         console.warn('[cache] Cleared stale SW/caches — hard refresh once if UI still looks old');
       }
     })();
-
   }, []);
 
   return null;

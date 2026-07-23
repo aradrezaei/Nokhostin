@@ -1,6 +1,9 @@
 /** Tiny memory + sessionStorage cache for snappy panel navigations. */
 
-interface Entry<T> { at: number; data: T }
+interface Entry<T> {
+  at: number;
+  data: T;
+}
 
 export function createPanelCache<T>(storageKey: string, ttlMs: number) {
   let memory: Entry<T> | null = null;

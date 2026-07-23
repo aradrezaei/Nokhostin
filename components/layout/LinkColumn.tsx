@@ -1,6 +1,9 @@
 import Link from 'next/link';
 
-export interface NavLink { label: string; href: string }
+export interface NavLink {
+  label: string;
+  href: string;
+}
 
 /** Simple titled link column — reused in footer (and anywhere else). */
 export default function LinkColumn({

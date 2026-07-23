@@ -397,7 +397,9 @@ export default function FrontendRoadmap() {
                   {/* Stage Header */}
                   <div
                     className="p-6 cursor-pointer"
-                    onClick={() => { setExpandedStage(isExpanded ? null : stage.id); }}
+                    onClick={() => {
+                      setExpandedStage(isExpanded ? null : stage.id);
+                    }}
                   >
                     <div className="flex items-start gap-4">
                       {/* Stage Number */}

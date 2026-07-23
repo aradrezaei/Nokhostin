@@ -118,7 +118,9 @@ export default function AdminCoursesPage() {
 
       <Select
         value={instituteFilter}
-        onChange={(e) => { setInstituteFilter(e.target.value); }}
+        onChange={(e) => {
+          setInstituteFilter(e.target.value);
+        }}
         className="max-w-xs"
       >
         <option value="">همه آموزشگاه‌ها</option>
@@ -175,13 +177,21 @@ export default function AdminCoursesPage() {
         </div>
       )}
 
-      <Modal open={open} title="ثبت دوره جدید" onClose={() => { setOpen(false); }}>
+      <Modal
+        open={open}
+        title="ثبت دوره جدید"
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
         <div className="space-y-4">
           {formError && <Alert>{formError}</Alert>}
           <Field label="آموزشگاه">
             <Select
               value={form.instituteId}
-              onChange={(e) => { setForm((f) => ({ ...f, instituteId: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, instituteId: e.target.value }));
+              }}
             >
               {institutes.map((i) => (
                 <option key={i.id} value={i.id}>
@@ -193,14 +203,18 @@ export default function AdminCoursesPage() {
           <Field label="نام دوره / کتاب">
             <TextInput
               value={form.name}
-              onChange={(e) => { setForm((f) => ({ ...f, name: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, name: e.target.value }));
+              }}
               placeholder="Family Friends 2"
             />
           </Field>
           <Field label="سطح" hint="اختیاری — مثلاً A2 یا Term A">
             <TextInput
               value={form.level}
-              onChange={(e) => { setForm((f) => ({ ...f, level: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, level: e.target.value }));
+              }}
               placeholder="A2"
             />
           </Field>
@@ -208,12 +222,19 @@ export default function AdminCoursesPage() {
             <Textarea
               rows={3}
               value={form.description}
-              onChange={(e) => { setForm((f) => ({ ...f, description: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, description: e.target.value }));
+              }}
               placeholder="توضیح کوتاه درباره دوره"
             />
           </Field>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => { setOpen(false); }}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
               انصراف
             </Button>
             <Button onClick={submit} disabled={saving || form.name.length < 2 || !form.instituteId}>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { scheduleEffect } from '@/lib/scheduleEffect';
-import { Download, RefreshCw, WifiOff, X } from 'lucide-react';
+import { Download, WifiOff, X } from 'lucide-react';
 import {
   applyWaitingServiceWorker,
   isStandaloneDisplay,
@@ -40,15 +40,11 @@ function dismissInstall() {
   }
 }
 
-/**
- * هسته PWA: ثبت SW، بنر نصب، وضعیت آفلاین، و توست آپدیت.
- * سبک و بدون انیمیشن سنگین.
- */
+/** PWA core only — silent SW updates, optional install, offline hint. */
 export default function PwaShell() {
   const [offline, setOffline] = useState(false);
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstall, setShowInstall] = useState(false);
-  const [updateReg, setUpdateReg] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
     const stop = scheduleEffect(() => {
@@ -92,7 +88,9 @@ export default function PwaShell() {
 
   useEffect(() => {
     const config: ServiceWorkerConfig = {
-      onUpdate: (reg) => { setUpdateReg(reg); },
+      onUpdate: (reg) => {
+        applyWaitingServiceWorker(reg);
+      },
     };
     registerServiceWorker(config);
   }, []);
@@ -124,30 +122,7 @@ export default function PwaShell() {
         </div>
       )}
 
-      {updateReg && (
-        <div className="fixed inset-x-0 bottom-4 z-[70] flex justify-center px-4">
-          <div className="flex w-full max-w-md items-center gap-3 rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-3.5 py-3 shadow-[0_12px_40px_-16px_rgba(15,23,42,0.35)] dark:border-slate-700 dark:bg-[#131f24]">
-            <RefreshCw className="h-5 w-5 shrink-0 text-[#7c3aed]" strokeWidth={2.25} />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-black text-slate-900 dark:text-white">
-                نسخه جدید آماده است
-              </p>
-              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
-                برای دریافت آخرین تغییرات، همین الان به‌روز کن
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => { applyWaitingServiceWorker(updateReg); }}
-              className="shrink-0 rounded-xl border-2 border-[#5b21b6] border-b-4 bg-[#7c3aed] px-3 py-2 text-xs font-black text-white"
-            >
-              به‌روزرسانی
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showInstall && deferred && !updateReg && (
+      {showInstall && deferred && (
         <div className="fixed inset-x-0 bottom-4 z-[70] flex justify-center px-4">
           <div className="flex w-full max-w-md items-start gap-3 rounded-2xl border-2 border-slate-200 border-b-4 bg-white px-3.5 py-3 shadow-[0_12px_40px_-16px_rgba(15,23,42,0.35)] dark:border-slate-700 dark:bg-[#131f24]">
             <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#7c3aed]/10 text-[#7c3aed] dark:bg-[#7c3aed]/20">

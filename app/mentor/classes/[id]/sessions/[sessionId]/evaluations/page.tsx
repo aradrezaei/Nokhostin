@@ -145,29 +145,31 @@ export default function MentorEvaluationsPage() {
                     const score = d[skill.key];
                     return (
                       <div key={skill.key}>
-                      <p className="mb-1.5 text-[11px] font-extrabold text-slate-400">
-                        {skill.label}
-                        {score !== null ? ` · ${toFa(score)}` : ''}
-                      </p>
-                      <div className="grid grid-cols-6 gap-1.5">
-                        {[0, 1, 2, 3, 4, 5].map((n) => {
-                          const active = d[skill.key] === n;
-                          return (
-                            <button
-                              key={n}
-                              type="button"
-                              onClick={() => { setScore(row.studentId, skill.key, n); }}
-                              className={`rounded-xl border-2 py-2 text-xs font-black ${
-                                active
-                                  ? 'border-[#5b21b6] border-b-4 bg-[#7c3aed] text-white'
-                                  : 'border-slate-200 text-slate-500 dark:border-slate-700'
-                              }`}
-                            >
-                              {toFa(n)}
-                            </button>
-                          );
-                        })}
-                      </div>
+                        <p className="mb-1.5 text-[11px] font-extrabold text-slate-400">
+                          {skill.label}
+                          {score !== null ? ` · ${toFa(score)}` : ''}
+                        </p>
+                        <div className="grid grid-cols-6 gap-1.5">
+                          {[0, 1, 2, 3, 4, 5].map((n) => {
+                            const active = d[skill.key] === n;
+                            return (
+                              <button
+                                key={n}
+                                type="button"
+                                onClick={() => {
+                                  setScore(row.studentId, skill.key, n);
+                                }}
+                                className={`rounded-xl border-2 py-2 text-xs font-black ${
+                                  active
+                                    ? 'border-[#5b21b6] border-b-4 bg-[#7c3aed] text-white'
+                                    : 'border-slate-200 text-slate-500 dark:border-slate-700'
+                                }`}
+                              >
+                                {toFa(n)}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     );
                   })}
@@ -179,7 +181,13 @@ export default function MentorEvaluationsPage() {
       )}
 
       <div className="sticky bottom-3 flex gap-2 rounded-2xl border-2 border-slate-200 border-b-4 bg-white/95 p-3 backdrop-blur dark:border-slate-800 dark:bg-[#131f24]/95">
-        <Button variant="ghost" className="flex-1" onClick={() => { router.back(); }}>
+        <Button
+          variant="ghost"
+          className="flex-1"
+          onClick={() => {
+            router.back();
+          }}
+        >
           انصراف
         </Button>
         <Button className="flex-1" onClick={save} disabled={saving || rows.length === 0}>

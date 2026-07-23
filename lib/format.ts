@@ -41,7 +41,11 @@ export const WEEKDAYS_ORDER: WeekDay[] = [
   'friday',
 ];
 
-interface Ymd { y: number; m: number; d: number }
+interface Ymd {
+  y: number;
+  m: number;
+  d: number;
+}
 
 function toYmd(value: Date | string | null | undefined): Ymd | null {
   if (!value) return null;

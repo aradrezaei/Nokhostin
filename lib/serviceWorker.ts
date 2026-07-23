@@ -29,8 +29,8 @@ export function registerServiceWorker(config?: ServiceWorkerConfig) {
         config?.onSuccess?.(registration);
 
         const watch = () => {
-      const worker = registration.installing ?? registration.waiting;
-      if (!worker) return;
+          const worker = registration.installing ?? registration.waiting;
+          if (!worker) return;
           worker.addEventListener('statechange', () => {
             if (worker.state === 'installed' && navigator.serviceWorker.controller) {
               config?.onUpdate?.(registration);
@@ -42,9 +42,12 @@ export function registerServiceWorker(config?: ServiceWorkerConfig) {
         registration.addEventListener('updatefound', watch);
 
         // چک دوره‌ای آپدیت
-        setInterval(() => {
-          void registration.update().catch(() => undefined);
-        }, 60 * 60 * 1000);
+        setInterval(
+          () => {
+            void registration.update().catch(() => undefined);
+          },
+          60 * 60 * 1000,
+        );
       })
       .catch((error: unknown) => {
         config?.onError?.(error instanceof Error ? error : new Error(String(error)));

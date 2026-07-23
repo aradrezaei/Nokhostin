@@ -2,13 +2,7 @@
 
 import { MessageCircle } from 'lucide-react';
 
-export default function ChatFab({
-  unread,
-  onOpen,
-}: {
-  unread: number;
-  onOpen: () => void;
-}) {
+export default function ChatFab({ unread, onOpen }: { unread: number; onOpen: () => void }) {
   return (
     <button
       type="button"

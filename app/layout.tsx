@@ -1,9 +1,8 @@
 import React from 'react';
 import './globals.css';
-import { AuthProvider } from '@/lib/auth';
+import AppProviders from '@/components/providers/AppProviders';
 import { NavGate, FooterGate } from '@/components/layout/Chrome';
 import ClearStaleCaches from '@/components/layout/ClearStaleCaches';
-import VpnNotice from '@/components/layout/VpnNotice';
 import PwaShell from '@/components/layout/PwaShell';
 import SupportChatRoot from '@/components/chat/SupportChatRoot';
 import localFont from 'next/font/local';
@@ -264,9 +263,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           defer
           src="https://cloud.umami.is/script.js"
           data-website-id="3f4a413e-35c7-43a7-9e97-98e29b907937"
-         />
+        />
 
-        <AuthProvider>
+        <AppProviders>
           <ClearStaleCaches />
           <PwaShell />
           <NavGate />
@@ -274,9 +273,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
             {children}
           </main>
           <FooterGate />
-          <VpnNotice />
           <SupportChatRoot />
-        </AuthProvider>
+        </AppProviders>
       </body>
     </html>
   );

@@ -1,13 +1,11 @@
 'use client';
 
 import { scheduleEffect } from '@/lib/scheduleEffect';
-
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, TrendingUp, X } from 'lucide-react';
+import { TrendingUp, X } from 'lucide-react';
 import { formatScore, toFa } from '@/lib/format';
 import Medal from '@/components/panel/Medal';
-import { Button } from '@/components/panel/ui';
 
 const SEEN_KEY = 'nokhostin.improvementSeen.v1';
 
@@ -42,10 +40,7 @@ function markSeen(classId: string) {
   }
 }
 
-/**
- * Motivational celebration when the student beat their previous-term score.
- * Shows once per class until they dismiss (persisted in localStorage).
- */
+/** One-shot progress unlock — short copy, no fluff. */
 export default function ImprovementModal({ items }: { items: ImprovementHighlight[] }) {
   const [item, setItem] = useState<ImprovementHighlight | null>(null);
 
@@ -57,8 +52,7 @@ export default function ImprovementModal({ items }: { items: ImprovementHighligh
           return;
         }
         const seen = readSeen();
-        const next = items.find((i) => !seen.has(i.classId)) ?? null;
-        setItem(next);
+        setItem(items.find((i) => !seen.has(i.classId)) ?? null);
       }),
     [items],
   );
@@ -79,84 +73,59 @@ export default function ImprovementModal({ items }: { items: ImprovementHighligh
       className="fixed inset-0 z-[70] flex items-end justify-center p-4 sm:items-center"
       role="dialog"
       aria-modal="true"
-      aria-label="مدال پیشرفت"
+      aria-label="پیشرفت"
     >
-      <button
-        type="button"
-        className="absolute inset-0 bg-slate-900/55 backdrop-blur-[2px]"
-        aria-label="بستن"
-        onClick={close}
-      />
+      <button type="button" className="absolute inset-0 bg-black/45" aria-label="بستن" onClick={close} />
 
-      <div className="relative w-full max-w-md overflow-hidden rounded-[28px] border-2 border-emerald-300 border-b-8 bg-white shadow-2xl dark:border-emerald-800 dark:bg-[#131f24]">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-emerald-100/90 to-transparent dark:from-emerald-950/50" />
-
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border-2 border-[var(--p-line)] border-b-4 bg-[var(--p-surface)]">
         <button
           type="button"
           onClick={close}
-          className="absolute end-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border-2 border-slate-200 bg-white text-slate-500 dark:border-slate-700 dark:bg-[#131f24] dark:text-slate-300"
+          className="absolute end-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full text-[var(--p-muted)] hover:bg-[var(--p-bg)]"
           aria-label="بستن"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4" strokeWidth={2.5} />
         </button>
 
-        <div className="relative px-6 pb-6 pt-8 text-center">
-          <div className="mx-auto flex h-[108px] w-[108px] items-center justify-center">
-            <span className="absolute h-24 w-24 animate-ping rounded-full bg-emerald-300/30" />
-            <Medal code="improved" size={100} className="relative drop-shadow-sm" />
-          </div>
-
-          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border-2 border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
-            <Sparkles className="h-3.5 w-3.5" />
-            مدال پیشرفت
-          </p>
-
-          <h2 className="mt-3 text-xl font-black text-slate-900 dark:text-white">
-            نسبت به ترم قبل رشد کردی!
-          </h2>
-          <p className="mt-2 text-sm font-bold leading-6 text-slate-500 dark:text-slate-400">
-            تو کلاس <span className="text-slate-800 dark:text-slate-200">{item.classTitle}</span>
-            {item.courseName ? ` · ${item.courseName}` : ''} نمره‌ات از ترم قبل بالاتر رفته.
-          </p>
+        <div className="px-6 pb-6 pt-8 text-center">
+          <Medal code="improved" size={96} className="mx-auto" />
+          <h2 className="mt-4 text-xl font-extrabold text-[var(--p-ink)]">پیشرفت ترم</h2>
+          <p className="mt-2 text-sm font-bold text-[var(--p-muted)]">{item.classTitle}</p>
 
           <div className="mt-5 grid grid-cols-3 gap-2">
-            <div className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-2 py-3 dark:border-slate-800 dark:bg-slate-900/50">
-              <p className="text-[10px] font-bold text-slate-400">ترم قبل</p>
-              <p className="mt-1 text-lg font-black text-slate-700 dark:text-slate-200">
-                {formatScore(item.previousScore)}
-              </p>
+            <div className="rounded-2xl border-2 border-[var(--p-line)] px-2 py-3">
+              <p className="text-[10px] font-bold text-[var(--p-muted)]">قبل</p>
+              <p className="mt-1 text-lg font-extrabold">{formatScore(item.previousScore)}</p>
             </div>
-            <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 px-2 py-3 dark:border-emerald-800 dark:bg-emerald-950/40">
-              <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">تغییر</p>
-              <p className="mt-1 flex items-center justify-center gap-1 text-lg font-black text-emerald-700 dark:text-emerald-300">
-                <TrendingUp className="h-4 w-4 shrink-0" />
+            <div className="rounded-2xl border-2 border-[var(--p-green)] bg-[color-mix(in_srgb,var(--p-green)_12%,transparent)] px-2 py-3">
+              <p className="text-[10px] font-bold text-[var(--p-green)]">تغییر</p>
+              <p className="mt-1 flex items-center justify-center gap-1 text-lg font-extrabold text-[var(--p-green)]">
+                <TrendingUp className="h-4 w-4" />
                 {deltaLabel ?? '—'}
               </p>
             </div>
-            <div className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-2 py-3 dark:border-slate-800 dark:bg-slate-900/50">
-              <p className="text-[10px] font-bold text-slate-400">ترم فعلی</p>
-              <p className="mt-1 text-lg font-black text-[#7c3aed] dark:text-[#a78bfa]">
-                {formatScore(item.currentScore)}
-              </p>
+            <div className="rounded-2xl border-2 border-[var(--p-line)] px-2 py-3">
+              <p className="text-[10px] font-bold text-[var(--p-muted)]">الان</p>
+              <p className="mt-1 text-lg font-extrabold">{formatScore(item.currentScore)}</p>
             </div>
           </div>
 
-          {delta !== null && delta > 0 && (
-            <p className="mt-4 text-xs font-extrabold text-emerald-700 dark:text-emerald-300">
-              {toFa(Math.round(delta * 10) / 10)} نمره جلوتر از خودِ قبلی‌ات — ادامه بده.
+          {delta !== null && delta > 0 ? (
+            <p className="mt-4 text-xs font-extrabold text-[var(--p-green)]">
+              +{toFa(Math.round(delta * 10) / 10)} نسبت به ترم قبل
             </p>
-          )}
+          ) : null}
 
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-            <Button variant="ghost" className="flex-1" onClick={close}>
-              باشه، دیدم
-            </Button>
+            <button type="button" onClick={close} className="panel-btn panel-btn--ghost flex-1">
+              بستن
+            </button>
             <Link
               href={`/dashboard/courses/${item.classId}`}
               onClick={close}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-[#5b21b6] border-b-4 bg-[#7c3aed] px-5 py-2.5 text-sm font-black text-white hover:bg-[#6d28d9] active:border-b-2"
+              className="panel-btn panel-btn--green flex-1"
             >
-              جزئیات کلاس
+              مشاهده کلاس
             </Link>
           </div>
         </div>

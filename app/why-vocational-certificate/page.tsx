@@ -44,7 +44,9 @@ export default function WhyVocationalCertificatePage() {
     });
 
     // Clean up observer on component unmount
-    return () => { observer.disconnect(); };
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return (

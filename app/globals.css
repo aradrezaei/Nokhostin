@@ -425,3 +425,193 @@
 .nk-select::-ms-expand {
   display: none;
 }
+
+/* ─── Panel app (post-login world) — Duolingo-grade shell ─── */
+.panel-app {
+  --p-bg: #f7f7f7;
+  --p-surface: #ffffff;
+  --p-ink: #3c3c3c;
+  --p-muted: #777777;
+  --p-line: #e5e5e5;
+  --p-line-strong: #e5e5e5;
+  --p-green: #58cc02;
+  --p-green-deep: #58a700;
+  --p-blue: #1cb0f6;
+  --p-blue-deep: #1899d6;
+  --p-gold: #ffc800;
+  --p-gold-deep: #e5a500;
+  --p-rose: #ff4b4b;
+  --p-rose-deep: #ea2b2b;
+  --p-violet: #ce82ff;
+  --p-top: 3.5rem;
+  --p-bottom: calc(4rem + env(safe-area-inset-bottom));
+  background: var(--p-bg);
+  color: var(--p-ink);
+  min-height: 100dvh;
+}
+
+.dark .panel-app {
+  --p-bg: #131f24;
+  --p-surface: #1a2830;
+  --p-ink: #f0f4f5;
+  --p-muted: #8b9aa3;
+  --p-line: #2a3a44;
+  --p-line-strong: #334854;
+  --p-green: #7ac70c;
+  --p-green-deep: #58a700;
+  --p-blue: #49c0f8;
+  --p-blue-deep: #1cb0f6;
+  --p-gold: #ffc800;
+  --p-gold-deep: #e5a500;
+}
+
+.panel-top {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--p-top);
+  border-bottom: 2px solid var(--p-line);
+  background: var(--p-surface);
+}
+
+.panel-bottom {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  height: var(--p-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 2px solid var(--p-line);
+  background: var(--p-surface);
+}
+
+.panel-tab {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 0;
+  color: var(--p-muted);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.panel-tab--on {
+  color: var(--p-green);
+}
+
+.panel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2rem;
+  padding-inline: 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--p-ink);
+}
+
+.panel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding-inline: 1.25rem;
+  border-radius: 1rem;
+  border: 2px solid transparent;
+  border-bottom-width: 4px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  user-select: none;
+  cursor: pointer;
+}
+
+.panel-btn:active:not(:disabled) {
+  border-bottom-width: 2px;
+  transform: translateY(2px);
+}
+
+.panel-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.panel-btn--green {
+  color: #fff;
+  background: var(--p-green);
+  border-color: var(--p-green-deep);
+}
+
+.panel-btn--green:hover:not(:disabled) {
+  filter: brightness(1.03);
+}
+
+.panel-btn--blue {
+  color: #fff;
+  background: var(--p-blue);
+  border-color: var(--p-blue-deep);
+}
+
+.panel-btn--ghost {
+  color: var(--p-blue);
+  background: var(--p-surface);
+  border-color: var(--p-line-strong);
+}
+
+.panel-card {
+  border: 2px solid var(--p-line);
+  border-bottom-width: 4px;
+  border-radius: 1rem;
+  background: var(--p-surface);
+}
+
+.panel-path-node {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 999px;
+  border: 0;
+  border-bottom: 6px solid color-mix(in srgb, var(--p-green-deep) 85%, black);
+  background: var(--p-green);
+  color: #fff;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--p-green) 22%, transparent);
+}
+
+.panel-path-node--idle {
+  background: #e5e5e5;
+  border-bottom-color: #bdbdbd;
+  color: #afafaf;
+  box-shadow: none;
+}
+
+.dark .panel-path-node--idle {
+  background: #2a3a44;
+  border-bottom-color: #1a2830;
+  color: #6b7c86;
+}
+
+.panel-path-node--gold {
+  background: var(--p-gold);
+  border-bottom-color: var(--p-gold-deep);
+  color: #3c3c3c;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--p-gold) 28%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .panel-app {
+    --p-bottom: 0px;
+  }
+
+  .panel-bottom {
+    display: none;
+  }
+
+  .panel-side {
+    display: flex;
+  }
+}

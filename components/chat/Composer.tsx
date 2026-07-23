@@ -16,7 +16,10 @@ export default function Composer({
   placeholder?: string;
 }) {
   return (
-    <div className="flex items-end gap-2 border-t-2 border-slate-200 p-3 dark:border-slate-700" dir="rtl">
+    <div
+      className="flex items-end gap-2 border-t-2 border-slate-200 p-3 dark:border-slate-700"
+      dir="rtl"
+    >
       <textarea
         value={value}
         onChange={(e) => {

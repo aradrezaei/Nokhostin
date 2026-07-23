@@ -1,12 +1,10 @@
 'use client';
 
-import { scheduleEffect } from '@/lib/scheduleEffect';
-
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { createPanelCache } from '@/lib/panelCache';
-import { putClassProgress } from '@/hooks/useClassProgress';
+import { queryKeys } from '@/lib/query/keys';
 import type { ClassProgress, Medal, MyClassEntry } from '@/lib/types';
 
 export interface OverviewImprovement {
@@ -45,8 +43,6 @@ export interface StudentOverview {
   snapshots: OverviewSnapshot[];
   achievements: OverviewAchievement[];
 }
-
-const panelCache = createPanelCache<StudentOverview>('nokhostin.overview.v1', 90_000);
 
 const TOP_MEDAL: Pick<Medal, 'code' | 'title' | 'description'> = {
   code: 'top_rank',
@@ -110,7 +106,6 @@ function normalizeOverview(raw: StudentOverview): StudentOverview {
     }
   }
 
-  // Prefer improved medals first for motivation, then top rank.
   achievements.sort((a, b) => {
     const rank = (c: Medal['code']) => (c === 'improved' ? 0 : 1);
     return rank(a.code) - rank(b.code);
@@ -151,9 +146,12 @@ function scheduleIdle(fn: () => void) {
     return;
   }
   if (typeof window.requestIdleCallback === 'function') {
-    window.requestIdleCallback(() => {
-      fn();
-    }, { timeout: 2500 });
+    window.requestIdleCallback(
+      () => {
+        fn();
+      },
+      { timeout: 2500 },
+    );
     return;
   }
   window.setTimeout(fn, 400);
@@ -162,32 +160,15 @@ function scheduleIdle(fn: () => void) {
 /** Single /me/overview fetch shared by dashboard + profile + courses. */
 export function useMyOverview() {
   const { request } = useAuth();
-  const [data, setData] = useState<StudentOverview | null>(() => panelCache.getStale());
-  const [loading, setLoading] = useState(() => !panelCache.getStale());
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
 
-  const load = useCallback(
-    async (force = false) => {
-      if (!force) {
-        const fresh = panelCache.getFresh();
-        if (fresh) {
-          setData(fresh);
-          setLoading(false);
-          return fresh;
-        }
-      }
-
-      // Keep previous UI visible — only spin when we have nothing to show.
-      if (!panelCache.getStale()) setLoading(true);
-      setError('');
+  const query = useQuery({
+    queryKey: queryKeys.overview,
+    queryFn: async () => {
       try {
         const raw = await request<StudentOverview>('/me/overview');
         const next = normalizeOverview(raw);
-        panelCache.set(next);
-        setData(next);
 
-        // Warm first class progress payloads so drill-down feels instant,
-        // and surface "improved vs previous term" medals if overview omitted them.
         scheduleIdle(() => {
           void Promise.all(
             next.classes.slice(0, 4).map(async (entry) => {
@@ -195,23 +176,21 @@ export function useMyOverview() {
                 const progress = await request<ClassProgress>(
                   `/me/classes/${entry.class.id}/progress`,
                 );
-                putClassProgress(entry.class.id, progress);
+                queryClient.setQueryData(queryKeys.classProgress(entry.class.id), progress);
                 return progress;
               } catch {
                 return null;
               }
             }),
           ).then((results) => {
-            let current = panelCache.getStale() ?? next;
+            let current =
+              queryClient.getQueryData<StudentOverview>(queryKeys.overview) ?? next;
             for (const progress of results) {
               if (!progress) continue;
               const merged = mergeProgressIntoOverview(current, progress);
               if (merged !== current) current = merged;
             }
-            if (current !== (panelCache.getStale() ?? next)) {
-              panelCache.set(current);
-              setData(current);
-            }
+            queryClient.setQueryData(queryKeys.overview, current);
           });
         });
 
@@ -219,24 +198,16 @@ export function useMyOverview() {
       } catch (e) {
         try {
           const classes = await request<MyClassEntry[]>('/me/classes');
-          const next = normalizeOverview({ classes, snapshots: [], achievements: [] });
-          panelCache.set(next);
-          setData(next);
-          setError('');
-          return next;
+          return normalizeOverview({ classes, snapshots: [], achievements: [] });
         } catch {
-          setError(e instanceof ApiError ? e.message : 'خطا در دریافت عملکرد.');
-          return null;
+          throw e;
         }
-      } finally {
-        setLoading(false);
       }
     },
-    [request],
-  );
+    staleTime: 90_000,
+  });
 
-  useEffect(() => scheduleEffect(() => load()), [load]);
-
+  const data = query.data ?? null;
   const achievements = useMemo(() => data?.achievements ?? [], [data]);
 
   const improvementHighlights = useMemo(
@@ -260,22 +231,42 @@ export function useMyOverview() {
     snapshots: data?.snapshots ?? [],
     achievements,
     improvementHighlights,
-    loading,
-    error,
-    reload: () => load(true),
+    loading: query.isLoading,
+    error: query.error
+      ? query.error instanceof ApiError
+        ? query.error.message
+        : 'خطا در دریافت عملکرد.'
+      : '',
+    reload: () => query.refetch(),
   };
 }
 
 export function invalidateOverviewCache() {
-  panelCache.clear();
+  /* Prefer queryClient.invalidateQueries({ queryKey: queryKeys.overview }) in components. */
 }
 
 /** Fire-and-forget warm used by panel shell after auth resolves. */
-export function warmOverviewCache(request: <T>(path: string, init?: RequestInit) => Promise<T>) {
-  if (panelCache.getFresh()) return;
-  void request<StudentOverview>('/me/overview')
-    .then((raw) => {
-      panelCache.set(normalizeOverview(raw));
-    })
-    .catch(() => undefined);
+export function useWarmOverviewCache() {
+  const { request, user, loading } = useAuth();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (loading || user?.role !== 'student') return;
+    if (queryClient.getQueryData(queryKeys.overview)) return;
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.overview,
+      queryFn: async () => {
+        const raw = await request<StudentOverview>('/me/overview');
+        return normalizeOverview(raw);
+      },
+      staleTime: 90_000,
+    });
+  }, [loading, user, request, queryClient]);
+}
+
+/** @deprecated Use useWarmOverviewCache */
+export function warmOverviewCache(
+  _request: <T>(path: string, init?: RequestInit) => Promise<T>,
+) {
+  void _request;
 }

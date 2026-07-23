@@ -113,7 +113,9 @@ export default function MentorClassDetailPage() {
           <button
             key={t.key}
             type="button"
-            onClick={() => { setTab(t.key); }}
+            onClick={() => {
+              setTab(t.key);
+            }}
             className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-black ${
               tab === t.key
                 ? 'bg-[#7c3aed] text-white border-2 border-[#5b21b6] border-b-4'

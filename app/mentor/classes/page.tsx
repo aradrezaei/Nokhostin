@@ -43,7 +43,13 @@ export default function MentorClassesPage() {
             فقط کلاس‌هایی که استاد آن‌ها هستید
           </p>
         </div>
-        <Select value={status} onChange={(e) => { setStatus(e.target.value); }} className="w-44">
+        <Select
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value);
+          }}
+          className="w-44"
+        >
           <option value="">همه</option>
           <option value="active">فعال</option>
           <option value="finished">پایان‌یافته</option>

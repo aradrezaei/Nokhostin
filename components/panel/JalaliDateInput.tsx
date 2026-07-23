@@ -61,7 +61,9 @@ export default function JalaliDateInput({
           required={required}
           value={String(Math.min(jd, daysInMonth))}
           onFocus={ensureValue}
-          onChange={(e) => { emit(jy, jm, Number(e.target.value)); }}
+          onChange={(e) => {
+            emit(jy, jm, Number(e.target.value));
+          }}
         >
           {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((d) => (
             <option key={d} value={d}>
@@ -75,7 +77,9 @@ export default function JalaliDateInput({
           required={required}
           value={String(jm)}
           onFocus={ensureValue}
-          onChange={(e) => { emit(jy, Number(e.target.value), jd); }}
+          onChange={(e) => {
+            emit(jy, Number(e.target.value), jd);
+          }}
         >
           {JALALI_MONTH_NAMES.map((name, idx) => (
             <option key={name} value={idx + 1}>
@@ -89,7 +93,9 @@ export default function JalaliDateInput({
           required={required}
           value={String(jy)}
           onFocus={ensureValue}
-          onChange={(e) => { emit(Number(e.target.value), jm, jd); }}
+          onChange={(e) => {
+            emit(Number(e.target.value), jm, jd);
+          }}
         >
           {years.map((y) => (
             <option key={y} value={y}>

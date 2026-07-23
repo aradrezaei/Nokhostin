@@ -28,7 +28,10 @@ import Avatar from '@/components/panel/Avatar';
 import BrandMark from '@/components/layout/BrandMark';
 
 type IconComponent = ComponentType<{ className?: string; strokeWidth?: number }>;
-interface CourseLink { name: string; href: string }
+interface CourseLink {
+  name: string;
+  href: string;
+}
 interface Department {
   id: string;
   title: string;
@@ -89,7 +92,7 @@ function CourseMenu({ onNavigate }: { onNavigate: () => void }) {
       id="course-menu"
       role="menu"
       aria-label="دپارتمان‌های آموزشی"
-      className="nav-dropdown absolute left-1/2 top-[calc(100%+12px)] w-[min(720px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-[0_24px_64px_-16px_rgba(15,23,42,0.18)] dark:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.55)]"
+      className="nav-dropdown absolute inset-inline-0 top-[calc(100%+12px)] z-50 mx-auto w-[min(720px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--nav-bg)] shadow-[0_24px_64px_-16px_rgba(15,23,42,0.18)] dark:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.55)] sm:inset-inline-auto sm:start-1/2 sm:w-[min(720px,calc(100vw-2rem))] sm:-translate-x-1/2"
     >
       <div className="flex items-center justify-between gap-4 border-b border-[var(--nav-border)] px-5 py-3">
         <p className="text-[13px] font-semibold text-[var(--nav-ink)]">دپارتمان‌های آموزشی</p>
@@ -158,7 +161,9 @@ function MobileMenu({
 
   useEffect(() => {
     if (!open) {
-      return scheduleEffect(() => { setCoursesOpen(false); });
+      return scheduleEffect(() => {
+        setCoursesOpen(false);
+      });
     }
     closeBtnRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
@@ -247,7 +252,9 @@ function MobileMenu({
 
           <button
             type="button"
-            onClick={() => { setCoursesOpen((v) => !v); }}
+            onClick={() => {
+              setCoursesOpen((v) => !v);
+            }}
             aria-expanded={coursesOpen}
             className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-[15px] font-bold text-[var(--nav-ink)] hover:bg-[var(--nav-muted)]"
           >
@@ -345,8 +352,12 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const courseMenuRef = useRef<HTMLDivElement>(null);
   const courseMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeCourseMenu = useCallback(() => { setCourseMenuOpen(false); }, []);
-  const closeMobileMenu = useCallback(() => { setMobileMenuOpen(false); }, []);
+  const closeCourseMenu = useCallback(() => {
+    setCourseMenuOpen(false);
+  }, []);
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
 
   useEffect(
     () =>
@@ -361,10 +372,14 @@ export default function Navbar() {
   );
 
   useEffect(() => {
-    const onScroll = () => { setScrolled(window.scrollY > 8); };
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); };
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -417,7 +432,9 @@ export default function Navbar() {
   };
 
   const scheduleCloseCourseMenu = () => {
-    courseMenuTimerRef.current = setTimeout(() => { setCourseMenuOpen(false); }, 160);
+    courseMenuTimerRef.current = setTimeout(() => {
+      setCourseMenuOpen(false);
+    }, 160);
   };
 
   return (
@@ -465,7 +482,9 @@ export default function Navbar() {
               >
                 <button
                   type="button"
-                  onClick={() => { setCourseMenuOpen((v) => !v); }}
+                  onClick={() => {
+                    setCourseMenuOpen((v) => !v);
+                  }}
                   aria-expanded={courseMenuOpen}
                   aria-controls="course-menu"
                   aria-haspopup="menu"
@@ -506,7 +525,9 @@ export default function Navbar() {
             {/* Hamburger only below lg — never beside desktop nav */}
             <button
               type="button"
-              onClick={() => { setMobileMenuOpen(true); }}
+              onClick={() => {
+                setMobileMenuOpen(true);
+              }}
               aria-expanded={mobileMenuOpen}
               aria-label="بازکردن منو"
               className="nav-icon-btn nav-hamburger"

@@ -107,10 +107,16 @@ export function DeferredSpinner({
 
   useEffect(() => {
     if (!active) {
-      return scheduleEffect(() => { setShow(false); });
+      return scheduleEffect(() => {
+        setShow(false);
+      });
     }
-    const id = window.setTimeout(() => { setShow(true); }, delayMs);
-    return () => { window.clearTimeout(id); };
+    const id = window.setTimeout(() => {
+      setShow(true);
+    }, delayMs);
+    return () => {
+      window.clearTimeout(id);
+    };
   }, [active, delayMs]);
 
   if (!active || !show) return null;

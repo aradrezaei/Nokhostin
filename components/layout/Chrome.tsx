@@ -3,23 +3,17 @@
 import { usePathname } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { isAppRoute } from '@/lib/routes';
 
-/** Only the auth modal page hides site chrome. Panels keep navbar + footer. */
-const HIDDEN_PREFIXES = ['/auth'];
-
-function isHidden(pathname: string | null): boolean {
-  if (!pathname) return false;
-  return HIDDEN_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-}
-
+/** Marketing chrome only — panel/auth run inside their own shells. */
 export function NavGate() {
   const pathname = usePathname();
-  if (isHidden(pathname)) return null;
+  if (isAppRoute(pathname)) return null;
   return <Navbar />;
 }
 
 export function FooterGate() {
   const pathname = usePathname();
-  if (isHidden(pathname)) return null;
+  if (isAppRoute(pathname)) return null;
   return <Footer />;
 }

@@ -1,22 +1,22 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { GraduationCap, LayoutDashboard } from 'lucide-react';
+import { GraduationCap, House } from 'lucide-react';
 import PanelLayout from '@/components/panel/PanelLayout';
 
 const NAV = [
-  { href: '/mentor', label: 'داشبورد', icon: <LayoutDashboard className="h-4 w-4" /> },
-  { href: '/mentor/classes', label: 'کلاس‌های من', icon: <GraduationCap className="h-4 w-4" /> },
+  { href: '/mentor', label: 'خانه', tab: 'خانه', icon: <House className="h-5 w-5" strokeWidth={2.5} /> },
+  {
+    href: '/mentor/classes',
+    label: 'کلاس‌ها',
+    tab: 'کلاس‌ها',
+    icon: <GraduationCap className="h-5 w-5" strokeWidth={2.5} />,
+  },
 ];
 
 export default function MentorLayout({ children }: { children: ReactNode }) {
   return (
-    <PanelLayout
-      title="پنل استاد"
-      subtitle="آموزشگاه نخستین"
-      allowedRoles={['mentor']}
-      navItems={NAV}
-    >
+    <PanelLayout brand="نخستین" allowedRoles={['mentor']} navItems={NAV}>
       {children}
     </PanelLayout>
   );

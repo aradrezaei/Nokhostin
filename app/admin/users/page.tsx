@@ -1,15 +1,20 @@
 'use client';
 
-import { scheduleEffect } from '@/lib/scheduleEffect';
-import { confirmAction } from '@/lib/confirm';
-
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Plus, Search, Trash2 } from 'lucide-react';
-import { ApiError } from '@/lib/api';
+import { confirmAction } from '@/lib/confirm';
+import { formatApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { queryKeys } from '@/lib/query/keys';
+import { createUserSchema, type CreateUserValues } from '@/lib/validations/users';
 import type { ManagedUser, Paginated, UserRole, UserStatus } from '@/lib/types';
 import Avatar from '@/components/panel/Avatar';
 import { Alert, Badge, Button, Field, Modal, Select, TextInput } from '@/components/panel/ui';
+import { useUiStore } from '@/stores/ui-store';
 
 const ROLE_LABEL: Record<UserRole, string> = {
   super_admin: 'مدیرکل',
@@ -21,93 +26,119 @@ type CreateMode = 'student' | 'mentor';
 
 export default function AdminUsersPage() {
   const { request } = useAuth();
-  const [data, setData] = useState<Paginated<ManagedUser> | null>(null);
-  const [roleFilter, setRoleFilter] = useState('');
-  const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
+  const setBanner = useUiStore((s) => s.setBanner);
 
-  const [modal, setModal] = useState<CreateMode | null>(null);
-  const [form, setForm] = useState({ fullName: '', mobile: '', studentType: 'in_person' });
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState('');
+  const [roleFilter, setRoleFilter] = useQueryState('role', parseAsString.withDefault(''));
+  const [search, setSearch] = useQueryState('q', parseAsString.withDefault(''));
+  const [modal, setModal] = useQueryState(
+    'create',
+    parseAsString.withDefault('').withOptions({ history: 'push' }),
+  );
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    const params = new URLSearchParams({ pageSize: '50' });
-    if (roleFilter) params.set('role', roleFilter);
-    if (search.trim()) params.set('search', search.trim());
-    try {
-      setData(await request<Paginated<ManagedUser>>(`/users?${params.toString()}`));
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'خطا در دریافت کاربران.');
-    } finally {
-      setLoading(false);
+  const createMode: CreateMode | null =
+    modal === 'student' || modal === 'mentor' ? modal : null;
+
+  const usersQuery = useQuery({
+    queryKey: queryKeys.adminUsers({ role: roleFilter, search }),
+    queryFn: async () => {
+      const params = new URLSearchParams({ pageSize: '50' });
+      if (roleFilter) params.set('role', roleFilter);
+      if (search.trim()) params.set('search', search.trim());
+      return await request<Paginated<ManagedUser>>(`/users?${params.toString()}`);
+    },
+  });
+
+  const form = useForm<CreateUserValues>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: { fullName: '', mobile: '', studentType: 'in_person' },
+  });
+
+  useEffect(() => {
+    if (createMode) {
+      form.reset({ fullName: '', mobile: '', studentType: 'in_person' });
     }
-  }, [request, roleFilter, search]);
+  }, [createMode, form]);
 
-  useEffect(() => scheduleEffect(() => load()), [load]);
-
-  const openModal = (mode: CreateMode) => {
-    setForm({ fullName: '', mobile: '', studentType: 'in_person' });
-    setFormError('');
-    setModal(mode);
-  };
-
-  const submitCreate = async () => {
-    setSaving(true);
-    setFormError('');
-    try {
-      if (modal === 'mentor') {
+  const createMutation = useMutation({
+    mutationFn: async (values: CreateUserValues) => {
+      if (createMode === 'mentor') {
         await request('/users/mentors', {
           method: 'POST',
-          body: JSON.stringify({ fullName: form.fullName, mobile: form.mobile }),
+          body: JSON.stringify({ fullName: values.fullName, mobile: values.mobile }),
         });
-      } else {
-        await request('/users/students', {
-          method: 'POST',
-          body: JSON.stringify({
-            fullName: form.fullName,
-            mobile: form.mobile,
-            studentType: form.studentType,
-          }),
-        });
+        return;
       }
-      setModal(null);
-      await load();
-    } catch (e) {
-      setFormError(e instanceof ApiError ? e.message : 'ثبت کاربر ناموفق بود.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const toggleStatus = async (u: ManagedUser) => {
-    const next: UserStatus = u.status === 'active' ? 'inactive' : 'active';
-    try {
-      await request(`/users/${u.id}/status`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status: next }),
+      await request('/users/students', {
+        method: 'POST',
+        body: JSON.stringify({
+          fullName: values.fullName,
+          mobile: values.mobile,
+          studentType: values.studentType,
+        }),
       });
-      await load();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'تغییر وضعیت ناموفق بود.');
-    }
+    },
+    onSuccess: async () => {
+      await setModal(null);
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      setBanner('کاربر با موفقیت ثبت شد.');
+    },
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: UserStatus }) => {
+      await request(`/users/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await request(`/users/${id}`, { method: 'DELETE' });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+    },
+  });
+
+  const listError = usersQuery.error
+    ? formatApiError(usersQuery.error, 'خطا در دریافت کاربران.')
+    : statusMutation.error
+      ? formatApiError(statusMutation.error, 'تغییر وضعیت ناموفق بود.')
+      : deleteMutation.error
+        ? formatApiError(deleteMutation.error, 'حذف کاربر ناموفق بود.')
+        : '';
+
+  const formError = createMutation.error
+    ? formatApiError(createMutation.error, 'ثبت کاربر ناموفق بود.')
+    : '';
+
+  const onCreate = form.handleSubmit(async (values) => {
+    await createMutation.mutateAsync(values);
+  });
+
+  const toggleStatus = (u: ManagedUser) => {
+    const next: UserStatus = u.status === 'active' ? 'inactive' : 'active';
+    statusMutation.mutate({ id: u.id, status: next });
   };
 
-  const removeUser = async (u: ManagedUser) => {
+  const removeUser = (u: ManagedUser) => {
     const roleWord = u.role === 'mentor' ? 'استاد' : 'هنرجو';
-    if (!confirmAction(`«${u.fullName}» (${roleWord}) برای همیشه حذف شود؟\nاین کار برگشت‌پذیر نیست.`)) {
+    if (
+      !confirmAction(`«${u.fullName}» (${roleWord}) برای همیشه حذف شود؟\nاین کار برگشت‌پذیر نیست.`)
+    ) {
       return;
     }
-    try {
-      await request(`/users/${u.id}`, { method: 'DELETE' });
-      await load();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'حذف کاربر ناموفق بود.');
-    }
+    deleteMutation.mutate(u.id);
   };
+
+  const data = usersQuery.data ?? null;
+  const loading = usersQuery.isLoading;
 
   return (
     <div className="space-y-5">
@@ -119,10 +150,19 @@ export default function AdminUsersPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => { openModal('mentor'); }}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              void setModal('mentor');
+            }}
+          >
             <Plus className="h-4 w-4" /> منتور
           </Button>
-          <Button onClick={() => { openModal('student'); }}>
+          <Button
+            onClick={() => {
+              void setModal('student');
+            }}
+          >
             <Plus className="h-4 w-4" /> دانش‌آموز
           </Button>
         </div>
@@ -133,12 +173,20 @@ export default function AdminUsersPage() {
           <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <TextInput
             value={search}
-            onChange={(e) => { setSearch(e.target.value); }}
+            onChange={(e) => {
+              void setSearch(e.target.value);
+            }}
             placeholder="جستجوی نام یا موبایل"
             className="pr-9"
           />
         </div>
-        <Select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); }} className="w-40">
+        <Select
+          value={roleFilter}
+          onChange={(e) => {
+            void setRoleFilter(e.target.value);
+          }}
+          className="w-40"
+        >
           <option value="">همه نقش‌ها</option>
           <option value="student">دانش‌آموز</option>
           <option value="mentor">منتور</option>
@@ -146,7 +194,7 @@ export default function AdminUsersPage() {
         </Select>
       </div>
 
-      {error && <Alert>{error}</Alert>}
+      {listError && <Alert>{listError}</Alert>}
 
       <div className="overflow-x-auto rounded-3xl border-2 border-slate-200 border-b-4 dark:border-slate-800">
         <table className="w-full min-w-[640px] text-sm">
@@ -201,7 +249,9 @@ export default function AdminUsersPage() {
                       <div className="inline-flex flex-wrap justify-end gap-2">
                         <button
                           type="button"
-                          onClick={() => toggleStatus(u)}
+                          onClick={() => {
+                            toggleStatus(u);
+                          }}
                           className={`cursor-pointer rounded-xl border-2 border-b-4 px-3 py-1.5 text-xs font-black ${
                             u.status === 'active'
                               ? 'border-slate-200 bg-white text-slate-600 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-rose-800 dark:hover:bg-rose-950/40 dark:hover:text-rose-300'
@@ -212,7 +262,9 @@ export default function AdminUsersPage() {
                         </button>
                         <Button
                           variant="danger"
-                          onClick={() => removeUser(u)}
+                          onClick={() => {
+                            removeUser(u);
+                          }}
                           className="!px-3 !py-1.5"
                           title="حذف دائم"
                         >
@@ -236,52 +288,69 @@ export default function AdminUsersPage() {
       </div>
 
       <Modal
-        open={modal !== null}
-        title={modal === 'mentor' ? 'ثبت منتور جدید' : 'ثبت دانش‌آموز جدید'}
-        onClose={() => { setModal(null); }}
+        open={createMode !== null}
+        title={createMode === 'mentor' ? 'ثبت منتور جدید' : 'ثبت دانش‌آموز جدید'}
+        onClose={() => {
+          void setModal(null);
+        }}
       >
-        <div className="space-y-4">
-          {formError && <Alert>{formError}</Alert>}
+        <form className="space-y-4" onSubmit={onCreate} noValidate>
+          {(formError || form.formState.errors.root) && (
+            <Alert>{formError || form.formState.errors.root?.message}</Alert>
+          )}
           <Field label="نام و نام خانوادگی">
             <TextInput
-              value={form.fullName}
-              onChange={(e) => { setForm((f) => ({ ...f, fullName: e.target.value })); }}
+              {...form.register('fullName')}
               placeholder="مثلاً علی رضایی"
+              aria-invalid={Boolean(form.formState.errors.fullName)}
             />
+            {form.formState.errors.fullName && (
+              <p className="mt-1 text-xs font-medium text-rose-600">
+                {form.formState.errors.fullName.message}
+              </p>
+            )}
           </Field>
           <Field label="شماره موبایل" hint="کاربر با همین شماره و کد پیامکی وارد می‌شود.">
             <TextInput
               dir="ltr"
-              value={form.mobile}
-              onChange={(e) =>
-                { setForm((f) => ({ ...f, mobile: e.target.value.replace(/\D/g, '').slice(0, 11) })); }
-              }
+              {...form.register('mobile', {
+                onChange: (e: { target: { value: string } }) => {
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+                  form.setValue('mobile', digits, { shouldValidate: form.formState.isSubmitted });
+                },
+              })}
               placeholder="09123456789"
+              aria-invalid={Boolean(form.formState.errors.mobile)}
             />
+            {form.formState.errors.mobile && (
+              <p className="mt-1 text-xs font-medium text-rose-600">
+                {form.formState.errors.mobile.message}
+              </p>
+            )}
           </Field>
-          {modal === 'student' && (
+          {createMode === 'student' && (
             <Field label="نوع دانش‌آموز">
-              <Select
-                value={form.studentType}
-                onChange={(e) => { setForm((f) => ({ ...f, studentType: e.target.value })); }}
-              >
+              <Select {...form.register('studentType')}>
                 <option value="in_person">حضوری</option>
                 <option value="online">آنلاین</option>
               </Select>
             </Field>
           )}
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => { setModal(null); }}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                void setModal(null);
+              }}
+            >
               انصراف
             </Button>
-            <Button
-              onClick={submitCreate}
-              disabled={saving || form.fullName.length < 2 || form.mobile.length !== 11}
-            >
-              {saving ? 'در حال ثبت…' : 'ثبت'}
+            <Button type="submit" disabled={createMutation.isPending}>
+              {createMutation.isPending ? 'در حال ثبت…' : 'ثبت'}
             </Button>
           </div>
-        </div>
+        </form>
       </Modal>
     </div>
   );

@@ -117,13 +117,21 @@ export default function MentorTermGradePage() {
                 max={100}
                 dir="ltr"
                 value={form[key]}
-                onChange={(e) => { setForm((f) => ({ ...f, [key]: e.target.value })); }}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, [key]: e.target.value }));
+                }}
                 placeholder="مثلاً ۸۵"
               />
             </Field>
           ))}
           <div className="flex gap-2 pt-2">
-            <Button variant="ghost" className="flex-1" onClick={() => { router.back(); }}>
+            <Button
+              variant="ghost"
+              className="flex-1"
+              onClick={() => {
+                router.back();
+              }}
+            >
               انصراف
             </Button>
             <Button className="flex-1" onClick={save} disabled={saving}>

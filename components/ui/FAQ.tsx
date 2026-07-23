@@ -73,7 +73,9 @@ export default function SmartFAQ({
               }`}
             >
               <button
-                onClick={() => { setOpenIndex(openIndex === i ? null : i); }}
+                onClick={() => {
+                  setOpenIndex(openIndex === i ? null : i);
+                }}
                 className="w-full flex items-center justify-between p-4 md:p-8 text-right outline-none"
               >
                 <div className="flex items-center gap-2">

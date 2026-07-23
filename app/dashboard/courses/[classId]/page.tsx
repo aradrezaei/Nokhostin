@@ -7,10 +7,10 @@ import { useParams } from 'next/navigation';
 import { useClassProgress } from '@/hooks/useClassProgress';
 import ImprovementModal from '@/components/panel/ImprovementModal';
 import { Alert } from '@/components/panel/ui';
-import { DeferredSpinner } from '@/components/panel/widgets';
 
 const ProgressView = dynamic(() => import('@/components/panel/ProgressView'), {
-  loading: () => <DeferredSpinner active label="در حال آماده‌سازی گزارش…" />,
+  loading: () => <div className="h-64" aria-hidden />,
+  ssr: false,
 });
 
 export default function StudentClassProgressPage() {
@@ -32,19 +32,19 @@ export default function StudentClassProgressPage() {
   }, [data]);
 
   if (error && !data) return <Alert>{error}</Alert>;
-  if (loading && !data) return <DeferredSpinner active />;
-  if (!data) return null;
+  if (!data) {
+    return loading ? <div className="h-64" aria-hidden /> : null;
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-lg space-y-4">
       <ImprovementModal items={improvementItems} />
-      <p className="text-xs font-bold text-slate-400">
-        <Link href="/dashboard/courses" className="hover:text-[#7c3aed]">
-          کلاس‌های من
-        </Link>
-        {' / '}روند رشد
-      </p>
-      {error ? <Alert>{error}</Alert> : null}
+      <Link
+        href="/dashboard/courses"
+        className="inline-flex text-xs font-extrabold text-[var(--p-blue)]"
+      >
+        ← کلاس‌ها
+      </Link>
       <ProgressView data={data} />
     </div>
   );

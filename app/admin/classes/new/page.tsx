@@ -66,7 +66,9 @@ export default function AdminNewClassPage() {
             : (res.items[0]?.id ?? ''),
         }));
       })
-      .catch(() => { setCourses([]); });
+      .catch(() => {
+        setCourses([]);
+      });
   }, [form.instituteId, request]);
 
   const toggleDay = (day: WeekDay) => {
@@ -119,7 +121,9 @@ export default function AdminNewClassPage() {
             <Select
               required
               value={form.instituteId}
-              onChange={(e) => { setForm((f) => ({ ...f, instituteId: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, instituteId: e.target.value }));
+              }}
             >
               {institutes.map((i) => (
                 <option key={i.id} value={i.id}>
@@ -133,7 +137,9 @@ export default function AdminNewClassPage() {
             <Select
               required
               value={form.courseId}
-              onChange={(e) => { setForm((f) => ({ ...f, courseId: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, courseId: e.target.value }));
+              }}
             >
               {courses.length === 0 && <option value="">دوره‌ای نیست — اول بساز</option>}
               {courses.map((c) => (
@@ -149,7 +155,9 @@ export default function AdminNewClassPage() {
             <Select
               required
               value={form.teacherId}
-              onChange={(e) => { setForm((f) => ({ ...f, teacherId: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, teacherId: e.target.value }));
+              }}
             >
               <option value="">انتخاب استاد</option>
               {mentors.map((m) => (
@@ -164,7 +172,9 @@ export default function AdminNewClassPage() {
             <TextInput
               required
               value={form.title}
-              onChange={(e) => { setForm((f) => ({ ...f, title: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, title: e.target.value }));
+              }}
               placeholder="آلمانی ترم ۳ عصر"
             />
           </Field>
@@ -176,7 +186,9 @@ export default function AdminNewClassPage() {
                 min={1}
                 required
                 value={form.termNumber}
-                onChange={(e) => { setForm((f) => ({ ...f, termNumber: e.target.value })); }}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, termNumber: e.target.value }));
+                }}
               />
             </Field>
             <Field label="تعداد جلسات">
@@ -186,7 +198,9 @@ export default function AdminNewClassPage() {
                 max={120}
                 required
                 value={form.totalSessions}
-                onChange={(e) => { setForm((f) => ({ ...f, totalSessions: e.target.value })); }}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, totalSessions: e.target.value }));
+                }}
               />
             </Field>
             <Field label="ساعت شروع">
@@ -195,7 +209,9 @@ export default function AdminNewClassPage() {
                 required
                 dir="ltr"
                 value={form.time}
-                onChange={(e) => { setForm((f) => ({ ...f, time: e.target.value })); }}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, time: e.target.value }));
+                }}
               />
             </Field>
           </div>
@@ -204,7 +220,9 @@ export default function AdminNewClassPage() {
             <JalaliDateInput
               required
               value={form.startDate}
-              onChange={(startDate) => { setForm((f) => ({ ...f, startDate })); }}
+              onChange={(startDate) => {
+                setForm((f) => ({ ...f, startDate }));
+              }}
             />
           </Field>
 
@@ -216,7 +234,9 @@ export default function AdminNewClassPage() {
                   <button
                     key={day}
                     type="button"
-                    onClick={() => { toggleDay(day); }}
+                    onClick={() => {
+                      toggleDay(day);
+                    }}
                     className={`rounded-xl border-2 px-3 py-2 text-xs font-black ${
                       active
                         ? 'border-[#5b21b6] border-b-4 bg-[#7c3aed] text-white'
@@ -231,7 +251,13 @@ export default function AdminNewClassPage() {
           </Field>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => { router.back(); }}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                router.back();
+              }}
+            >
               انصراف
             </Button>
             <Button

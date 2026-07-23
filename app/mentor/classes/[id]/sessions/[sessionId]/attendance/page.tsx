@@ -150,10 +150,20 @@ export default function MentorAttendancePage() {
         </div>
         {canMark && (
           <div className="flex flex-wrap gap-2">
-            <Button variant="ghost" onClick={() => { markAll('present'); }}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                markAll('present');
+              }}
+            >
               همه حاضر
             </Button>
-            <Button variant="subtle" onClick={() => { markAll('absent'); }}>
+            <Button
+              variant="subtle"
+              onClick={() => {
+                markAll('absent');
+              }}
+            >
               همه غایب
             </Button>
           </div>
@@ -194,12 +204,12 @@ export default function MentorAttendancePage() {
                         key={opt.value}
                         type="button"
                         disabled={!canMark}
-                        onClick={() =>
-                          { setDraft((prev) => ({
+                        onClick={() => {
+                          setDraft((prev) => ({
                             ...prev,
                             [row.studentId]: { ...d, status: opt.value },
-                          })); }
-                        }
+                          }));
+                        }}
                         className={`rounded-xl border-2 px-2 py-2.5 text-xs font-black disabled:opacity-50 ${
                           active
                             ? `${opt.tone} border-b-4`
@@ -222,15 +232,15 @@ export default function MentorAttendancePage() {
                       disabled={!canMark}
                       className="!w-24 !py-2"
                       value={d.lateMinutes}
-                      onChange={(e) =>
-                        { setDraft((prev) => ({
+                      onChange={(e) => {
+                        setDraft((prev) => ({
                           ...prev,
                           [row.studentId]: {
                             ...d,
                             lateMinutes: Number(e.target.value) || 1,
                           },
-                        })); }
-                      }
+                        }));
+                      }}
                     />
                     <span className="text-xs font-bold text-slate-400">
                       {toFa(d.lateMinutes)} دقیقه
@@ -244,7 +254,13 @@ export default function MentorAttendancePage() {
       )}
 
       <div className="sticky bottom-3 flex gap-2 rounded-2xl border-2 border-slate-200 border-b-4 bg-white p-3 dark:border-slate-800 dark:bg-[#131f24]">
-        <Button variant="ghost" className="flex-1" onClick={() => { router.back(); }}>
+        <Button
+          variant="ghost"
+          className="flex-1"
+          onClick={() => {
+            router.back();
+          }}
+        >
           بازگشت
         </Button>
         <Button

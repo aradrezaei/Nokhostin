@@ -32,15 +32,7 @@ export default function UserMenu() {
   }, [open]);
 
   if (loading) {
-    return (
-      <span
-        className="inline-flex h-9 w-28 items-center gap-2 rounded-xl bg-[var(--nav-muted)] px-2"
-        aria-hidden="true"
-      >
-        <span className="h-7 w-7 animate-pulse rounded-xl bg-[var(--nav-border)]" />
-        <span className="h-3 flex-1 animate-pulse rounded bg-[var(--nav-border)]" />
-      </span>
-    );
+    return <span className="inline-block h-9 w-[7.5rem]" aria-hidden="true" />;
   }
 
   if (!user) {
@@ -57,7 +49,9 @@ export default function UserMenu() {
     <div ref={ref} className="relative">
       <button
         type="button"
-        onClick={() => { setOpen((v) => !v); }}
+        onClick={() => {
+          setOpen((v) => !v);
+        }}
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={`حساب ${user.fullName}`}
@@ -90,7 +84,9 @@ export default function UserMenu() {
           <Link
             href={home}
             role="menuitem"
-            onClick={() => { setOpen(false); }}
+            onClick={() => {
+              setOpen(false);
+            }}
             className="flex items-center gap-2.5 px-3.5 py-2.5 text-[13px] font-medium text-[var(--nav-muted-ink)] hover:bg-[var(--nav-muted)] hover:text-[var(--nav-ink)]"
           >
             <LayoutDashboard className="h-4 w-4" strokeWidth={2} />

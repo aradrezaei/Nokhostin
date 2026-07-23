@@ -132,7 +132,9 @@ export default function AdminAttendanceLogsPage() {
           <button
             type="button"
             disabled={page <= 1}
-            onClick={() => { setPage((p) => Math.max(1, p - 1)); }}
+            onClick={() => {
+              setPage((p) => Math.max(1, p - 1));
+            }}
             className="rounded-xl border-2 border-slate-200 px-3 py-2 text-xs font-black disabled:opacity-40 dark:border-slate-700"
           >
             قبلی
@@ -143,7 +145,9 @@ export default function AdminAttendanceLogsPage() {
           <button
             type="button"
             disabled={page >= pages}
-            onClick={() => { setPage((p) => Math.min(pages, p + 1)); }}
+            onClick={() => {
+              setPage((p) => Math.min(pages, p + 1));
+            }}
             className="rounded-xl border-2 border-slate-200 px-3 py-2 text-xs font-black disabled:opacity-40 dark:border-slate-700"
           >
             بعدی

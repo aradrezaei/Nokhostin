@@ -1,15 +1,22 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ChangeEvent, SyntheticEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { API_BASE, ApiError, parseResult } from '@/lib/api';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { API_BASE, formatApiError, parseResult } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { panelHome } from '@/lib/roles';
 import type { AuthTokens, AuthUser } from '@/lib/types';
-
-const PHONE_LEN = 11;
-const PHONE_REGEX = /^09\d{9}$/;
+import {
+  OTP_LENGTH,
+  PHONE_LENGTH,
+  otpFormSchema,
+  phoneFormSchema,
+  type OtpFormValues,
+  type PhoneFormValues,
+} from '@/lib/validations/auth';
 
 type Step = 'phone' | 'code';
 
@@ -20,32 +27,79 @@ function redirectFor(role: AuthUser['role']): string {
 export default function LoginSection() {
   const router = useRouter();
   const { setSession } = useAuth();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement | null>(null);
+  const codeInputRef = useRef<HTMLInputElement | null>(null);
 
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
-  const [code, setCode] = useState('');
-  const [touched, setTouched] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [serverError, setServerError] = useState('');
 
-  const isValidPhone = PHONE_REGEX.test(phone);
-  const showError = touched && phone.length > 0 && !isValidPhone;
+  const phoneForm = useForm<PhoneFormValues>({
+    resolver: zodResolver(phoneFormSchema),
+    defaultValues: { phone: '' },
+    mode: 'onBlur',
+  });
+
+  const otpForm = useForm<OtpFormValues>({
+    resolver: zodResolver(otpFormSchema),
+    defaultValues: { code: '' },
+    mode: 'onSubmit',
+  });
+
+  const codeValue = useWatch({ control: otpForm.control, name: 'code', defaultValue: '' });
+
+  const requestOtp = useMutation({
+    mutationFn: async (mobile: string) => {
+      const res = await fetch(`${API_BASE}/auth/otp/request`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ mobile }),
+      });
+      return await parseResult<{ expiresInSeconds: number }>(res);
+    },
+  });
+
+  const verifyOtp = useMutation({
+    mutationFn: async (payload: { mobile: string; code: string }) => {
+      const res = await fetch(`${API_BASE}/auth/otp/verify`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      return await parseResult<AuthTokens & { user: AuthUser }>(res);
+    },
+  });
+
+  const busy = requestOtp.isPending || verifyOtp.isPending;
 
   useEffect(() => {
-    inputRef.current?.focus();
     const original = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = original;
     };
+  }, []);
+
+  useEffect(() => {
+    if (step === 'phone') phoneInputRef.current?.focus();
+    else codeInputRef.current?.focus();
   }, [step]);
 
   useEffect(() => {
+    if (step === 'code' && serverError) {
+      codeInputRef.current?.select();
+    }
+  }, [step, serverError]);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
-    const timer = setTimeout(() => { setCooldown((c) => c - 1); }, 1000);
-    return () => { clearTimeout(timer); };
+    const timer = setTimeout(() => {
+      setCooldown((c) => c - 1);
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [cooldown]);
 
   const handleClose = useCallback(() => {
@@ -58,81 +112,72 @@ export default function LoginSection() {
       if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => { window.removeEventListener('keydown', onKeyDown); };
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [handleClose]);
 
-  const requestOtp = useCallback(async () => {
-    const res = await fetch(`${API_BASE}/auth/otp/request`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mobile: phone }),
-    });
-    await parseResult<{ expiresInSeconds: number }>(res);
-  }, [phone]);
-
-  const handlePhoneSubmit = useCallback(
-    async (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      setTouched(true);
-      setServerError('');
-      if (!isValidPhone || submitting) return;
-
-      setSubmitting(true);
-      try {
-        await requestOtp();
-        setStep('code');
-        setCooldown(90);
-      } catch (error) {
-        setServerError(error instanceof ApiError ? error.message : 'خطا در ارسال کد.');
-      } finally {
-        setSubmitting(false);
-      }
-    },
-    [isValidPhone, submitting, requestOtp],
-  );
-
-  const handleCodeSubmit = useCallback(
-    async (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      setServerError('');
-      if (code.length < 4 || submitting) return;
-
-      setSubmitting(true);
-      try {
-        const res = await fetch(`${API_BASE}/auth/otp/verify`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ mobile: phone, code }),
-        });
-        const data = await parseResult<AuthTokens & { user: AuthUser }>(res);
-        setSession({ accessToken: data.accessToken, refreshToken: data.refreshToken }, data.user);
-        router.replace(redirectFor(data.user.role));
-      } catch (error) {
-        setServerError(error instanceof ApiError ? error.message : 'کد وارد شده نادرست است.');
-      } finally {
-        setSubmitting(false);
-      }
-    },
-    [code, phone, submitting, setSession, router],
-  );
-
-  const handleResend = useCallback(async () => {
-    if (cooldown > 0 || submitting) return;
-    setSubmitting(true);
+  const onPhoneSubmit = phoneForm.handleSubmit(async (values) => {
     setServerError('');
     try {
-      await requestOtp();
+      await requestOtp.mutateAsync(values.phone);
+      setPhone(values.phone);
+      setStep('code');
+      setCooldown(90);
+      otpForm.reset({ code: '' });
+    } catch (error) {
+      setServerError(formatApiError(error, 'خطا در ارسال کد.'));
+    }
+  });
+
+  const onCodeSubmit = otpForm.handleSubmit(async (values) => {
+    setServerError('');
+    try {
+      const data = await verifyOtp.mutateAsync({ mobile: phone, code: values.code });
+      setSession({ accessToken: data.accessToken, refreshToken: data.refreshToken }, data.user);
+      router.replace(redirectFor(data.user.role));
+    } catch (error) {
+      const message = formatApiError(error, 'کد وارد شده نادرست است.');
+      setServerError(message);
+      otpForm.setError('code', { type: 'server', message });
+    }
+  });
+
+  const handleResend = async () => {
+    if (cooldown > 0 || busy) return;
+    setServerError('');
+    otpForm.clearErrors('code');
+    try {
+      await requestOtp.mutateAsync(phone);
       setCooldown(90);
     } catch (error) {
-      setServerError(error instanceof ApiError ? error.message : 'خطا در ارسال مجدد.');
-    } finally {
-      setSubmitting(false);
+      setServerError(formatApiError(error, 'خطا در ارسال مجدد.'));
     }
-  }, [cooldown, submitting, requestOtp]);
+  };
 
-  const handlePhoneChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value.replace(/\D/g, '').slice(0, PHONE_LEN));
-  }, []);
+  const phoneError = phoneForm.formState.errors.phone?.message;
+  const codeFieldError = otpForm.formState.errors.code?.message;
+  const codeError = codeFieldError ?? serverError;
+  const showPhoneError = Boolean(phoneError ?? (step === 'phone' ? serverError : ''));
+
+  const { ref: phoneRegRef, ...phoneReg } = phoneForm.register('phone', {
+    onChange: (e: { target: { value: string } }) => {
+      const digits = e.target.value.replace(/\D/g, '').slice(0, PHONE_LENGTH);
+      phoneForm.setValue('phone', digits, {
+        shouldValidate: phoneForm.formState.isSubmitted,
+      });
+      if (serverError) setServerError('');
+    },
+  });
+
+  const { ref: codeRegRef, ...codeReg } = otpForm.register('code', {
+    onChange: (e: { target: { value: string } }) => {
+      const digits = e.target.value.replace(/\D/g, '').slice(0, OTP_LENGTH);
+      otpForm.setValue('code', digits, { shouldValidate: false });
+      if (serverError) setServerError('');
+      if (otpForm.formState.errors.code) otpForm.clearErrors('code');
+    },
+  });
 
   return (
     <section
@@ -172,38 +217,38 @@ export default function LoginSection() {
               شماره موبایل خود را وارد کنید تا کد تایید برایتان ارسال شود.
             </p>
 
-            <form className="mt-8 flex flex-col gap-5" onSubmit={handlePhoneSubmit} noValidate>
+            <form className="mt-8 flex flex-col gap-5" onSubmit={onPhoneSubmit} noValidate>
               <div className="flex flex-col gap-2">
                 <label htmlFor="phone" className="login-label text-sm font-bold">
                   شماره موبایل
                 </label>
                 <input
-                  ref={inputRef}
+                  {...phoneReg}
+                  ref={(el) => {
+                    phoneRegRef(el);
+                    phoneInputRef.current = el;
+                  }}
                   id="phone"
-                  name="phone"
                   type="tel"
                   inputMode="numeric"
                   autoComplete="tel"
-                  maxLength={PHONE_LEN}
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  onBlur={() => { setTouched(true); }}
+                  maxLength={PHONE_LENGTH}
                   placeholder="09123456789"
                   dir="ltr"
-                  aria-invalid={showError}
+                  aria-invalid={showPhoneError}
                   className="login-input h-[54px] w-full rounded-2xl px-4 text-[17px] font-bold tracking-wide outline-none sm:h-[56px]"
                 />
                 <p className="login-error min-h-[18px] text-xs font-medium" role="alert">
-                  {showError ? 'شماره موبایل وارد شده معتبر نیست.' : serverError}
+                  {phoneError ?? serverError}
                 </p>
               </div>
 
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={busy}
                 className="login-cta cursor-pointer h-[52px] w-full rounded-2xl text-[16px] font-extrabold tracking-wide"
               >
-                {submitting ? 'در حال ارسال…' : 'ارسال کد تایید'}
+                {requestOtp.isPending ? 'در حال ارسال…' : 'ارسال کد تایید'}
               </button>
             </form>
           </>
@@ -216,43 +261,45 @@ export default function LoginSection() {
               کد تایید را وارد کنید
             </h1>
             <p className="login-desc mt-3 text-[14px] leading-6 sm:text-[15px]">
-              کد ارسال‌شده به شماره{' '}
+              کد {OTP_LENGTH} رقمی ارسال‌شده به شماره{' '}
               <span dir="ltr" className="font-bold">
                 {phone}
               </span>{' '}
               را وارد کنید.
             </p>
 
-            <form className="mt-8 flex flex-col gap-5" onSubmit={handleCodeSubmit} noValidate>
+            <form className="mt-8 flex flex-col gap-5" onSubmit={onCodeSubmit} noValidate>
               <div className="flex flex-col gap-2">
                 <label htmlFor="code" className="login-label text-sm font-bold">
                   کد تایید
                 </label>
                 <input
-                  ref={inputRef}
+                  {...codeReg}
+                  ref={(el) => {
+                    codeRegRef(el);
+                    codeInputRef.current = el;
+                  }}
                   id="code"
-                  name="code"
                   type="tel"
                   inputMode="numeric"
                   autoComplete="one-time-code"
-                  maxLength={8}
-                  value={code}
-                  onChange={(e) => { setCode(e.target.value.replace(/\D/g, '').slice(0, 8)); }}
+                  maxLength={OTP_LENGTH}
                   placeholder="- - - - -"
                   dir="ltr"
+                  aria-invalid={Boolean(codeError)}
                   className="login-input h-[54px] w-full rounded-2xl px-4 text-center text-[22px] font-bold tracking-[0.5em] outline-none sm:h-[56px]"
                 />
                 <p className="login-error min-h-[18px] text-xs font-medium" role="alert">
-                  {serverError}
+                  {codeError}
                 </p>
               </div>
 
               <button
                 type="submit"
-                disabled={submitting || code.length < 4}
+                disabled={busy || codeValue.length < OTP_LENGTH}
                 className="login-cta cursor-pointer h-[52px] w-full rounded-2xl text-[16px] font-extrabold tracking-wide"
               >
-                {submitting ? 'در حال بررسی…' : 'ورود'}
+                {verifyOtp.isPending ? 'در حال بررسی…' : 'ورود'}
               </button>
 
               <div className="flex items-center justify-between text-xs">
@@ -260,8 +307,8 @@ export default function LoginSection() {
                   type="button"
                   onClick={() => {
                     setStep('phone');
-                    setCode('');
                     setServerError('');
+                    otpForm.reset({ code: '' });
                   }}
                   className="login-link font-bold"
                 >
@@ -270,7 +317,7 @@ export default function LoginSection() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={cooldown > 0}
+                  disabled={cooldown > 0 || busy}
                   className="login-link font-bold disabled:opacity-50"
                 >
                   {cooldown > 0 ? `ارسال مجدد تا ${cooldown} ثانیه` : 'ارسال مجدد کد'}

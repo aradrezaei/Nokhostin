@@ -105,11 +105,7 @@ export function adminSendMessage(request: RequestFn, id: string, body: string) {
   });
 }
 
-export function adminPatchConversation(
-  request: RequestFn,
-  id: string,
-  status: 'open' | 'closed',
-) {
+export function adminPatchConversation(request: RequestFn, id: string, status: 'open' | 'closed') {
   return request<SupportConversation>(`/admin/support/conversations/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),

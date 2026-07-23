@@ -63,7 +63,12 @@ export default function AdminBlogPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => { setTaxOpen(true); }}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setTaxOpen(true);
+            }}
+          >
             <Tags className="h-4 w-4" /> دسته و تگ
           </Button>
           <Link href="/admin/blog/new">
@@ -156,7 +161,12 @@ export default function AdminBlogPage() {
         )}
       </div>
 
-      <TaxonomyModal open={taxOpen} onClose={() => { setTaxOpen(false); }} />
+      <TaxonomyModal
+        open={taxOpen}
+        onClose={() => {
+          setTaxOpen(false);
+        }}
+      />
     </div>
   );
 }
@@ -228,7 +238,9 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
             <div className="flex gap-2">
               <TextInput
                 value={catName}
-                onChange={(e) => { setCatName(e.target.value); }}
+                onChange={(e) => {
+                  setCatName(e.target.value);
+                }}
                 placeholder="نام دسته"
               />
               <Button onClick={addCategory}>افزودن</Button>
@@ -253,7 +265,9 @@ function TaxonomyModal({ open, onClose }: { open: boolean; onClose: () => void }
             <div className="flex gap-2">
               <TextInput
                 value={tagName}
-                onChange={(e) => { setTagName(e.target.value); }}
+                onChange={(e) => {
+                  setTagName(e.target.value);
+                }}
                 placeholder="نام تگ"
               />
               <Button onClick={addTag}>افزودن</Button>

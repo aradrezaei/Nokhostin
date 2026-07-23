@@ -168,7 +168,9 @@ function ImageBlockEditor({
     <div className="space-y-3">
       <TextInput
         value={block.alt}
-        onChange={(e) => { patch({ alt: e.target.value }); }}
+        onChange={(e) => {
+          patch({ alt: e.target.value });
+        }}
         placeholder="متن جایگزین تصویر (الزامی برای سئو)"
       />
       {block.url ? (
@@ -199,7 +201,9 @@ function ImageBlockEditor({
       </div>
       <TextInput
         value={block.caption}
-        onChange={(e) => { patch({ caption: e.target.value }); }}
+        onChange={(e) => {
+          patch({ caption: e.target.value });
+        }}
         placeholder="توضیح تصویر (اختیاری)"
       />
       {error && <p className="text-xs font-black text-rose-600 dark:text-rose-400">{error}</p>}
@@ -214,8 +218,12 @@ export default function BlockEditor({
   value: EditorBlock[];
   onChange: (blocks: EditorBlock[]) => void;
 }) {
-  const add = (type: string) => { onChange([...value, NEW_BLOCKS[type]()]); };
-  const remove = (key: string) => { onChange(value.filter((b) => b.key !== key)); };
+  const add = (type: string) => {
+    onChange([...value, NEW_BLOCKS[type]()]);
+  };
+  const remove = (key: string) => {
+    onChange(value.filter((b) => b.key !== key));
+  };
   const move = (index: number, dir: -1 | 1) => {
     const next = [...value];
     const target = index + dir;
@@ -223,8 +231,9 @@ export default function BlockEditor({
     [next[index], next[target]] = [next[target], next[index]];
     onChange(next);
   };
-  const patch = (key: string, p: Partial<EditorBlock>) =>
-    { onChange(value.map((b) => (b.key === key ? ({ ...b, ...p } as EditorBlock) : b))); };
+  const patch = (key: string, p: Partial<EditorBlock>) => {
+    onChange(value.map((b) => (b.key === key ? ({ ...b, ...p } as EditorBlock) : b)));
+  };
 
   return (
     <div className="space-y-5">
@@ -234,7 +243,9 @@ export default function BlockEditor({
           <button
             key={btn.type}
             type="button"
-            onClick={() => { add(btn.type); }}
+            onClick={() => {
+              add(btn.type);
+            }}
             className="rounded-xl border-2 border-slate-200 border-b-3 bg-slate-50 px-3.5 py-2 text-xs font-black text-slate-700 transition-all duration-75 select-none hover:border-[#7c3aed] hover:bg-violet-50 hover:text-[#7c3aed] active:border-b active:translate-y-[2px] dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:border-[#8b5cf6] dark:hover:bg-slate-800 dark:hover:text-[#8b5cf6]"
           >
             + {btn.label}
@@ -264,7 +275,9 @@ export default function BlockEditor({
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                onClick={() => { move(index, -1); }}
+                onClick={() => {
+                  move(index, -1);
+                }}
                 aria-label="انتقال به بالا"
                 className="rounded-xl border-2 border-slate-200 border-b-3 bg-slate-50 p-1.5 text-slate-500 transition-all active:border-b active:translate-y-[1px] hover:border-[#7c3aed] hover:text-[#7c3aed] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-[#8b5cf6] dark:hover:text-[#8b5cf6]"
               >
@@ -272,7 +285,9 @@ export default function BlockEditor({
               </button>
               <button
                 type="button"
-                onClick={() => { move(index, 1); }}
+                onClick={() => {
+                  move(index, 1);
+                }}
                 aria-label="انتقال به پایین"
                 className="rounded-xl border-2 border-slate-200 border-b-3 bg-slate-50 p-1.5 text-slate-500 transition-all active:border-b active:translate-y-[1px] hover:border-[#7c3aed] hover:text-[#7c3aed] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-[#8b5cf6] dark:hover:text-[#8b5cf6]"
               >
@@ -280,7 +295,9 @@ export default function BlockEditor({
               </button>
               <button
                 type="button"
-                onClick={() => { remove(block.key); }}
+                onClick={() => {
+                  remove(block.key);
+                }}
                 aria-label="حذف بلاک"
                 className="rounded-xl border-2 border-rose-200 border-b-3 bg-rose-50 p-1.5 text-rose-600 transition-all active:border-b active:translate-y-[1px] hover:bg-rose-100 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-400 dark:hover:bg-rose-950/80"
               >
@@ -294,7 +311,9 @@ export default function BlockEditor({
             <div className="flex gap-2.5">
               <Select
                 value={block.level}
-                onChange={(e) => { patch(block.key, { level: Number(e.target.value) as 2 | 3 | 4 }); }}
+                onChange={(e) => {
+                  patch(block.key, { level: Number(e.target.value) as 2 | 3 | 4 });
+                }}
                 className="w-32 shrink-0"
               >
                 <option value={2}>تیتر H2</option>
@@ -303,7 +322,9 @@ export default function BlockEditor({
               </Select>
               <TextInput
                 value={block.text}
-                onChange={(e) => { patch(block.key, { text: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { text: e.target.value });
+                }}
                 placeholder="متن تیتر را بنویسید..."
               />
             </div>
@@ -314,7 +335,9 @@ export default function BlockEditor({
               <Textarea
                 rows={4}
                 value={block.text}
-                onChange={(e) => { patch(block.key, { text: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { text: e.target.value });
+                }}
                 placeholder="متن پاراگراف را وارد کنید..."
               />
               <div className="flex gap-4 text-xs font-black text-slate-700 dark:text-slate-300">
@@ -322,7 +345,9 @@ export default function BlockEditor({
                   <input
                     type="checkbox"
                     checked={block.bold}
-                    onChange={(e) => { patch(block.key, { bold: e.target.checked }); }}
+                    onChange={(e) => {
+                      patch(block.key, { bold: e.target.checked });
+                    }}
                     className="h-4 w-4 rounded-md border-2 border-slate-300 text-[#7c3aed] focus:ring-0 dark:border-slate-700"
                   />
                   ضخیم (Bold)
@@ -331,7 +356,9 @@ export default function BlockEditor({
                   <input
                     type="checkbox"
                     checked={block.lead}
-                    onChange={(e) => { patch(block.key, { lead: e.target.checked }); }}
+                    onChange={(e) => {
+                      patch(block.key, { lead: e.target.checked });
+                    }}
                     className="h-4 w-4 rounded-md border-2 border-slate-300 text-[#7c3aed] focus:ring-0 dark:border-slate-700"
                   />
                   متن بزرگ (شاخص)
@@ -341,7 +368,12 @@ export default function BlockEditor({
           )}
 
           {block.type === 'image' && (
-            <ImageBlockEditor block={block} patch={(p) => { patch(block.key, p); }} />
+            <ImageBlockEditor
+              block={block}
+              patch={(p) => {
+                patch(block.key, p);
+              }}
+            />
           )}
 
           {block.type === 'quote' && (
@@ -349,12 +381,16 @@ export default function BlockEditor({
               <Textarea
                 rows={2}
                 value={block.text}
-                onChange={(e) => { patch(block.key, { text: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { text: e.target.value });
+                }}
                 placeholder="متن نقل‌قول..."
               />
               <TextInput
                 value={block.cite}
-                onChange={(e) => { patch(block.key, { cite: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { cite: e.target.value });
+                }}
                 placeholder="منبع یا نقل‌کننده (اختیاری)"
               />
             </div>
@@ -366,7 +402,9 @@ export default function BlockEditor({
                 <input
                   type="checkbox"
                   checked={block.ordered}
-                  onChange={(e) => { patch(block.key, { ordered: e.target.checked }); }}
+                  onChange={(e) => {
+                    patch(block.key, { ordered: e.target.checked });
+                  }}
                   className="h-4 w-4 rounded-md border-2 border-slate-300 text-[#7c3aed] focus:ring-0 dark:border-slate-700"
                 />
                 لیست شماره‌دار
@@ -374,7 +412,9 @@ export default function BlockEditor({
               <Textarea
                 rows={4}
                 value={block.items}
-                onChange={(e) => { patch(block.key, { items: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { items: e.target.value });
+                }}
                 placeholder="هر خط را یک آیتم از لیست قرار دهید..."
               />
             </div>
@@ -384,13 +424,17 @@ export default function BlockEditor({
             <div className="space-y-3">
               <TextInput
                 value={block.language}
-                onChange={(e) => { patch(block.key, { language: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { language: e.target.value });
+                }}
                 placeholder="زبان برنامه نویسی (مثلاً python)"
               />
               <Textarea
                 rows={5}
                 value={block.code}
-                onChange={(e) => { patch(block.key, { code: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { code: e.target.value });
+                }}
                 className="font-mono text-xs"
                 placeholder="کد را اینجا وارد کنید..."
               />
@@ -402,9 +446,9 @@ export default function BlockEditor({
               <div className="flex gap-2.5">
                 <Select
                   value={block.provider}
-                  onChange={(e) =>
-                    { patch(block.key, { provider: e.target.value as 'youtube' | 'aparat' }); }
-                  }
+                  onChange={(e) => {
+                    patch(block.key, { provider: e.target.value as 'youtube' | 'aparat' });
+                  }}
                   className="w-32 shrink-0"
                 >
                   <option value="youtube">یوتیوب</option>
@@ -412,14 +456,18 @@ export default function BlockEditor({
                 </Select>
                 <TextInput
                   value={block.url}
-                  onChange={(e) => { patch(block.key, { url: e.target.value }); }}
+                  onChange={(e) => {
+                    patch(block.key, { url: e.target.value });
+                  }}
                   placeholder="آدرس لینک ویدیو"
                   dir="ltr"
                 />
               </div>
               <TextInput
                 value={block.title}
-                onChange={(e) => { patch(block.key, { title: e.target.value }); }}
+                onChange={(e) => {
+                  patch(block.key, { title: e.target.value });
+                }}
                 placeholder="عنوان ویدیو (اختیاری)"
               />
             </div>

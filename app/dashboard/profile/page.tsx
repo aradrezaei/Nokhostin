@@ -1,151 +1,110 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, ChevronLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { formatDate, formatSchedule, toFa } from '@/lib/format';
+import { formatDate, toFa } from '@/lib/format';
 import { ROLE_LABEL } from '@/lib/roles';
 import { useMyOverview } from '@/hooks/useMyOverview';
 import Avatar from '@/components/panel/Avatar';
-import MedalShowcase from '@/components/panel/MedalShowcase';
-import { Badge, Card } from '@/components/panel/ui';
-import { EmptyState, DeferredSpinner, TuitionPill } from '@/components/panel/widgets';
+import Medal from '@/components/panel/Medal';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const { classes, achievements, loading } = useMyOverview();
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { classes, achievements } = useMyOverview();
 
   if (!user) return null;
 
-  const rows = [
-    { label: 'نام و نام خانوادگی', value: user.fullName },
-    { label: 'شماره موبایل', value: user.mobile, ltr: true },
-    { label: 'نقش', value: ROLE_LABEL[user.role] },
-    {
-      label: 'نوع هنرجو',
-      value:
-        user.role !== 'student'
-          ? '—'
-          : user.studentType === 'online'
-            ? 'آنلاین'
-            : user.studentType === 'in_person'
-              ? 'حضوری'
-              : '—',
-    },
-    { label: 'وضعیت حساب', value: user.status === 'active' ? 'فعال' : 'غیرفعال' },
-    ...(user.createdAt ? [{ label: 'تاریخ عضویت', value: formatDate(user.createdAt) }] : []),
-  ];
-
-  const activeClasses = classes.filter((i) => i.status === 'active');
-  const topMedals = achievements.filter((a) => a.code === 'top_rank');
-  const improvedMedals = achievements.filter((a) => a.code === 'improved');
+  const activeCount = classes.filter((i) => i.status === 'active').length;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <Card className="flex flex-col items-center !py-8 text-center">
-        <Avatar name={user.fullName} seed={user.id} size={112} priority />
-        <h1 className="mt-4 text-2xl font-black text-slate-900 dark:text-white">{user.fullName}</h1>
-        <p dir="ltr" className="mt-1 text-sm font-bold text-slate-400">
+    <div className="mx-auto max-w-lg space-y-6">
+      <header className="panel-card flex flex-col items-center px-6 py-8 text-center">
+        <Avatar name={user.fullName} seed={user.id} size={96} priority className="!rounded-full" />
+        <h1 className="mt-4 text-xl font-extrabold text-[var(--p-ink)]">{user.fullName}</h1>
+        <p dir="ltr" className="mt-1 text-sm font-bold text-[var(--p-muted)]">
           {user.mobile}
         </p>
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-          <Badge tone="violet">{ROLE_LABEL[user.role]}</Badge>
-          <Badge tone={user.status === 'active' ? 'green' : 'gray'}>
-            {user.status === 'active' ? 'فعال' : 'غیرفعال'}
-          </Badge>
-          {user.studentType && (
-            <Badge tone="amber">{user.studentType === 'online' ? 'آنلاین' : 'حضوری'}</Badge>
-          )}
-          {improvedMedals.length > 0 && (
-            <Badge tone="green">{toFa(improvedMedals.length)} مدال پیشرفت</Badge>
-          )}
-          {topMedals.length > 0 && (
-            <Badge tone="amber">{toFa(topMedals.length)} مدال مقام اول</Badge>
-          )}
-        </div>
-      </Card>
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-slate-900 dark:text-white">مدال‌ها</h2>
-          <span className="text-[11px] font-bold text-slate-400">
-            {loading ? '…' : toFa(achievements.length)} مدال
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <span className="rounded-full bg-[color-mix(in_srgb,var(--p-green)_14%,transparent)] px-3 py-1 text-[11px] font-extrabold text-[var(--p-green)]">
+            {ROLE_LABEL[user.role]}
           </span>
-        </div>
-        {loading && achievements.length === 0 ? (
-          <DeferredSpinner active />
-        ) : (
-          <MedalShowcase items={achievements} />
-        )}
-      </section>
-
-      <Card className="divide-y divide-slate-100 !p-0 dark:divide-slate-800">
-        {rows.map((row) => (
-          <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-4">
-            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
-              {row.label}
+          {user.studentType ? (
+            <span className="rounded-full bg-[var(--p-bg)] px-3 py-1 text-[11px] font-extrabold text-[var(--p-muted)]">
+              {user.studentType === 'online' ? 'آنلاین' : 'حضوری'}
             </span>
+          ) : null}
+        </div>
+      </header>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-ink)]">{toFa(activeCount)}</p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">کلاس فعال</p>
+        </div>
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-ink)]">{toFa(achievements.length)}</p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">مدال</p>
+        </div>
+        <div className="panel-card px-3 py-4 text-center">
+          <p className="text-xl font-extrabold text-[var(--p-ink)]">
+            {user.status === 'active' ? '✓' : '—'}
+          </p>
+          <p className="mt-1 text-[10px] font-extrabold text-[var(--p-muted)]">وضعیت</p>
+        </div>
+      </div>
+
+      {achievements.length > 0 ? (
+        <section className="space-y-3">
+          <h2 className="text-sm font-extrabold text-[var(--p-ink)]">مدال‌ها</h2>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {achievements.map((a) => (
+              <Link
+                key={`${a.code}-${a.classId}`}
+                href={`/dashboard/courses/${a.classId}`}
+                className="panel-card flex flex-col items-center px-2 py-3"
+              >
+                <Medal code={a.code} size={56} />
+                <p className="mt-1 text-center text-[10px] font-extrabold text-[var(--p-ink)]">
+                  {a.code === 'top_rank' ? 'مقام اول' : 'پیشرفت'}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="panel-card divide-y-2 divide-[var(--p-line)] overflow-hidden !p-0">
+        {[
+          { label: 'موبایل', value: user.mobile, ltr: true },
+          {
+            label: 'عضویت',
+            value: user.createdAt ? formatDate(user.createdAt) : '—',
+          },
+        ].map((row) => (
+          <div key={row.label} className="flex items-center justify-between gap-4 px-5 py-4">
+            <span className="text-sm font-bold text-[var(--p-muted)]">{row.label}</span>
             <span
               dir={row.ltr ? 'ltr' : undefined}
-              className="text-sm font-black text-slate-900 dark:text-white"
+              className="text-sm font-extrabold text-[var(--p-ink)]"
             >
               {row.value}
             </span>
           </div>
         ))}
-      </Card>
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-slate-900 dark:text-white">کلاس‌های ثبت‌شده</h2>
-          <Link href="/dashboard/courses" className="text-xs font-black text-[#7c3aed]">
-            مشاهده همه
-          </Link>
-        </div>
-
-        {loading && activeClasses.length === 0 ? (
-          <DeferredSpinner active />
-        ) : activeClasses.length === 0 ? (
-          <EmptyState
-            icon={<BookOpen className="h-6 w-6" />}
-            title="کلاسی ثبت نشده"
-            hint="کلاس‌های فعال اینجا نمایش داده می‌شوند."
-          />
-        ) : (
-          <div className="space-y-3">
-            {activeClasses.map((entry) => (
-              <Link
-                key={entry.enrollmentId}
-                href={`/dashboard/courses/${entry.class.id}`}
-                className="block"
-              >
-                <Card className="!p-4 hover:border-[#7c3aed]/50">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-slate-900 dark:text-white">
-                        {entry.class.title}
-                      </p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">
-                        {entry.class.course?.name ?? '—'}
-                        {entry.class.course?.level ? ` · ${entry.class.course.level}` : ''}
-                        {' · '}ترم {toFa(entry.class.termNumber)}
-                      </p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">
-                        {formatSchedule(entry.class.schedule)}
-                        {entry.class.teacher ? ` · ${entry.class.teacher.fullName}` : ''}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 flex-col items-end gap-2">
-                      <TuitionPill paid={entry.tuitionPaid} />
-                      <ChevronLeft className="h-4 w-4 text-slate-300" />
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
       </section>
+
+      <button
+        type="button"
+        className="panel-btn panel-btn--ghost w-full text-[var(--p-rose)]"
+        onClick={async () => {
+          await logout();
+          router.replace('/');
+        }}
+      >
+        خروج از حساب
+      </button>
     </div>
   );
 }

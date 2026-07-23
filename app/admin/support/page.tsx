@@ -113,9 +113,12 @@ export default function AdminSupportPage() {
         /* ignore poll errors */
       } finally {
         if (mySession === gate.id) {
-          timer = setTimeout(() => {
-            void tick();
-          }, document.hidden ? 10_000 : 2500);
+          timer = setTimeout(
+            () => {
+              void tick();
+            },
+            document.hidden ? 10_000 : 2500,
+          );
         }
       }
     };
@@ -210,7 +213,9 @@ export default function AdminSupportPage() {
                         setSelectedId(item.id);
                       }}
                       className={`flex w-full flex-col gap-1 border-b border-slate-100 px-3 py-3 text-right dark:border-slate-800 ${
-                        active ? 'bg-violet-50 dark:bg-violet-950/30' : 'hover:bg-slate-50 dark:hover:bg-slate-900'
+                        active
+                          ? 'bg-violet-50 dark:bg-violet-950/30'
+                          : 'hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -243,7 +248,9 @@ export default function AdminSupportPage() {
                 <div>
                   <p className="text-sm font-black text-slate-900 dark:text-white">
                     {conversation?.user?.fullName ??
-                      (conversation?.guestId ? `مهمان · ${conversation.guestId.slice(0, 10)}` : 'گفتگو')}
+                      (conversation?.guestId
+                        ? `مهمان · ${conversation.guestId.slice(0, 10)}`
+                        : 'گفتگو')}
                   </p>
                   {conversation?.user?.mobile && (
                     <p className="text-[11px] font-bold text-slate-400" dir="ltr">
@@ -251,7 +258,13 @@ export default function AdminSupportPage() {
                     </p>
                   )}
                 </div>
-                <Button variant="ghost" className="!px-3 !py-2 text-xs" onClick={() => { void toggleStatus(); }}>
+                <Button
+                  variant="ghost"
+                  className="!px-3 !py-2 text-xs"
+                  onClick={() => {
+                    void toggleStatus();
+                  }}
+                >
                   {conversation?.status === 'open' ? 'بستن گفتگو' : 'باز کردن دوباره'}
                 </Button>
               </div>
@@ -268,7 +281,12 @@ export default function AdminSupportPage() {
                   placeholder="پاسخ پشتیبانی…"
                 />
                 <div className="flex justify-end">
-                  <Button disabled={sending || !draft.trim()} onClick={() => { void send(); }}>
+                  <Button
+                    disabled={sending || !draft.trim()}
+                    onClick={() => {
+                      void send();
+                    }}
+                  >
                     ارسال پاسخ
                   </Button>
                 </div>

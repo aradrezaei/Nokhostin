@@ -75,7 +75,9 @@ export default function AdminClassDetailPage() {
     const t = setTimeout(() => {
       void fetchStudents();
     }, 250);
-    return () => { clearTimeout(t); };
+    return () => {
+      clearTimeout(t);
+    };
   }, [enrollOpen, studentSearch, fetchStudents]);
 
   const enrolledIds = useMemo(
@@ -296,13 +298,21 @@ export default function AdminClassDetailPage() {
         </div>
       </section>
 
-      <Modal open={enrollOpen} title="افزودن هنرجو به کلاس" onClose={() => { setEnrollOpen(false); }}>
+      <Modal
+        open={enrollOpen}
+        title="افزودن هنرجو به کلاس"
+        onClose={() => {
+          setEnrollOpen(false);
+        }}
+      >
         <div className="space-y-4">
           {formError && <Alert>{formError}</Alert>}
           <Field label="جستجو">
             <TextInput
               value={studentSearch}
-              onChange={(e) => { setStudentSearch(e.target.value); }}
+              onChange={(e) => {
+                setStudentSearch(e.target.value);
+              }}
               placeholder="نام یا موبایل"
             />
           </Field>

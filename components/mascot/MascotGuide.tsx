@@ -35,8 +35,12 @@ export default function MascotGuide({
 
   useEffect(() => {
     if (!greetOnMount) return;
-    const t = setTimeout(() => { setOpen(true); }, 900);
-    return () => { clearTimeout(t); };
+    const t = setTimeout(() => {
+      setOpen(true);
+    }, 900);
+    return () => {
+      clearTimeout(t);
+    };
   }, [greetOnMount]);
 
   const advance = useCallback(() => {
@@ -50,20 +54,33 @@ export default function MascotGuide({
       setOpen(true);
     }
     setMood('happy');
-    window.setTimeout(() => { setMood('idle'); }, 700);
+    window.setTimeout(() => {
+      setMood('idle');
+    }, 700);
   };
 
   const posClass = position === 'bottom-left' ? 'left-5' : 'right-5';
 
   return (
     <div ref={wrapperRef} className={`fixed bottom-5 ${posClass} z-50 flex flex-col items-end`}>
-      {open && <SpeechBubble text={messages[index]} onClose={() => { setOpen(false); }} />}
+      {open && (
+        <SpeechBubble
+          text={messages[index]}
+          onClose={() => {
+            setOpen(false);
+          }}
+        />
+      )}
 
       <button
         type="button"
         onClick={handleClick}
-        onMouseEnter={() => { setMood('happy'); }}
-        onMouseLeave={() => { setMood('idle'); }}
+        onMouseEnter={() => {
+          setMood('happy');
+        }}
+        onMouseLeave={() => {
+          setMood('idle');
+        }}
         aria-label="راهنمای بیت — برای صحبت با بیت کلیک کن"
         className="rounded-full transition-transform duration-150 ease-out hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
       >

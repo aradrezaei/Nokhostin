@@ -4,22 +4,18 @@ import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { scheduleEffect } from '@/lib/scheduleEffect';
+import { isAppRoute } from '@/lib/routes';
 
 const ChatPanel = dynamic(() => import('./ChatPanel'), {
   ssr: false,
   loading: () => null,
 });
 
-const HIDDEN_PREFIXES = ['/auth', '/admin', '/dashboard', '/mentor'];
-
 /** Short defer so chat doesn't compete with first paint — not a long wait. */
 const BOOT_DELAY_MS = 800;
 
 function isHidden(pathname: string | null): boolean {
-  if (!pathname) {
-    return true;
-  }
-  return HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return !pathname || isAppRoute(pathname);
 }
 
 /**

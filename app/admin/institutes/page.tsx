@@ -101,13 +101,21 @@ export default function AdminInstitutesPage() {
         </div>
       )}
 
-      <Modal open={open} title="ثبت آموزشگاه جدید" onClose={() => { setOpen(false); }}>
+      <Modal
+        open={open}
+        title="ثبت آموزشگاه جدید"
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
         <div className="space-y-4">
           {formError && <Alert>{formError}</Alert>}
           <Field label="نام آموزشگاه">
             <TextInput
               value={form.name}
-              onChange={(e) => { setForm((f) => ({ ...f, name: e.target.value })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, name: e.target.value }));
+              }}
               placeholder="مثلاً آموزشگاه زبان نخستین"
             />
           </Field>
@@ -115,26 +123,33 @@ export default function AdminInstitutesPage() {
             <TextInput
               dir="ltr"
               value={form.slug}
-              onChange={(e) =>
-                { setForm((f) => ({
+              onChange={(e) => {
+                setForm((f) => ({
                   ...f,
                   slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''),
-                })); }
-              }
+                }));
+              }}
               placeholder="language"
             />
           </Field>
           <Field label="نوع">
             <Select
               value={form.type}
-              onChange={(e) => { setForm((f) => ({ ...f, type: e.target.value as InstituteType })); }}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, type: e.target.value as InstituteType }));
+              }}
             >
               <option value="language">زبان</option>
               <option value="vocational">فنی و حرفه‌ای</option>
             </Select>
           </Field>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" onClick={() => { setOpen(false); }}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
               انصراف
             </Button>
             <Button
