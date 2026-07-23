@@ -3,27 +3,30 @@
 import { useState } from 'react';
 import { ChevronDown, Headset } from 'lucide-react';
 import { CHAT_FAQS } from '@/lib/chat/faqs';
+import ChatWallpaper from './ChatWallpaper';
 
 export default function FaqStep({ onTalkToHuman }: { onTalkToHuman: () => void }) {
   const [openId, setOpenId] = useState<string | null>(CHAT_FAQS[0].id);
 
   return (
-    <div className="flex h-full flex-col" dir="rtl">
-      <div className="border-b-2 border-slate-200 px-4 py-3 dark:border-slate-700">
-        <p className="text-sm font-black text-slate-900 dark:text-white">کمکت می‌کنیم</p>
+    <div className="relative flex h-full min-h-0 flex-col bg-[#f3eefc] dark:bg-[#0c1418]" dir="rtl">
+      <ChatWallpaper />
+
+      <div className="relative border-b border-violet-200/70 px-4 py-3 dark:border-slate-700/80">
+        <p className="text-sm font-black text-slate-900 dark:text-white">سوالات پرتکرار</p>
         <p className="mt-0.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
-          اول این جواب‌های پرتکرار را ببین؛ اگر حل نشد با پشتیبانی حرف بزن.
+          اول این‌ها را ببین؛ اگر حل نشد با پشتیبانی حرف بزن.
         </p>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2 [content-visibility:auto]">
+      <div className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2">
         <ul className="space-y-2">
           {CHAT_FAQS.map((faq) => {
             const open = openId === faq.id;
             return (
               <li
                 key={faq.id}
-                className="rounded-2xl border-2 border-slate-200 border-b-4 bg-white dark:border-slate-700 dark:bg-[#131f24]"
+                className="rounded-2xl border-2 border-slate-200/90 border-b-4 bg-white/95 dark:border-slate-700 dark:bg-[#131f24]/95"
               >
                 <button
                   type="button"
@@ -52,7 +55,7 @@ export default function FaqStep({ onTalkToHuman }: { onTalkToHuman: () => void }
         </ul>
       </div>
 
-      <div className="border-t-2 border-slate-200 p-3 dark:border-slate-700">
+      <div className="relative border-t-2 border-slate-200 bg-white/90 p-3 dark:border-slate-700 dark:bg-[#131f24]/95">
         <button
           type="button"
           onClick={onTalkToHuman}

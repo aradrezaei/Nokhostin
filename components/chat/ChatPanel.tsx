@@ -1,7 +1,7 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
 import ChatFab from './ChatFab';
+import ChatHeader from './ChatHeader';
 import Composer from './Composer';
 import FaqStep from './FaqStep';
 import LiveThread from './LiveThread';
@@ -12,42 +12,48 @@ export default function ChatPanel() {
   const open = chat.view !== 'closed';
 
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 z-[60] flex flex-col items-start gap-3 sm:bottom-6 sm:left-6">
+    <>
+      {/* FAB — bottom-right for RTL */}
+      {!open && (
+        <div className="pointer-events-none fixed bottom-4 right-4 z-[60] sm:bottom-6 sm:right-6">
+          <div className="pointer-events-auto">
+            <ChatFab unread={chat.unread} onOpen={chat.openFaq} />
+          </div>
+        </div>
+      )}
+
       {open && (
         <div
-          className="pointer-events-auto flex h-[min(560px,calc(100dvh-6.5rem))] w-[min(100vw-2rem,380px)] flex-col overflow-hidden rounded-3xl border-2 border-slate-200 border-b-4 bg-[#fcfbff] shadow-[0_16px_40px_-20px_rgba(15,23,42,0.45)] dark:border-slate-700 dark:bg-[#131f24]"
+          className="pointer-events-auto fixed inset-0 z-[70] flex flex-col overflow-hidden bg-[#fcfbff] dark:bg-[#131f24] sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(600px,calc(100dvh-3rem))] sm:w-[min(100vw-2rem,400px)] sm:rounded-3xl sm:border-2 sm:border-slate-200 sm:border-b-4 sm:shadow-[0_16px_40px_-20px_rgba(15,23,42,0.45)] sm:dark:border-slate-700"
           role="dialog"
+          aria-modal="true"
           aria-label="پشتیبانی نخستین"
+          dir="rtl"
         >
-          <header className="flex items-center gap-2 border-b-2 border-slate-200 bg-[#7c3aed] px-3 py-2.5 text-white dark:border-[#5b21b6]">
-            {chat.view === 'live' && (
-              <button
-                type="button"
-                onClick={chat.backToFaq}
-                aria-label="بازگشت به سوالات"
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/15"
-              >
-                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-              </button>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-black">
-                {chat.view === 'live' ? 'گفتگو با پشتیبانی' : 'مرکز راهنما'}
-              </p>
-              <p className="text-[10px] font-bold text-violet-100">
-                {chat.view === 'live' ? 'پاسخ در ساعات کاری' : 'سریع‌ترین راه برای جواب گرفتن'}
-              </p>
-            </div>
-          </header>
+          <ChatHeader
+            showBack={chat.view === 'live'}
+            onBack={chat.backToFaq}
+            onClose={chat.close}
+          />
 
-          {chat.view === 'faq' && <FaqStep onTalkToHuman={() => { void chat.startLive(); }} />}
+          {chat.view === 'faq' && (
+            <div className="min-h-0 flex-1">
+              <FaqStep
+                onTalkToHuman={() => {
+                  void chat.startLive();
+                }}
+              />
+            </div>
+          )}
 
           {chat.view === 'live' && (
             <div className="flex min-h-0 flex-1 flex-col">
               <LiveThread messages={chat.messages} loading={chat.loadingLive} />
-              {chat.error && (
-                <p className="px-3 pb-1 text-[11px] font-bold text-rose-600">{chat.error}</p>
-              )}
+              {chat.error ? (
+                <p className="bg-white px-3 py-1 text-[11px] font-bold text-rose-600 dark:bg-[#131f24]">
+                  {chat.error}
+                </p>
+              ) : null}
               <Composer
                 value={chat.draft}
                 onChange={chat.updateDraft}
@@ -60,17 +66,6 @@ export default function ChatPanel() {
           )}
         </div>
       )}
-
-      <div className="pointer-events-auto">
-        <ChatFab
-          open={open}
-          unread={chat.unread}
-          onToggle={() => {
-            if (open) chat.close();
-            else chat.openFaq();
-          }}
-        />
-      </div>
-    </div>
+    </>
   );
 }

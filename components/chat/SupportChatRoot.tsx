@@ -12,6 +12,9 @@ const ChatPanel = dynamic(() => import('./ChatPanel'), {
 
 const HIDDEN_PREFIXES = ['/auth', '/admin', '/dashboard', '/mentor'];
 
+/** Short defer so chat doesn't compete with first paint — not a long wait. */
+const BOOT_DELAY_MS = 800;
+
 function isHidden(pathname: string | null): boolean {
   if (!pathname) {
     return true;
@@ -20,8 +23,7 @@ function isHidden(pathname: string | null): boolean {
 }
 
 /**
- * Lazy-mounts the support widget after idle so marketing pages stay snappy.
- * Hidden on auth + panel routes.
+ * Defers support chat slightly after mount, then dynamic-imports the panel.
  */
 export default function SupportChatRoot() {
   const pathname = usePathname();
@@ -36,28 +38,28 @@ export default function SupportChatRoot() {
     }
 
     let cancelled = false;
-    const arm = () => {
-      if (!cancelled) {
-        setReady(true);
-      }
-    };
-
     let idleId: number | undefined;
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    if (typeof window.requestIdleCallback === 'function') {
-      idleId = window.requestIdleCallback(arm, { timeout: 2500 });
-    } else {
-      timeoutId = setTimeout(arm, 1200);
-    }
+    const timeoutId = setTimeout(() => {
+      if (cancelled) {
+        return;
+      }
+      const start = () => {
+        if (!cancelled) {
+          setReady(true);
+        }
+      };
+      if (typeof window.requestIdleCallback === 'function') {
+        idleId = window.requestIdleCallback(start, { timeout: 500 });
+      } else {
+        start();
+      }
+    }, BOOT_DELAY_MS);
 
     return () => {
       cancelled = true;
+      clearTimeout(timeoutId);
       if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
         window.cancelIdleCallback(idleId);
-      }
-      if (timeoutId) {
-        clearTimeout(timeoutId);
       }
     };
   }, [hidden]);
